@@ -19,3 +19,18 @@ DEFAULT_DAYS_BACK = 3
 # Pagination + safety
 PAGE_SIZE = 200
 MAX_OBJECTS = 100           # safety cap for dev pulls; --max-objects 0 disables
+
+# --- Phase 2a: preprocessing ---
+TENSORS_DIR = DATA_DIR / "tensors"
+
+# Tensor schema
+WINDOW_DAYS = 200
+BIN_DAYS = 1
+N_BINS = WINDOW_DAYS // BIN_DAYS        # 200
+N_CHANNELS = 6                           # [g_flux, g_err, g_mask, r_flux, r_err, r_mask]
+CHANNEL_ORDER = ("g_flux", "g_err", "g_mask", "r_flux", "r_err", "r_mask")
+
+# Photometry
+FLUX_ZEROPOINT = 23.9                    # AB mag zeropoint → flux in μJy
+UPPER_LIMIT_SIGMA = 5                    # ZTF diffmaglim is a 5σ upper limit
+ASINH_SOFTENING = 2.0                    # μJy; ~2× typical ZTF difference-image point-source noise

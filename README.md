@@ -4,7 +4,7 @@ A small system that watches the sky for novel astronomical patterns that current
 transient pipelines miss. The goal is a ranked, human-readable feed of "things
 worth an astronomer's attention" — not another classifier.
 
-**Status: Phase 1 — ingestion only.**
+**Status: Phase 1 ingestion + Phase 2a preprocessing complete. Phase 2b (model) is next.**
 
 ## Architecture (target)
 
@@ -61,6 +61,55 @@ data/
 convenience layer. You can rebuild the Parquet from raw without re-hitting the
 API by calling `flatten_to_dataframe` + `write_parquet` directly.
 
+## Build input tensors (Phase 2a)
+
+```bash
+python -m scripts.preprocess_tensors                    # uses most recent Parquet
+python -m scripts.preprocess_tensors --date 2026-05-20  # specific date
+```
+
+This converts the flattened Parquet (detections only) plus the raw JSON
+non-detections into the model-ready tensor described by the Phase 2 schema
+decisions: a 200-day window right-aligned to each object's last detection,
+binned at 1-day resolution, with one channel per filter for flux + error +
+mask. Magnitudes are converted to flux at zeropoint 23.9 μJy; non-detections
+become `flux=0` with noise derived from `diffmaglim/5`. Flux is asinh-stretched
+(softening = 2.0 μJy) and per-filter median-subtracted using detection bins
+only — upper-limit bins (flux=0, mask=1) are excluded from the median so they
+don't bias it toward zero. Filters with zero detection bins fall back to
+median = 0 and the manifest records the fallback.
+
+Outputs land under `data/tensors/{date}.npz` (the tensor archive) and
+`data/tensors/{date}.csv` (a human-readable manifest):
+
+```
+data/tensors/YYYY-MM-DD.npz
+  X               (N, 200, 6) float32  — channels [g_flux, g_err, g_mask, r_flux, r_err, r_mask]
+  oids            (N,)        str      — sorted, parallel to axis 0 of X
+  median_g_asinh  (N,)        float32  — per-object asinh-space median (used for the subtraction)
+  median_r_asinh  (N,)        float32
+  window_end_mjd  (N,)        float32  — each window's right edge (= obj_lastmjd)
+  channels        (6,)        str      — self-describing channel order
+  meta_*                               — softening, window_days, bin_days, zp, σ, build date
+
+data/tensors/YYYY-MM-DD.csv
+  idx, oid, window_end_mjd,
+  n_obs_g, n_obs_r, n_uplim_g, n_uplim_r,
+  total_unmasked_bins, frac_bins_masked,
+  median_g_asinh, median_r_asinh,
+  median_g_raw_flux, median_r_raw_flux,
+  median_g_fallback, median_r_fallback
+```
+
+Classification metadata is intentionally dropped at preprocessing — the
+autoencoder must be classifier-blind. It can be rejoined by `oid` downstream
+(audit, validation agent).
+
+Before writing, sanity checks fail loudly on: any NaN/inf in `X`, duplicate
+oids, length mismatches across parallel arrays, or `mask=0` bins with nonzero
+flux/err. Objects are sorted by `oid` before stacking, so the same Parquet
+input produces a byte-identical tensor archive across runs.
+
 ## What's filtered, and what isn't
 
 Quality cuts:
@@ -91,18 +140,29 @@ python -m pytest -q
 
 ```
 src/argus/
-├── config.py                    # paths, quality cuts, defaults
-└── ingest/
-    ├── alerce.py                # thin wrapper over the ALeRCE client
-    └── storage.py               # raw JSON + flattened Parquet writers
+├── config.py                    # paths, quality cuts, tensor schema, transform params
+├── ingest/
+│   ├── alerce.py                # thin wrapper over the ALeRCE client
+│   └── storage.py               # raw JSON + flattened Parquet writers
+└── preprocess/
+    ├── photometry.py            # mag↔flux, upper-limit noise, asinh + error propagation
+    ├── grid.py                  # Event, windowing, binning, per-object tensorization
+    └── dataset.py               # file IO, stacking, manifest, sanity checks
 scripts/
-└── ingest_daily.py              # CLI entry point
+├── ingest_daily.py              # ingestion CLI
+└── preprocess_tensors.py        # preprocessing CLI
+notebooks/
+└── 02_explore_lightcurve.ipynb  # one-object Parquet-vs-raw comparison + Phase 2 schema decisions
 tests/
 ├── fixtures/                    # 12 real objects, committed
-└── test_storage.py              # parsing + storage logic
+├── test_storage.py              # ingestion parsing + storage
+├── test_preprocess_photometry.py
+├── test_preprocess_grid.py
+└── test_preprocess_dataset.py
 ```
 
 ## Next
 
-Phase 2 will train an autoencoder on the flattened light curves and surface
-reconstruction-error outliers. Until then this repo just produces clean data.
+Phase 2b will train a 1D convolutional autoencoder on the tensor archive and
+surface reconstruction-error outliers. The Phase 2 schema decisions and the
+empirical audit plan are documented in `notebooks/02_explore_lightcurve.ipynb`.
