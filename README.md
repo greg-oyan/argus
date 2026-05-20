@@ -4,7 +4,12 @@ A small system that watches the sky for novel astronomical patterns that current
 transient pipelines miss. The goal is a ranked, human-readable feed of "things
 worth an astronomer's attention" — not another classifier.
 
-**Status: Phase 1 ingestion + Phase 2a preprocessing complete. Phase 2b (model) is next.**
+**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation complete.**
+
+The product vision and the strategic decision behind Phase 2B live in
+[`docs/ARGUS_VISION.md`](docs/ARGUS_VISION.md) and
+[`docs/PHASE_2B_DECISION.md`](docs/PHASE_2B_DECISION.md).
+Read them first if you're new to the repo.
 
 ## Architecture (target)
 
@@ -139,30 +144,83 @@ python -m pytest -q
 ## Repository layout
 
 ```
+docs/
+├── ARGUS_VISION.md              # product vision; the governing standard
+└── PHASE_2B_DECISION.md         # why case-file-first, detector-second
 src/argus/
 ├── config.py                    # paths, quality cuts, tensor schema, transform params
 ├── ingest/
 │   ├── alerce.py                # thin wrapper over the ALeRCE client
 │   └── storage.py               # raw JSON + flattened Parquet writers
-└── preprocess/
-    ├── photometry.py            # mag↔flux, upper-limit noise, asinh + error propagation
-    ├── grid.py                  # Event, windowing, binning, per-object tensorization
-    └── dataset.py               # file IO, stacking, manifest, sanity checks
+├── preprocess/
+│   ├── photometry.py            # mag↔flux, upper-limit noise, asinh + error propagation
+│   ├── grid.py                  # Event, windowing, binning, per-object tensorization
+│   └── dataset.py               # file IO, stacking, manifest, sanity checks
+└── casefile/
+    ├── schema.py                # CaseFile + LightCurveSummary + CandidateExplanation dataclasses
+    ├── summarize.py             # pure: evidence, candidates, uncertainty, next checks
+    └── build.py                 # orchestration: load local files → CaseFile → JSON
 scripts/
 ├── ingest_daily.py              # ingestion CLI
-└── preprocess_tensors.py        # preprocessing CLI
+├── preprocess_tensors.py        # preprocessing CLI
+└── build_casefile.py            # case-file CLI
 notebooks/
 └── 02_explore_lightcurve.ipynb  # one-object Parquet-vs-raw comparison + Phase 2 schema decisions
 tests/
 ├── fixtures/                    # 12 real objects, committed
-├── test_storage.py              # ingestion parsing + storage
+├── test_storage.py
 ├── test_preprocess_photometry.py
 ├── test_preprocess_grid.py
-└── test_preprocess_dataset.py
+├── test_preprocess_dataset.py
+└── test_casefile.py
 ```
+
+## Build a case file (Phase 2B)
+
+A *case file* is Argus's primary output: a per-object JSON document that
+separates observed evidence, candidate explanations, uncertainty, and
+recommended next checks. It is the bridge between the data engine (Phases
+1 and 2a) and the future visual interface — the same JSON will drive both
+human reading and any later UI layer.
+
+```bash
+python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq
+```
+
+This reads only local data (`data/lightcurves/{date}.parquet`,
+`data/raw/{date}/lightcurves/{oid}.json`, and the tensor manifest at
+`data/tensors/{date}.csv` if present) and writes:
+
+```
+data/casefiles/{oid}.json
+```
+
+Top-level fields:
+
+| field | content |
+|---|---|
+| `oid`, `source_date`, `generated_at` | identity and provenance |
+| `coordinates` | RA/Dec from the per-object Parquet mean, when available |
+| `available_data_sources` | which of `parquet_detections`, `raw_lightcurve_json`, `tensor_manifest` were actually used |
+| `detection_count`, `non_detection_count`, `filters_observed` | quick photometric inventory |
+| `first_mjd`, `last_mjd`, `time_span_days` | coverage |
+| `classification_metadata` | any external (ALeRCE) label, kept as metadata only |
+| `light_curve_summary` | per-filter detection/non-detection counts, magnitude range, longest detection gap, most recent detection |
+| `evidence_notes` | plain-English facts read off the data |
+| `candidate_explanations` | external labels and placeholder hypotheses, each with `mismatch_notes` saying "no fit performed" |
+| `uncertainty_notes` | what hasn't been checked (SIMBAD/NED, spectroscopy, forced photometry, fitting…) |
+| `recommended_next_checks` | concrete actions that would tighten the case |
+
+Phase 2B emits **no fitted explanations** — every candidate is either an
+inherited external label or a `placeholder_unfitted` hypothesis. The
+governing principle is in the vision doc: the case file shows its work and
+does not claim things it hasn't checked.
 
 ## Next
 
-Phase 2b will train a 1D convolutional autoencoder on the tensor archive and
-surface reconstruction-error outliers. The Phase 2 schema decisions and the
-empirical audit plan are documented in `notebooks/02_explore_lightcurve.ipynb`.
+Replace placeholder candidate explanations with fitted comparators (a
+Type Ia SN template is the natural first one), and add evidence-source
+plugins for SIMBAD / NED / PanSTARRS to fill in `coordinates` cross-matches.
+Each step is evaluated against the governing standard in
+[`docs/ARGUS_VISION.md`](docs/ARGUS_VISION.md): does it help Argus build a
+better scientific case from anomalous public data?

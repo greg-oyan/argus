@@ -22,6 +22,7 @@ MAX_OBJECTS = 100           # safety cap for dev pulls; --max-objects 0 disables
 
 # --- Phase 2a: preprocessing ---
 TENSORS_DIR = DATA_DIR / "tensors"
+CASEFILES_DIR = DATA_DIR / "casefiles"
 
 # Tensor schema
 WINDOW_DAYS = 200
