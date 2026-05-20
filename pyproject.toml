@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "argus"
+version = "0.1.0"
+description = "Watching the sky for novel astronomical patterns ZTF pipelines miss."
+requires-python = ">=3.10"
+dependencies = [
+    "alerce>=2.3.0",
+    "pandas>=2.0",
+    "pyarrow>=14",
+    "requests>=2.31",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -1,0 +1,2016 @@
+{
+  "detections": [
+    {
+      "tid": "ztf",
+      "mjd": 58722.24339119997,
+      "candid": "968243391615010031",
+      "fid": 1,
+      "pid": 968243391615,
+      "diffmaglim": 20.379124,
+      "isdiffpos": -1,
+      "nid": 968,
+      "distnr": 0.61508447,
+      "magpsf": 19.49182,
+      "magpsf_corr": 17.503311,
+      "magpsf_corr_ext": null,
+      "magap": 19.8513,
+      "magap_corr": null,
+      "sigmapsf": 0.17634505,
+      "sigmapsf_corr": 100.0,
+      "sigmapsf_corr_ext": 0.028246174,
+      "sigmagap": 0.2212,
+      "sigmagap_corr": null,
+      "ra": 302.2437538,
+      "dec": 10.8749365,
+      "rb": 0.8657143,
+      "rbversion": "t17_f5_c3",
+      "drb": 0.99681056,
+      "magapbig": 19.738,
+      "sigmagapbig": 0.2504,
+      "rfid": 541120116,
+      "has_stamp": true,
+      "corrected": true,
+      "dubious": false,
+      "candid_alert": null,
+      "step_id_corr": "bulk_1.0.0",
+      "phase": 0.0,
+      "parent_candid": 0
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59275.53258100012,
+      "candid": "1521532581615010050",
+      "fid": 2,
+      "pid": 1521532581615,
+      "diffmaglim": 19.2667,
+      "isdiffpos": -1,
+      "nid": 1521,
+      "distnr": 0.20259,
+      "magpsf": 19.0144,
+      "magpsf_corr": 16.871222,
+      "magpsf_corr_ext": null,
+      "magap": 19.4606,
+      "magap_corr": null,
+      "sigmapsf": 0.249872,
+      "sigmapsf_corr": 0.030214004,
+      "sigmapsf_corr_ext": 0.034709312,
+      "sigmagap": 0.384,
+      "sigmagap_corr": null,
+      "ra": 302.2439102,
+      "dec": 10.8748073,
+      "rb": 0.804286,
+      "rbversion": "t17_f5_c3",
+      "drb": null,
+      "magapbig": 19.312,
+      "sigmagapbig": 0.4282,
+      "rfid": null,
+      "has_stamp": false,
+      "corrected": true,
+      "dubious": false,
+      "candid_alert": null,
+      "step_id_corr": "correction_0.0.1",
+      "phase": 0.0,
+      "parent_candid": null
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59275.53846060019,
+      "candid": "1521538461615010037",
+      "fid": 2,
+      "pid": 1521538461615,
+      "diffmaglim": 19.206852,
+      "isdiffpos": -1,
+      "nid": 1521,
+      "distnr": 0.5276382,
+      "magpsf": 19.037624,
+      "magpsf_corr": 16.868034,
+      "magpsf_corr_ext": null,
+      "magap": 19.1154,
+      "magap_corr": null,
+      "sigmapsf": 0.1692633,
+      "sigmapsf_corr": 0.015376124,
+      "sigmapsf_corr_ext": 0.022947049,
+      "sigmagap": 0.2799,
+      "sigmagap_corr": null,
+      "ra": 302.2439798,
+      "dec": 10.8748842,
+      "rb": 0.8242857,
+      "rbversion": "t17_f5_c3",
+      "drb": 0.95303744,
+      "magapbig": 19.4682,
+      "sigmagapbig": 0.4953,
+      "rfid": 541120216,
+      "has_stamp": true,
+      "corrected": true,
+      "dubious": false,
+      "candid_alert": null,
+      "step_id_corr": "correction_0.0.1",
+      "phase": 0.0,
+      "parent_candid": null
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59275.54141200008,
+      "candid": "1521541411615010045",
+      "fid": 2,
+      "pid": 1521541411615,
+      "diffmaglim": 19.2997,
+      "isdiffpos": -1,
+      "nid": 1521,
+      "distnr": 0.206815,
+      "magpsf": 19.0725,
+      "magpsf_corr": 16.863392,
+      "magpsf_corr_ext": null,
+      "magap": 18.7873,
+      "magap_corr": null,
+      "sigmapsf": 0.217441,
+      "sigmapsf_corr": 0.022810087,
+      "sigmapsf_corr_ext": 0.028424831,
+      "sigmagap": 0.2058,
+      "sigmagap_corr": null,
+      "ra": 302.2438288,
+      "dec": 10.874858,
+      "rb": 0.852857,
+      "rbversion": "t17_f5_c3",
+      "drb": null,
+      "magapbig": 18.7831,
+      "sigmagapbig": 0.2621,
+      "rfid": null,
+      "has_stamp": false,
+      "corrected": true,
+      "dubious": false,
+      "candid_alert": null,
+      "step_id_corr": "correction_0.0.1",
+      "phase": 0.0,
+      "parent_candid": null
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59275.54625000013,
+      "candid": "1521546241615010057",
+      "fid": 2,
+      "pid": 1521546241615,
+      "diffmaglim": 19.283236,
+      "isdiffpos": -1,
+      "nid": 1521,
+      "distnr": 0.2731006,
+      "magpsf": 19.020836,
+      "magpsf_corr": 16.87033,
+      "magpsf_corr_ext": null,
+      "magap": 19.0002,
+      "magap_corr": null,
+      "sigmapsf": 0.17718184,
+      "sigmapsf_corr": 0.017500307,
+      "sigmapsf_corr_ext": 0.024446523,
+      "sigmagap": 0.251,
+      "sigmagap_corr": null,
+      "ra": 302.2439295,
+      "dec": 10.8747927,
+      "rb": 0.75285715,
+      "rbversion": "t17_f5_c3",
+      "drb": 0.99924976,
+      "magapbig": 18.776,
+      "sigmagapbig": 0.2611,
+      "rfid": 541120216,
+      "has_stamp": true,
+      "corrected": true,
+      "dubious": false,
+      "candid_alert": null,
+      "step_id_corr": "correction_0.0.1",
+      "phase": 0.0,
+      "parent_candid": null
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59484.1936458,
+      "candid": "1730193642915010055",
+      "fid": 1,
+      "pid": 1730193642915,
+      "diffmaglim": 21.01913,
+      "isdiffpos": -1,
+      "nid": 1730,
+      "distnr": 0.20936622,
+      "magpsf": 19.496927,
+      "magpsf_corr": 17.508291,
+      "magpsf_corr_ext": null,
+      "magap": 19.391,
+      "magap_corr": null,
+      "sigmapsf": 0.20856349,
+      "sigmapsf_corr": 0.026070317,
+      "sigmapsf_corr_ext": 0.0334029,
+      "sigmagap": 0.0998,
+      "sigmagap_corr": null,
+      "ra": 302.2437635,
+      "dec": 10.8748018,
+      "rb": 0.57,
+      "rbversion": "t17_f5_c3",
+      "drb": 0.9972103,
+      "magapbig": 19.3336,
+      "sigmagapbig": 0.1171,
+      "rfid": 542120129,
+      "has_stamp": true,
+      "corrected": true,
+      "dubious": false,
+      "candid_alert": null,
+      "step_id_corr": "correction_1.0.6",
+      "phase": 0.0,
+      "parent_candid": null
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59484.23408559989,
+      "candid": "1730234082915010035",
+      "fid": 2,
+      "pid": 1730234082915,
+      "diffmaglim": 20.388088,
+      "isdiffpos": -1,
+      "nid": 1730,
+      "distnr": 0.1950761,
+      "magpsf": 18.900406,
+      "magpsf_corr": 16.907736,
+      "magpsf_corr_ext": null,
+      "magap": 19.2017,
+      "magap_corr": null,
+      "sigmapsf": 0.19674413,
+      "sigmapsf_corr": 0.019813169,
+      "sigmapsf_corr_ext": 0.03139306,
+      "sigmagap": 0.136,
+      "sigmagap_corr": null,
+      "ra": 302.2438538,
+      "dec": 10.8748411,
+      "rb": 0.4242857,
+      "rbversion": "t17_f5_c3",
+      "drb": 0.4437096,
+      "magapbig": 19.2284,
+      "sigmagapbig": 0.1747,
+      "rfid": 542120229,
+      "has_stamp": true,
+      "corrected": true,
+      "dubious": false,
+      "candid_alert": null,
+      "step_id_corr": "correction_1.0.6",
+      "phase": 0.0,
+      "parent_candid": null
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59765.39995370014,
+      "candid": "2011399952915010040",
+      "fid": 1,
+      "pid": 2011399952915,
+      "diffmaglim": 20.940994,
+      "isdiffpos": -1,
+      "nid": 2011,
+      "distnr": 0.73244584,
+      "magpsf": 19.62945,
+      "magpsf_corr": 17.488493,
+      "magpsf_corr_ext": null,
+      "magap": 19.4097,
+      "magap_corr": null,
+      "sigmapsf": 0.13342445,
+      "sigmapsf_corr": 100.0,
+      "sigmapsf_corr_ext": 0.01857175,
+      "sigmagap": 0.1067,
+      "sigmagap_corr": null,
+      "ra": 302.2436161,
+      "dec": 10.8747636,
+      "rb": 0.75142854,
+      "rbversion": "t17_f5_c3",
+      "drb": 0.9988269,
+      "magapbig": 19.381,
+      "sigmagapbig": 0.1291,
+      "rfid": 542120129,
+      "has_stamp": true,
+      "corrected": true,
+      "dubious": false,
+      "candid_alert": null,
+      "step_id_corr": "dev",
+      "phase": 0.0,
+      "parent_candid": null
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60618.097361099906,
+      "candid": "2864097362915010060",
+      "fid": 2,
+      "pid": 2864097362915,
+      "diffmaglim": 20.000443,
+      "isdiffpos": -1,
+      "nid": 2864,
+      "distnr": 0.124292865,
+      "magpsf": 18.733318,
+      "magpsf_corr": 16.936947,
+      "magpsf_corr_ext": null,
+      "magap": 18.8272,
+      "magap_corr": null,
+      "sigmapsf": 0.10076967,
+      "sigmapsf_corr": 100.0,
+      "sigmapsf_corr_ext": 0.019265542,
+      "sigmagap": 0.1222,
+      "sigmagap_corr": null,
+      "ra": 302.2438128,
+      "dec": 10.8748336,
+      "rb": 0.82714283,
+      "rbversion": "t17_f5_c3",
+      "drb": 0.99989307,
+      "magapbig": 18.747,
+      "sigmagapbig": 0.1439,
+      "rfid": 542120229,
+      "has_stamp": true,
+      "corrected": true,
+      "dubious": false,
+      "candid_alert": null,
+      "step_id_corr": "24.5.1",
+      "phase": 0.0,
+      "parent_candid": null
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60618.10833329987,
+      "candid": "2864108331615010050",
+      "fid": 1,
+      "pid": 2864108331615,
+      "diffmaglim": 20.207253,
+      "isdiffpos": -1,
+      "nid": 2864,
+      "distnr": 0.21390882,
+      "magpsf": 19.391434,
+      "magpsf_corr": 17.520288,
+      "magpsf_corr_ext": null,
+      "magap": 19.3749,
+      "magap_corr": null,
+      "sigmapsf": 0.124607086,
+      "sigmapsf_corr": 100.0,
+      "sigmapsf_corr_ext": 0.022237433,
+      "sigmagap": 0.1631,
+      "sigmagap_corr": null,
+      "ra": 302.2439185,
+      "dec": 10.8748124,
+      "rb": 0.9357143,
+      "rbversion": "t17_f5_c3",
+      "drb": 0.99986494,
+      "magapbig": 19.3989,
+      "sigmagapbig": 0.2114,
+      "rfid": 541120116,
+      "has_stamp": true,
+      "corrected": true,
+      "dubious": false,
+      "candid_alert": null,
+      "step_id_corr": "24.5.1",
+      "phase": 0.0,
+      "parent_candid": null
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60618.12300929986,
+      "candid": "2864123002915010076",
+      "fid": 1,
+      "pid": 2864123002915,
+      "diffmaglim": 20.00366,
+      "isdiffpos": -1,
+      "nid": 2864,
+      "distnr": 0.4299704,
+      "magpsf": 19.561674,
+      "magpsf_corr": 17.498272,
+      "magpsf_corr_ext": null,
+      "magap": 19.4984,
+      "magap_corr": null,
+      "sigmapsf": 0.17240095,
+      "sigmapsf_corr": 0.015367915,
+      "sigmapsf_corr_ext": 0.025773818,
+      "sigmagap": 0.2004,
+      "sigmagap_corr": null,
+      "ra": 302.2437023,
+      "dec": 10.874799,
+      "rb": 0.8914286,
+      "rbversion": "t17_f5_c3",
+      "drb": 0.99856627,
+      "magapbig": 19.3127,
+      "sigmagapbig": 0.2146,
+      "rfid": 542120129,
+      "has_stamp": true,
+      "corrected": true,
+      "dubious": false,
+      "candid_alert": null,
+      "step_id_corr": "24.5.1",
+      "phase": 0.0,
+      "parent_candid": null
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61171.44540510001,
+      "candid": "3417445401615010044",
+      "fid": 2,
+      "pid": 3417445401615,
+      "diffmaglim": 20.591633,
+      "isdiffpos": -1,
+      "nid": 3417,
+      "distnr": 0.26490602,
+      "magpsf": 18.89416,
+      "magpsf_corr": 16.889029,
+      "magpsf_corr_ext": null,
+      "magap": 18.9617,
+      "magap_corr": null,
+      "sigmapsf": 0.13527797,
+      "sigmapsf_corr": 0.0124005005,
+      "sigmapsf_corr_ext": 0.021339048,
+      "sigmagap": 0.0967,
+      "sigmagap_corr": null,
+      "ra": 302.2438925,
+      "dec": 10.8748677,
+      "rb": 0.7757143,
+      "rbversion": "t17_f5_c3",
+      "drb": 0.98083556,
+      "magapbig": 18.9051,
+      "sigmagapbig": 0.1139,
+      "rfid": 541120216,
+      "has_stamp": true,
+      "corrected": true,
+      "dubious": false,
+      "candid_alert": null,
+      "step_id_corr": "27.5.7a32.dev1",
+      "phase": 0.0,
+      "parent_candid": null
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61180.4675925998,
+      "candid": "3426467591615010004",
+      "fid": 3,
+      "pid": 3426467591615,
+      "diffmaglim": 19.71599,
+      "isdiffpos": -1,
+      "nid": 3426,
+      "distnr": 0.56524044,
+      "magpsf": 19.035427,
+      "magpsf_corr": 16.619389,
+      "magpsf_corr_ext": null,
+      "magap": 18.8692,
+      "magap_corr": null,
+      "sigmapsf": 0.15696697,
+      "sigmapsf_corr": 100.0,
+      "sigmapsf_corr_ext": 0.016958702,
+      "sigmagap": 0.179,
+      "sigmagap_corr": null,
+      "ra": 302.2436888,
+      "dec": 10.8748139,
+      "rb": 0.71,
+      "rbversion": "t17_f5_c3",
+      "drb": 0.999355,
+      "magapbig": 18.9623,
+      "sigmagapbig": 0.2465,
+      "rfid": 541120316,
+      "has_stamp": true,
+      "corrected": true,
+      "dubious": false,
+      "candid_alert": null,
+      "step_id_corr": "27.5.7a32.dev1",
+      "phase": 0.0,
+      "parent_candid": null
+    }
+  ],
+  "non_detections": [
+    {
+      "tid": "ztf",
+      "mjd": 58693.33012730023,
+      "fid": 1,
+      "diffmaglim": 20.8852
+    },
+    {
+      "tid": "ztf",
+      "mjd": 58693.33193290001,
+      "fid": 1,
+      "diffmaglim": 20.8132
+    },
+    {
+      "tid": "ztf",
+      "mjd": 58694.31594910007,
+      "fid": 1,
+      "diffmaglim": 20.9198
+    },
+    {
+      "tid": "ztf",
+      "mjd": 58694.33157410007,
+      "fid": 1,
+      "diffmaglim": 20.9128
+    },
+    {
+      "tid": "ztf",
+      "mjd": 58694.33755790023,
+      "fid": 2,
+      "diffmaglim": 19.7365
+    },
+    {
+      "tid": "ztf",
+      "mjd": 58694.33936339989,
+      "fid": 2,
+      "diffmaglim": 18.5438
+    },
+    {
+      "tid": "ztf",
+      "mjd": 58697.37999999989,
+      "fid": 2,
+      "diffmaglim": 20.6469
+    },
+    {
+      "tid": "ztf",
+      "mjd": 58697.38045139983,
+      "fid": 2,
+      "diffmaglim": 20.8404
+    },
+    {
+      "tid": "ztf",
+      "mjd": 58700.330023100134,
+      "fid": 1,
+      "diffmaglim": 20.9308
+    },
+    {
+      "tid": "ztf",
+      "mjd": 58700.331400500145,
+      "fid": 1,
+      "diffmaglim": 20.9936
+    },
+    {
+      "tid": "ztf",
+      "mjd": 58700.39351850003,
+      "fid": 2,
+      "diffmaglim": 20.5351
+    },
+    {
+      "tid": "ztf",
+      "mjd": 58700.39398150006,
+      "fid": 2,
+      "diffmaglim": 20.8594
+    },
+    {
+      "tid": "ztf",
+      "mjd": 58703.403807899915,
+      "fid": 2,
+      "diffmaglim": 20.6725
+    },
+    {
+      "tid": "ztf",
+      "mjd": 58703.40425929986,
+      "fid": 2,
+      "diffmaglim": 20.4928
+    },
+    {
+      "tid": "ztf",
+      "mjd": 58706.39156250004,
+      "fid": 2,
+      "diffmaglim": 20.148
+    },
+    {
+      "tid": "ztf",
+      "mjd": 58706.39202550007,
+      "fid": 2,
+      "diffmaglim": 20.2105
+    },
+    {
+      "tid": "ztf",
+      "mjd": 58709.18418980017,
+      "fid": 1,
+      "diffmaglim": 19.2934
+    },
+    {
+      "tid": "ztf",
+      "mjd": 58709.247777800076,
+      "fid": 1,
+      "diffmaglim": 19.147
+    },
+    {
+      "tid": "ztf",
+      "mjd": 58713.232453700155,
+      "fid": 2,
+      "diffmaglim": 19.3897
+    },
+    {
+      "tid": "ztf",
+      "mjd": 58713.2329051001,
+      "fid": 2,
+      "diffmaglim": 19.4868
+    },
+    {
+      "tid": "ztf",
+      "mjd": 58716.26082180021,
+      "fid": 1,
+      "diffmaglim": 20.3218
+    },
+    {
+      "tid": "ztf",
+      "mjd": 58716.26128470013,
+      "fid": 1,
+      "diffmaglim": 20.25
+    },
+    {
+      "tid": "ztf",
+      "mjd": 58716.37060189992,
+      "fid": 2,
+      "diffmaglim": 20.3463
+    },
+    {
+      "tid": "ztf",
+      "mjd": 58716.371053200215,
+      "fid": 2,
+      "diffmaglim": 20.3015
+    },
+    {
+      "tid": "ztf",
+      "mjd": 58719.31568290014,
+      "fid": 2,
+      "diffmaglim": 19.5332
+    },
+    {
+      "tid": "ztf",
+      "mjd": 58719.31613430008,
+      "fid": 2,
+      "diffmaglim": 20.4341
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59256.562905100174,
+      "fid": 2,
+      "diffmaglim": 19.1257
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59256.56528940005,
+      "fid": 2,
+      "diffmaglim": 18.8455
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59256.56767359981,
+      "fid": 2,
+      "diffmaglim": 18.5911
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59258.560902799945,
+      "fid": 2,
+      "diffmaglim": 18.2212
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59258.565624999814,
+      "fid": 2,
+      "diffmaglim": 16.2438
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59258.56798609998,
+      "fid": 2,
+      "diffmaglim": 15.7298
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59262.55871530017,
+      "fid": 2,
+      "diffmaglim": 19.118
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59262.561145800166,
+      "fid": 2,
+      "diffmaglim": 18.9035
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59262.56356480019,
+      "fid": 2,
+      "diffmaglim": 18.6268
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59263.56018520007,
+      "fid": 2,
+      "diffmaglim": 18.6126
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59263.562615700066,
+      "fid": 2,
+      "diffmaglim": 18.4982
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59263.56503470009,
+      "fid": 2,
+      "diffmaglim": 18.1604
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59264.55533559993,
+      "fid": 2,
+      "diffmaglim": 19.6378
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59264.55776620004,
+      "fid": 2,
+      "diffmaglim": 19.6427
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59264.56019680016,
+      "fid": 2,
+      "diffmaglim": 19.3585
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59264.562627300154,
+      "fid": 2,
+      "diffmaglim": 19.0024
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59265.554814800154,
+      "fid": 2,
+      "diffmaglim": 18.9914
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59265.55575230019,
+      "fid": 2,
+      "diffmaglim": 18.9594
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59265.557175899856,
+      "fid": 2,
+      "diffmaglim": 18.8978
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59265.55811339989,
+      "fid": 2,
+      "diffmaglim": 18.6757
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59265.55954860011,
+      "fid": 2,
+      "diffmaglim": 18.5627
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59265.56048610015,
+      "fid": 2,
+      "diffmaglim": 18.4869
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59265.56193289999,
+      "fid": 2,
+      "diffmaglim": 18.355
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59265.56287040003,
+      "fid": 2,
+      "diffmaglim": 18.3124
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59266.555358800106,
+      "fid": 2,
+      "diffmaglim": 18.3375
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59266.55630790023,
+      "fid": 2,
+      "diffmaglim": 18.3696
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59266.55771989981,
+      "fid": 2,
+      "diffmaglim": 17.7003
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59266.55866899993,
+      "fid": 2,
+      "diffmaglim": 18.205
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59266.560069399886,
+      "fid": 2,
+      "diffmaglim": 18.0249
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59266.56101850001,
+      "fid": 2,
+      "diffmaglim": 18.0832
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59266.56243060017,
+      "fid": 2,
+      "diffmaglim": 17.7078
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59267.55473379977,
+      "fid": 2,
+      "diffmaglim": 19.1604
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59267.55618060008,
+      "fid": 2,
+      "diffmaglim": 19.0987
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59267.557118100114,
+      "fid": 2,
+      "diffmaglim": 18.9106
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59267.561504600104,
+      "fid": 2,
+      "diffmaglim": 18.5437
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59268.553460599855,
+      "fid": 2,
+      "diffmaglim": 19.7504
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59268.55489580007,
+      "fid": 2,
+      "diffmaglim": 19.7862
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59268.5558449002,
+      "fid": 2,
+      "diffmaglim": 19.7185
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59268.55729170004,
+      "fid": 2,
+      "diffmaglim": 19.6153
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59268.558229200076,
+      "fid": 2,
+      "diffmaglim": 19.3379
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59268.5596758998,
+      "fid": 2,
+      "diffmaglim": 19.5015
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59268.56061339984,
+      "fid": 2,
+      "diffmaglim": 19.2513
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59269.55236109998,
+      "fid": 2,
+      "diffmaglim": 19.686
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59269.554791700095,
+      "fid": 2,
+      "diffmaglim": 19.6209
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59269.55722220009,
+      "fid": 2,
+      "diffmaglim": 19.3175
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59269.559652800206,
+      "fid": 2,
+      "diffmaglim": 19.0275
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59270.553159699775,
+      "fid": 2,
+      "diffmaglim": 18.9443
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59270.55560189998,
+      "fid": 2,
+      "diffmaglim": 18.9202
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59270.558032399975,
+      "fid": 2,
+      "diffmaglim": 18.789
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59271.554016199894,
+      "fid": 2,
+      "diffmaglim": 17.9735
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59271.55644680001,
+      "fid": 2,
+      "diffmaglim": 18.3666
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59271.558877300005,
+      "fid": 2,
+      "diffmaglim": 18.4303
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59272.55229170015,
+      "fid": 2,
+      "diffmaglim": 18.7833
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59272.55472220015,
+      "fid": 2,
+      "diffmaglim": 18.711
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59272.557152799796,
+      "fid": 2,
+      "diffmaglim": 18.6393
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59273.55502310023,
+      "fid": 2,
+      "diffmaglim": 18.4678
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59273.557453699876,
+      "fid": 2,
+      "diffmaglim": 18.0943
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59274.5344560002,
+      "fid": 2,
+      "diffmaglim": 18.3426
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59274.53744209977,
+      "fid": 2,
+      "diffmaglim": 18.5846
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59274.540439799894,
+      "fid": 2,
+      "diffmaglim": 18.7124
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59274.54343750002,
+      "fid": 2,
+      "diffmaglim": 18.9083
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59274.550844899844,
+      "fid": 2,
+      "diffmaglim": 18.7283
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59274.55327549996,
+      "fid": 2,
+      "diffmaglim": 18.5486
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59274.555705999956,
+      "fid": 2,
+      "diffmaglim": 18.3967
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59275.535520799924,
+      "fid": 2,
+      "diffmaglim": 18.9438
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59454.2286111,
+      "fid": 1,
+      "diffmaglim": 20.6803
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59454.22954860004,
+      "fid": 1,
+      "diffmaglim": 20.7415
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59454.252743099816,
+      "fid": 2,
+      "diffmaglim": 20.3303
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59454.27665509982,
+      "fid": 2,
+      "diffmaglim": 20.5436
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59458.270717599895,
+      "fid": 1,
+      "diffmaglim": 20.7548
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59459.16983800009,
+      "fid": 1,
+      "diffmaglim": 20.6868
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59460.288368099835,
+      "fid": 1,
+      "diffmaglim": 20.6984
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59461.169432899915,
+      "fid": 2,
+      "diffmaglim": 20.5939
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59461.22649310017,
+      "fid": 1,
+      "diffmaglim": 20.2879
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59462.290138899814,
+      "fid": 1,
+      "diffmaglim": 20.5221
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59463.21259259991,
+      "fid": 1,
+      "diffmaglim": 20.5872
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59464.24660879979,
+      "fid": 1,
+      "diffmaglim": 20.7928
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59465.19035879988,
+      "fid": 2,
+      "diffmaglim": 20.6224
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59465.21372690005,
+      "fid": 1,
+      "diffmaglim": 20.7293
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59467.19167819992,
+      "fid": 1,
+      "diffmaglim": 20.4042
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59467.23716440005,
+      "fid": 2,
+      "diffmaglim": 20.4493
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59468.19171300018,
+      "fid": 1,
+      "diffmaglim": 20.8815
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59469.19143520016,
+      "fid": 2,
+      "diffmaglim": 20.6394
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59469.2368981,
+      "fid": 1,
+      "diffmaglim": 20.3665
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59470.25024309987,
+      "fid": 1,
+      "diffmaglim": 20.8171
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59471.19115740014,
+      "fid": 2,
+      "diffmaglim": 20.0888
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59471.26177080022,
+      "fid": 1,
+      "diffmaglim": 20.1085
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59473.247580999974,
+      "fid": 2,
+      "diffmaglim": 20.1889
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59473.255740699824,
+      "fid": 2,
+      "diffmaglim": 20.2036
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59473.27578700008,
+      "fid": 1,
+      "diffmaglim": 19.8285
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59473.27721060021,
+      "fid": 1,
+      "diffmaglim": 19.8753
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59475.23353009997,
+      "fid": 1,
+      "diffmaglim": 19.1247
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59476.22692129994,
+      "fid": 1,
+      "diffmaglim": 19.2193
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59476.29671300016,
+      "fid": 2,
+      "diffmaglim": 19.5919
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59477.14969909983,
+      "fid": 1,
+      "diffmaglim": 19.4803
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59477.21557869995,
+      "fid": 2,
+      "diffmaglim": 19.7633
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59478.211886600126,
+      "fid": 2,
+      "diffmaglim": 19.6669
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59478.2972569,
+      "fid": 1,
+      "diffmaglim": 19.0517
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59479.166782400105,
+      "fid": 1,
+      "diffmaglim": 19.5658
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59479.242986099795,
+      "fid": 2,
+      "diffmaglim": 20.0043
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59480.30100690015,
+      "fid": 1,
+      "diffmaglim": 19.3159
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59735.401504599955,
+      "fid": 2,
+      "diffmaglim": 20.536
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59735.44219909981,
+      "fid": 1,
+      "diffmaglim": 20.6588
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59735.44362269994,
+      "fid": 1,
+      "diffmaglim": 20.9534
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59737.297615699936,
+      "fid": 2,
+      "diffmaglim": 20.274
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59737.41374999983,
+      "fid": 1,
+      "diffmaglim": 20.8021
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59737.420497700106,
+      "fid": 1,
+      "diffmaglim": 20.7172
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59739.3988541998,
+      "fid": 1,
+      "diffmaglim": 20.9169
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59739.399791699834,
+      "fid": 1,
+      "diffmaglim": 20.8982
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59741.362499999814,
+      "fid": 2,
+      "diffmaglim": 20.2046
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59741.37700230023,
+      "fid": 2,
+      "diffmaglim": 20.3028
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59741.42016200023,
+      "fid": 1,
+      "diffmaglim": 20.3974
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59741.42111109989,
+      "fid": 1,
+      "diffmaglim": 20.3024
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59743.39800930023,
+      "fid": 1,
+      "diffmaglim": 19.4244
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59743.417129599955,
+      "fid": 1,
+      "diffmaglim": 19.6247
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59743.45592590002,
+      "fid": 2,
+      "diffmaglim": 20.0096
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59743.45687500015,
+      "fid": 2,
+      "diffmaglim": 20.0312
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59748.36568289995,
+      "fid": 2,
+      "diffmaglim": 20.1068
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59748.36710650008,
+      "fid": 2,
+      "diffmaglim": 20.1807
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59748.39439810021,
+      "fid": 1,
+      "diffmaglim": 19.8151
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59748.39534719987,
+      "fid": 1,
+      "diffmaglim": 19.7888
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59750.330046299845,
+      "fid": 1,
+      "diffmaglim": 19.7377
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59750.359479200095,
+      "fid": 2,
+      "diffmaglim": 19.8316
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59750.37831019983,
+      "fid": 2,
+      "diffmaglim": 19.9756
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59750.4027315001,
+      "fid": 1,
+      "diffmaglim": 20.0806
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59752.393622700125,
+      "fid": 2,
+      "diffmaglim": 20.6135
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59752.43718749983,
+      "fid": 1,
+      "diffmaglim": 20.373
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59755.358402799815,
+      "fid": 2,
+      "diffmaglim": 20.6895
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59755.35935189994,
+      "fid": 2,
+      "diffmaglim": 20.6934
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59755.415381900035,
+      "fid": 1,
+      "diffmaglim": 20.7917
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59755.416805599816,
+      "fid": 1,
+      "diffmaglim": 20.683
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59757.3579051001,
+      "fid": 1,
+      "diffmaglim": 20.578
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59757.35931710014,
+      "fid": 1,
+      "diffmaglim": 20.6806
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59757.40075229993,
+      "fid": 1,
+      "diffmaglim": 20.6368
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59757.40168979997,
+      "fid": 1,
+      "diffmaglim": 20.7832
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59759.34001159994,
+      "fid": 2,
+      "diffmaglim": 20.6273
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59759.37376159988,
+      "fid": 1,
+      "diffmaglim": 20.6637
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59759.42180560017,
+      "fid": 1,
+      "diffmaglim": 20.8884
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59761.32017360022,
+      "fid": 1,
+      "diffmaglim": 19.8838
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59761.322523099836,
+      "fid": 1,
+      "diffmaglim": 18.8514
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59761.37818290014,
+      "fid": 2,
+      "diffmaglim": 20.4498
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59761.3796064998,
+      "fid": 2,
+      "diffmaglim": 19.0264
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59763.33728010021,
+      "fid": 2,
+      "diffmaglim": 20.468
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59763.34393520001,
+      "fid": 2,
+      "diffmaglim": 20.6651
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59763.392766200006,
+      "fid": 1,
+      "diffmaglim": 20.6571
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59763.39475690015,
+      "fid": 1,
+      "diffmaglim": 20.6037
+    },
+    {
+      "tid": "ztf",
+      "mjd": 59765.38084489992,
+      "fid": 1,
+      "diffmaglim": 20.7655
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60591.162245399784,
+      "fid": 1,
+      "diffmaglim": 20.2484
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60591.171354200225,
+      "fid": 1,
+      "diffmaglim": 20.4544
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60593.16597220022,
+      "fid": 2,
+      "diffmaglim": 19.8897
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60593.18226849986,
+      "fid": 2,
+      "diffmaglim": 20.2964
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60593.21640049992,
+      "fid": 1,
+      "diffmaglim": 20.0312
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60593.22486109985,
+      "fid": 1,
+      "diffmaglim": 19.8418
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60595.14251160016,
+      "fid": 1,
+      "diffmaglim": 19.7751
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60595.17025459977,
+      "fid": 2,
+      "diffmaglim": 19.6603
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60596.13228010014,
+      "fid": 2,
+      "diffmaglim": 20.0276
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60596.19127310021,
+      "fid": 1,
+      "diffmaglim": 19.9167
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60597.14370370004,
+      "fid": 2,
+      "diffmaglim": 20.1109
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60597.17065969994,
+      "fid": 1,
+      "diffmaglim": 20.0444
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60598.13042820012,
+      "fid": 2,
+      "diffmaglim": 19.827
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60598.202604200225,
+      "fid": 1,
+      "diffmaglim": 19.5679
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60599.1441434999,
+      "fid": 2,
+      "diffmaglim": 20.234
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60600.259455999825,
+      "fid": 1,
+      "diffmaglim": 18.4517
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60602.195439800154,
+      "fid": 2,
+      "diffmaglim": 19.0942
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60602.25399310002,
+      "fid": 1,
+      "diffmaglim": 18.6929
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60603.17649309989,
+      "fid": 2,
+      "diffmaglim": 20.0386
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60603.266944400035,
+      "fid": 1,
+      "diffmaglim": 19.0471
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60604.112951400224,
+      "fid": 1,
+      "diffmaglim": 20.4189
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60604.17221060023,
+      "fid": 2,
+      "diffmaglim": 20.3102
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60606.110729199834,
+      "fid": 1,
+      "diffmaglim": 20.5449
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60606.149965300225,
+      "fid": 2,
+      "diffmaglim": 20.6
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60607.127847199794,
+      "fid": 1,
+      "diffmaglim": 20.5152
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60607.18611110002,
+      "fid": 2,
+      "diffmaglim": 19.9394
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60608.12414349988,
+      "fid": 1,
+      "diffmaglim": 20.6187
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60608.165925899986,
+      "fid": 2,
+      "diffmaglim": 20.3561
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60609.10844910005,
+      "fid": 1,
+      "diffmaglim": 20.4813
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60609.15564810019,
+      "fid": 2,
+      "diffmaglim": 20.3596
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60610.13030089997,
+      "fid": 1,
+      "diffmaglim": 20.3804
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60610.16547450004,
+      "fid": 2,
+      "diffmaglim": 19.7563
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60611.115011599846,
+      "fid": 1,
+      "diffmaglim": 18.1125
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60611.16236109985,
+      "fid": 2,
+      "diffmaglim": 17.4371
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60614.09748840006,
+      "fid": 2,
+      "diffmaglim": 20.4257
+    },
+    {
+      "tid": "ztf",
+      "mjd": 60615.227592600044,
+      "fid": 1,
+      "diffmaglim": 19.6513
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61145.44591439981,
+      "fid": 2,
+      "diffmaglim": 20.4626
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61145.47596060019,
+      "fid": 1,
+      "diffmaglim": 20.2918
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61147.43290509982,
+      "fid": 1,
+      "diffmaglim": 20.0132
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61147.46789349988,
+      "fid": 2,
+      "diffmaglim": 20.3265
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61148.44466440007,
+      "fid": 2,
+      "diffmaglim": 20.3268
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61148.486550900154,
+      "fid": 1,
+      "diffmaglim": 20.3321
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61150.42773150001,
+      "fid": 2,
+      "diffmaglim": 20.4962
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61150.47143519996,
+      "fid": 1,
+      "diffmaglim": 20.6378
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61151.42513890006,
+      "fid": 2,
+      "diffmaglim": 20.1683
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61151.48356480012,
+      "fid": 1,
+      "diffmaglim": 20.33
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61153.42907410022,
+      "fid": 2,
+      "diffmaglim": 20.3074
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61153.48692130018,
+      "fid": 1,
+      "diffmaglim": 20.3015
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61154.45106479991,
+      "fid": 1,
+      "diffmaglim": 20.5101
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61154.4818519,
+      "fid": 2,
+      "diffmaglim": 20.6508
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61158.427743100096,
+      "fid": 2,
+      "diffmaglim": 19.5277
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61158.473842599895,
+      "fid": 1,
+      "diffmaglim": 20.4114
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61159.43416670011,
+      "fid": 2,
+      "diffmaglim": 19.7768
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61159.47569439979,
+      "fid": 1,
+      "diffmaglim": 19.8227
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61160.43280090019,
+      "fid": 2,
+      "diffmaglim": 19.6316
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61160.47243059985,
+      "fid": 1,
+      "diffmaglim": 19.5929
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61161.4464004999,
+      "fid": 2,
+      "diffmaglim": 19.7986
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61161.48141200002,
+      "fid": 1,
+      "diffmaglim": 19.4994
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61162.427465300076,
+      "fid": 1,
+      "diffmaglim": 19.1813
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61162.45083330013,
+      "fid": 2,
+      "diffmaglim": 19.8358
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61163.44524310017,
+      "fid": 2,
+      "diffmaglim": 19.0317
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61167.36454859981,
+      "fid": 1,
+      "diffmaglim": 19.3229
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61167.46993059991,
+      "fid": 2,
+      "diffmaglim": 19.4192
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61168.40650459984,
+      "fid": 2,
+      "diffmaglim": 19.7988
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61168.45144680003,
+      "fid": 1,
+      "diffmaglim": 19.8343
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61169.40060190018,
+      "fid": 1,
+      "diffmaglim": 19.8814
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61169.44481479982,
+      "fid": 2,
+      "diffmaglim": 20.3226
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61170.43315970013,
+      "fid": 2,
+      "diffmaglim": 20.5707
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61170.467152799945,
+      "fid": 1,
+      "diffmaglim": 20.217
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61171.46825229982,
+      "fid": 1,
+      "diffmaglim": 20.3335
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61172.38516200008,
+      "fid": 1,
+      "diffmaglim": 20.523
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61172.43187499978,
+      "fid": 2,
+      "diffmaglim": 20.5993
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61173.3874884001,
+      "fid": 1,
+      "diffmaglim": 20.367
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61173.469976900145,
+      "fid": 2,
+      "diffmaglim": 20.7903
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61174.44974539988,
+      "fid": 2,
+      "diffmaglim": 20.766
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61174.4662269,
+      "fid": 1,
+      "diffmaglim": 20.6977
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61175.43195600016,
+      "fid": 1,
+      "diffmaglim": 20.7646
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61176.42039350001,
+      "fid": 2,
+      "diffmaglim": 20.0799
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61176.46149310004,
+      "fid": 1,
+      "diffmaglim": 20.3958
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61179.390150499996,
+      "fid": 1,
+      "diffmaglim": 20.0014
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61179.44164349977,
+      "fid": 2,
+      "diffmaglim": 19.745
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61179.46353009995,
+      "fid": 3,
+      "diffmaglim": 19.5199
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61180.40916670021,
+      "fid": 1,
+      "diffmaglim": 20.4885
+    },
+    {
+      "tid": "ztf",
+      "mjd": 61180.440798600204,
+      "fid": 2,
+      "diffmaglim": 20.3132
+    }
+  ]
+}
