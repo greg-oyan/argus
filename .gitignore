@@ -7,6 +7,7 @@ build/
 dist/
 .pytest_cache/
 .ipynb_checkpoints/
+notebooks/_plots/
 .DS_Store
 
 # Pulled data is reproducible from the API; not committed.
