@@ -69,6 +69,25 @@ def _section(title: str, lines: list[str]) -> list[str]:
     return out
 
 
+def _figure_alt_text(path: Path) -> str:
+    name = path.name.lower()
+    if "residual" in name:
+        return "Gaussian comparator residuals"
+    if "lightcurve" in name or "light-curve" in name:
+        return "Observed light curve"
+    return "Case-file figure"
+
+
+def _render_visual_summary(figure_paths: list[Path] | None) -> list[str]:
+    if not figure_paths:
+        return []
+    lines: list[str] = []
+    for path in figure_paths:
+        lines.append(f"![{_figure_alt_text(path)}]({path.name})")
+        lines.append("")
+    return _section("Visual Summary", lines)
+
+
 def _render_evidence_narrative(narrative: Any) -> list[str]:
     if narrative is None:
         return _section("Evidence Narrative", ["Evidence narrative is not present in this case file."])
@@ -272,9 +291,14 @@ def _render_uncertainty_and_next_checks(case: CaseFile) -> list[str]:
     return _section("Uncertainty and Next Checks", lines)
 
 
-def render_casefile_markdown(case: CaseFile) -> str:
+def render_casefile_markdown(
+    case: CaseFile,
+    *,
+    figure_paths: list[Path] | None = None,
+) -> str:
     """Render a CaseFile as presentation-ready Markdown."""
     lines: list[str] = [f"# Argus Case File: {case.oid}", ""]
+    lines.extend(_render_visual_summary(figure_paths))
     lines.extend(_render_evidence_narrative(case.evidence_narrative))
     lines.extend(_render_object_summary(case))
     lines.extend(_render_classification_metadata(case.classification_metadata))
@@ -299,6 +323,7 @@ def write_casefile_markdown(
     *,
     json_path: Path | None = None,
     output_dir: Path | None = None,
+    figure_paths: list[Path] | None = None,
 ) -> Path:
     """Write a Markdown report next to the JSON case file or into output_dir."""
     if json_path is not None:
@@ -307,5 +332,15 @@ def write_casefile_markdown(
         out = output_dir or CASEFILES_DIR
         path = out / f"{case.oid}.casefile.md"
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(render_casefile_markdown(case), encoding="utf-8")
+    existing_figures: list[Path] = []
+    for figure_path in figure_paths or []:
+        if figure_path is None:
+            continue
+        path_obj = Path(figure_path)
+        if path_obj.exists():
+            existing_figures.append(path_obj)
+    path.write_text(
+        render_casefile_markdown(case, figure_paths=existing_figures),
+        encoding="utf-8",
+    )
     return path

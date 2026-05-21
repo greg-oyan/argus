@@ -4,7 +4,7 @@ A small system that watches the sky for novel astronomical patterns that current
 transient pipelines miss. The goal is a ranked, human-readable feed of "things
 worth an astronomer's attention" — not another classifier.
 
-**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export complete.**
+**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export + Phase 2K static figures complete.**
 
 The product vision and the strategic decision behind Phase 2B live in
 [`docs/ARGUS_VISION.md`](docs/ARGUS_VISION.md) and
@@ -176,6 +176,7 @@ src/argus/
 ├── casefile/
 │   ├── schema.py                # CaseFile + summaries + comparator dataclasses
 │   ├── summarize.py             # pure: evidence, candidates, uncertainty, next checks
+│   ├── figures.py               # optional static PNG figures for case files
 │   ├── markdown.py              # presentation-ready Markdown case-file export
 │   └── build.py                 # orchestration: load local files → CaseFile → JSON
 ├── context/
@@ -212,6 +213,8 @@ human reading and any later UI layer.
 ```bash
 python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq
 python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq --write-markdown
+python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq --write-figures
+python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq --write-markdown --write-figures
 ```
 
 Default case-file builds stay offline. To opt in to the Phase 2H SIMBAD lookup,
@@ -230,6 +233,8 @@ This reads only local data (`data/lightcurves/{date}.parquet`,
 ```
 data/casefiles/{oid}.json
 data/casefiles/{oid}.casefile.md  # only when --write-markdown is passed
+data/casefiles/{oid}.lightcurve.png  # only when --write-figures is passed
+data/casefiles/{oid}.residuals.png   # only when point-level residual data exists
 ```
 
 Top-level fields:
@@ -365,6 +370,20 @@ and recommended next checks.
 Markdown export does not recompute metrics, query external services, or change
 the JSON case file. It is a readable rendering of the existing case-file
 evidence only.
+
+## Static Figures (Phase 2K)
+
+Case files can optionally write static PNG figures with `--write-figures`.
+Phase 2K currently writes an observed light-curve plot as
+`data/casefiles/{oid}.lightcurve.png`, using local flattened detections,
+per-band markers, and magnitude error bars when usable errors are available.
+The magnitude axis is inverted so brighter detections appear higher.
+
+If point-level Gaussian residual data is present in a future case file, Argus
+also writes `{oid}.residuals.png`. Current case files do not store point-level
+residual arrays, so residual plots are skipped gracefully rather than inferred.
+When `--write-markdown` and `--write-figures` are used together, the Markdown
+report includes image links only for generated files, avoiding broken links.
 
 ## Next
 

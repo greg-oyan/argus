@@ -3,6 +3,7 @@
 Usage:
     python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq
     python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq --write-markdown
+    python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq --write-figures
     python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq --include-cross-survey-context
 """
 from __future__ import annotations
@@ -11,6 +12,7 @@ import logging
 import sys
 
 from argus.casefile.build import build_casefile, write_casefile
+from argus.casefile.figures import write_casefile_figures
 from argus.casefile.markdown import write_casefile_markdown
 from argus.context.cross_survey import DEFAULT_CROSS_SURVEY_RADIUS_ARCSEC
 
@@ -37,6 +39,11 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Write a presentation-ready Markdown report next to the JSON case file.",
     )
+    p.add_argument(
+        "--write-figures",
+        action="store_true",
+        help="Write static PNG figures next to the JSON case file.",
+    )
     p.add_argument("-v", "--verbose", action="store_true")
     args = p.parse_args(argv)
 
@@ -52,7 +59,18 @@ def main(argv: list[str] | None = None) -> int:
         cross_survey_radius_arcsec=args.cross_survey_radius_arcsec,
     )
     path = write_casefile(case)
-    markdown_path = write_casefile_markdown(case, json_path=path) if args.write_markdown else None
+    figure_outputs = (
+        write_casefile_figures(case, date=args.date, json_path=path)
+        if args.write_figures else None
+    )
+    markdown_path = (
+        write_casefile_markdown(
+            case,
+            json_path=path,
+            figure_paths=figure_outputs.paths() if figure_outputs is not None else None,
+        )
+        if args.write_markdown else None
+    )
     log.info("oid: %s", case.oid)
     log.info("data sources used: %s", ", ".join(case.available_data_sources) or "(none)")
     log.info(
@@ -68,6 +86,11 @@ def main(argv: list[str] | None = None) -> int:
         log.info("cross-survey context: %s", case.cross_survey_context.status)
     log.info("recommended next checks: %d", len(case.recommended_next_checks))
     log.info("wrote %s", path)
+    if figure_outputs is not None:
+        for figure_path in figure_outputs.paths():
+            log.info("wrote %s", figure_path)
+        for name, reason in figure_outputs.skipped.items():
+            log.info("skipped %s figure: %s", name, reason)
     if markdown_path is not None:
         log.info("wrote %s", markdown_path)
     return 0
