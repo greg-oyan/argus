@@ -12,12 +12,25 @@ from typing import Optional
 
 import pandas as pd
 
-from argus.casefile.schema import CaseFile
+from argus.casefile.schema import CaseFile, ModelComparison
 from argus.casefile.summarize import (
     candidate_explanations, evidence_notes, recommended_next_checks,
     summarize_light_curve, uncertainty_notes,
 )
+from argus.compare.residuals import compute_residuals, interpret_residuals
+from argus.compare.simple_templates import MIN_POINTS_FOR_FIT, fit_gaussian_bump
 from argus.config import CASEFILES_DIR, LIGHTCURVES_DIR, RAW_DIR, TENSORS_DIR
+
+# Limitations attached to every Phase 2C comparator — enforced in code so the
+# case file cannot ship a fit without these caveats.
+_PHASE_2C_LIMITATIONS = (
+    "Phenomenological template — not a physical model. A good fit does not imply a "
+    "supernova or any specific source class.",
+    "Fit performed in magnitude space directly, not flux. Magnitude errors are "
+    "treated as Gaussian; this is approximate for low-SNR detections.",
+    "Only detections that passed the rb≥0.55 quality cut are used. Non-detections "
+    "and forced photometry are not consumed by this comparator.",
+)
 
 
 def _scalar_or_none(x):
@@ -46,6 +59,125 @@ def _extract_classification(obj_rows: pd.DataFrame) -> Optional[dict]:
         "classifier": str(clf) if clf is not None else None,
         "probability": float(prob) if prob is not None else None,
     }
+
+
+def _build_gaussian_bump_comparison(
+    detections: pd.DataFrame, filter_name: str, fid: int,
+) -> ModelComparison:
+    """Fit (or honestly decline to fit) one Gaussian bump for one filter."""
+    sub = detections[detections["fid"] == fid] if "fid" in detections.columns else detections.iloc[0:0]
+    sub = sub.dropna(subset=["mjd", "magpsf", "sigmapsf"])
+    n = len(sub)
+    name = f"Gaussian bump ({filter_name}-band)"
+    common = dict(
+        name=name,
+        model_type="gaussian_bump",
+        filter_used=filter_name,
+        limitations=list(_PHASE_2C_LIMITATIONS),
+    )
+
+    if n < MIN_POINTS_FOR_FIT:
+        return ModelComparison(
+            **common,
+            status="insufficient_data",
+            parameters=None,
+            fit_metrics={"n_points": int(n)},
+            residual_summary=[
+                f"Only {n} detection(s) in {filter_name}-band — below the "
+                f"minimum of {MIN_POINTS_FOR_FIT} required to fit a "
+                "4-parameter Gaussian bump."
+            ],
+            interpretation=(
+                f"No comparator was fit in {filter_name}-band: not enough "
+                "detections survive the quality cut."
+            ),
+        )
+
+    mjd = sub["mjd"].to_numpy(dtype=float)
+    mag = sub["magpsf"].to_numpy(dtype=float)
+    magerr = sub["sigmapsf"].to_numpy(dtype=float)
+
+    result = fit_gaussian_bump(mjd, mag, magerr)
+    if result["status"] == "failed_fit":
+        return ModelComparison(
+            **common,
+            status="failed_fit",
+            parameters=None,
+            fit_metrics={"n_points": result["n_points"], "error": result["error"]},
+            residual_summary=[
+                "The optimizer failed to converge on a Gaussian-bump fit for the "
+                f"{filter_name}-band detections."
+            ],
+            interpretation=(
+                "The comparator could not return a stable fit. This is itself "
+                "informative — the data is not well-described by a Gaussian bump "
+                "with these initial conditions."
+            ),
+        )
+
+    predicted = result["predicted"]
+    metrics = compute_residuals(
+        observed=mag, predicted=predicted, errors=magerr, mjd=mjd,
+        n_params=result["n_params"],
+    )
+    residual_notes = interpret_residuals(mjd, mag, predicted, result["params"])
+
+    # Templated interpretation built from the metrics. Deterministic, not generative.
+    rmse = metrics["rmse"]
+    redchi = metrics.get("reduced_chi2")
+    if redchi is None:
+        quality_clause = f"RMSE = {rmse:.2f} mag."
+    elif redchi < 2:
+        quality_clause = (
+            f"RMSE = {rmse:.2f} mag, reduced χ² ≈ {redchi:.1f} — the bump shape "
+            "is consistent with the data within the reported errors."
+        )
+    elif redchi < 10:
+        quality_clause = (
+            f"RMSE = {rmse:.2f} mag, reduced χ² ≈ {redchi:.1f} — the bump shape "
+            "captures the average behavior but not the point-to-point variability."
+        )
+    else:
+        quality_clause = (
+            f"RMSE = {rmse:.2f} mag, reduced χ² ≈ {redchi:.0f} — the bump shape "
+            "does not fit the data; reduced χ² is far above unity."
+        )
+
+    interpretation = (
+        f"A single Gaussian bump was fit to the {filter_name}-band detections. "
+        f"{quality_clause} See residual_summary for where the fit fails."
+    )
+
+    return ModelComparison(
+        **common,
+        status="fitted_baseline",
+        parameters=result["params"],
+        fit_metrics=metrics,
+        residual_summary=residual_notes,
+        interpretation=interpretation,
+    )
+
+
+def _build_model_comparisons(detections: pd.DataFrame) -> list[ModelComparison]:
+    """Run the Phase 2C comparator suite.
+
+    Currently exactly one comparator: a Gaussian bump on r-band detections.
+    If r-band has insufficient data, the comparator still runs and honestly
+    reports `insufficient_data`. g-band remains a placeholder for later phases.
+    """
+    if detections is None or detections.empty:
+        return [ModelComparison(
+            name="Gaussian bump (r-band)",
+            model_type="gaussian_bump",
+            filter_used="r",
+            status="insufficient_data",
+            parameters=None,
+            fit_metrics={"n_points": 0},
+            residual_summary=["No detections available in any filter."],
+            interpretation="No comparator was fit: no detections survive the quality cut.",
+            limitations=list(_PHASE_2C_LIMITATIONS),
+        )]
+    return [_build_gaussian_bump_comparison(detections, "r", fid=2)]
 
 
 def _extract_coordinates(obj_rows: pd.DataFrame) -> Optional[dict]:
@@ -120,6 +252,8 @@ def build_casefile(
     classification = _extract_classification(obj_rows)
     coordinates = _extract_coordinates(obj_rows)
 
+    model_comps = _build_model_comparisons(detections)
+
     return CaseFile(
         oid=oid,
         source_date=date,
@@ -138,6 +272,7 @@ def build_casefile(
         candidate_explanations=candidate_explanations(summary, classification),
         uncertainty_notes=uncertainty_notes(summary, classification, available),
         recommended_next_checks=recommended_next_checks(summary, classification, coordinates),
+        model_comparisons=model_comps,
     )
 
 

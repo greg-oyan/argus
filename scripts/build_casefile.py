@@ -35,6 +35,9 @@ def main(argv: list[str] | None = None) -> int:
         ", ".join(case.filters_observed) or "(none)",
     )
     log.info("candidate explanations: %d", len(case.candidate_explanations))
+    log.info("model comparisons: %d", len(case.model_comparisons))
+    for mc in case.model_comparisons:
+        log.info("  - %s [%s] %s", mc.name, mc.filter_used, mc.status)
     log.info("recommended next checks: %d", len(case.recommended_next_checks))
     log.info("wrote %s", path)
     return 0

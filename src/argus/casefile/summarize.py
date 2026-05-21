@@ -247,8 +247,9 @@ def recommended_next_checks(
             f"recent detection (MJD {summary.most_recent_detection_mjd:.2f})."
         )
     checks.append(
-        "Once a template comparator exists, fit a Type Ia SN template (and the "
-        "other placeholder hypotheses) and record residuals in this case file."
+        "Replace the Phase 2C Gaussian-bump baseline with physical templates "
+        "(Type Ia SN light curve, AGN damped random walk, stellar-flare profile) "
+        "and add their residuals to model_comparisons."
     )
     if (summary.most_recent_detection_mjd is not None
             and summary.last_mjd is not None

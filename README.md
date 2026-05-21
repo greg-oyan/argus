@@ -4,7 +4,7 @@ A small system that watches the sky for novel astronomical patterns that current
 transient pipelines miss. The goal is a ranked, human-readable feed of "things
 worth an astronomer's attention" — not another classifier.
 
-**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation complete.**
+**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator complete.**
 
 The product vision and the strategic decision behind Phase 2B live in
 [`docs/ARGUS_VISION.md`](docs/ARGUS_VISION.md) and
@@ -156,10 +156,13 @@ src/argus/
 │   ├── photometry.py            # mag↔flux, upper-limit noise, asinh + error propagation
 │   ├── grid.py                  # Event, windowing, binning, per-object tensorization
 │   └── dataset.py               # file IO, stacking, manifest, sanity checks
-└── casefile/
-    ├── schema.py                # CaseFile + LightCurveSummary + CandidateExplanation dataclasses
-    ├── summarize.py             # pure: evidence, candidates, uncertainty, next checks
-    └── build.py                 # orchestration: load local files → CaseFile → JSON
+├── casefile/
+│   ├── schema.py                # CaseFile + LightCurveSummary + CandidateExplanation + ModelComparison
+│   ├── summarize.py             # pure: evidence, candidates, uncertainty, next checks
+│   └── build.py                 # orchestration: load local files → CaseFile → JSON
+└── compare/
+    ├── simple_templates.py      # Gaussian-bump template + curve_fit
+    └── residuals.py             # fit-quality scalars + plain-English residual interpretation
 scripts/
 ├── ingest_daily.py              # ingestion CLI
 ├── preprocess_tensors.py        # preprocessing CLI
@@ -172,7 +175,8 @@ tests/
 ├── test_preprocess_photometry.py
 ├── test_preprocess_grid.py
 ├── test_preprocess_dataset.py
-└── test_casefile.py
+├── test_casefile.py
+└── test_compare.py
 ```
 
 ## Build a case file (Phase 2B)
@@ -211,16 +215,45 @@ Top-level fields:
 | `uncertainty_notes` | what hasn't been checked (SIMBAD/NED, spectroscopy, forced photometry, fitting…) |
 | `recommended_next_checks` | concrete actions that would tighten the case |
 
-Phase 2B emits **no fitted explanations** — every candidate is either an
-inherited external label or a `placeholder_unfitted` hypothesis. The
-governing principle is in the vision doc: the case file shows its work and
-does not claim things it hasn't checked.
+Phase 2B emits **no fitted explanations** in `candidate_explanations` — every
+entry there is either an inherited external label or a `placeholder_unfitted`
+hypothesis. The governing principle is in the vision doc: the case file shows
+its work and does not claim things it hasn't checked.
+
+## Fitted comparators (Phase 2C)
+
+Case files now also carry a top-level `model_comparisons` list — fits that
+were actually performed against the data. Phase 2C ships exactly one
+comparator: a **Gaussian bump on a constant baseline**, fit in magnitude
+space to r-band detections via `scipy.optimize.curve_fit`. It is the
+smallest non-trivial transient shape and its parameters mean exactly what
+they say.
+
+The same `python -m scripts.build_casefile --date … --oid …` command now
+runs the comparator and embeds its result. Each entry under
+`model_comparisons` has:
+
+| field | content |
+|---|---|
+| `name`, `model_type`, `filter_used` | identity (`Gaussian bump (r-band)`, `gaussian_bump`, `r`) |
+| `status` | one of `fitted_baseline`, `insufficient_data`, `failed_fit` |
+| `parameters` | `amplitude_mag`, `peak_mjd`, `sigma_days`, `baseline_mag` |
+| `fit_metrics` | `n_points`, `rmse`, `mae`, `residual_mean`, `residual_std`, `largest_abs_residual`, `largest_residual_mjd`, `reduced_chi2` (when defensible) |
+| `residual_summary` | plain-English notes about *where* the fit fails (coverage gaps, peak placement, scatter vs amplitude) |
+| `interpretation` | one templated sentence keyed off the metrics |
+| `limitations` | always includes "phenomenological — not a physical model" |
+
+What this is **not**: a physical light-curve model. A converged Gaussian-bump
+fit does *not* imply the object is a supernova or any specific source class.
+The `limitations` list says so explicitly on every comparator output, and the
+test suite asserts that the `interpretation` string never claims otherwise.
 
 ## Next
 
-Replace placeholder candidate explanations with fitted comparators (a
-Type Ia SN template is the natural first one), and add evidence-source
-plugins for SIMBAD / NED / PanSTARRS to fill in `coordinates` cross-matches.
-Each step is evaluated against the governing standard in
+Replace the Phase 2C Gaussian-bump baseline with physical templates (Type Ia
+SN light curve, AGN damped random walk, stellar-flare profile) and add their
+residuals to `model_comparisons`. Add evidence-source plugins for
+SIMBAD / NED / PanSTARRS to fill in `coordinates` cross-matches. Each step
+is evaluated against the governing standard in
 [`docs/ARGUS_VISION.md`](docs/ARGUS_VISION.md): does it help Argus build a
 better scientific case from anomalous public data?
