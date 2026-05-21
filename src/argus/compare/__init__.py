@@ -1,4 +1,4 @@
-"""Phase 2C: simple, auditable phenomenological comparators.
+"""Simple, auditable phenomenological comparators.
 
 Nothing in this package is a physical model. Each comparator is the smallest
 shape that captures one kind of transient behavior. The point is not to be

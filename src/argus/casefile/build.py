@@ -14,12 +14,24 @@ import pandas as pd
 
 from argus.casefile.schema import CaseFile, ModelComparison
 from argus.casefile.summarize import (
-    candidate_explanations, evidence_notes, recommended_next_checks,
-    summarize_light_curve, uncertainty_notes,
+    build_comparison_summary, build_evidence_narrative, candidate_explanations,
+    evidence_notes, recommended_next_checks, summarize_light_curve,
+    uncertainty_notes,
 )
 from argus.compare.residuals import compute_residuals, interpret_residuals
 from argus.compare.simple_templates import MIN_POINTS_FOR_FIT, fit_gaussian_bump
+from argus.compare.sncosmo_templates import build_sncosmo_template_probe
+from argus.compare.variability import (
+    MIN_POINTS_FOR_VARIABILITY,
+    interpretation_from_variability_metrics,
+    summarize_variability_texture,
+)
 from argus.config import CASEFILES_DIR, LIGHTCURVES_DIR, RAW_DIR, TENSORS_DIR
+from argus.context.cross_survey import (
+    DEFAULT_CROSS_SURVEY_RADIUS_ARCSEC,
+    build_cross_survey_context,
+)
+from argus.features.light_curve_features import extract_light_curve_features
 
 # Limitations attached to every Phase 2C comparator — enforced in code so the
 # case file cannot ship a fit without these caveats.
@@ -30,6 +42,15 @@ _PHASE_2C_LIMITATIONS = (
     "treated as Gaussian; this is approximate for low-SNR detections.",
     "Only detections that passed the rb≥0.55 quality cut are used. Non-detections "
     "and forced photometry are not consumed by this comparator.",
+)
+
+_PHASE_2D_LIMITATIONS = (
+    "Phenomenological summary - not a physical model. It does not imply any "
+    "source class or physical cause.",
+    "Uses only local r-band detections that passed the rb>=0.55 quality cut. "
+    "Non-detections and forced photometry are not consumed by this comparator.",
+    "Turning-point counts use simple rolling-median smoothing, so cadence, "
+    "gaps, and noisy measurements can affect the result.",
 )
 
 
@@ -158,15 +179,86 @@ def _build_gaussian_bump_comparison(
     )
 
 
-def _build_model_comparisons(detections: pd.DataFrame) -> list[ModelComparison]:
-    """Run the Phase 2C comparator suite.
+def _build_variability_comparison(
+    detections: pd.DataFrame, filter_name: str, fid: int,
+) -> ModelComparison:
+    """Compute descriptive repeated/irregular variability metrics for one filter."""
+    sub = detections[detections["fid"] == fid] if "fid" in detections.columns else detections.iloc[0:0]
+    if {"mjd", "magpsf"}.issubset(sub.columns):
+        sub = sub.dropna(subset=["mjd", "magpsf"])
+    else:
+        sub = pd.DataFrame(columns=["mjd", "magpsf", "sigmapsf"])
+    name = f"Variability texture ({filter_name}-band)"
+    common = dict(
+        name=name,
+        model_type="variability_texture",
+        filter_used=filter_name,
+        parameters=None,
+        limitations=list(_PHASE_2D_LIMITATIONS),
+    )
 
-    Currently exactly one comparator: a Gaussian bump on r-band detections.
-    If r-band has insufficient data, the comparator still runs and honestly
-    reports `insufficient_data`. g-band remains a placeholder for later phases.
+    mjd = sub["mjd"].to_numpy(dtype=float) if "mjd" in sub.columns else []
+    mag = sub["magpsf"].to_numpy(dtype=float) if "magpsf" in sub.columns else []
+    magerr = sub["sigmapsf"].to_numpy(dtype=float) if "sigmapsf" in sub.columns else None
+    result = summarize_variability_texture(mjd, mag, magerr)
+
+    if result["status"] == "insufficient_data":
+        return ModelComparison(
+            **common,
+            status="insufficient_data",
+            fit_metrics={
+                "n_points": result["n_points"],
+                "minimum_points": result["minimum_points"],
+            },
+            residual_summary=[
+                f"Only {result['n_points']} detection(s) in {filter_name}-band - "
+                f"below the minimum of {MIN_POINTS_FOR_VARIABILITY} required for "
+                "the variability texture summary."
+            ],
+            interpretation=interpretation_from_variability_metrics(result, filter_name),
+        )
+
+    metrics = {k: v for k, v in result.items() if k != "status"}
+    material = metrics["variability_materially_larger_than_errors"]
+    if material is True:
+        error_note = "Robust scatter is materially larger than the reported errors."
+    elif material is False:
+        error_note = "Robust scatter is comparable to the reported errors."
+    else:
+        error_note = "Reported errors are missing or unusable for scatter comparison."
+
+    residual_summary = [
+        (
+            f"Observed {filter_name}-band range: "
+            f"{metrics['observed_mag_range']:.2f} mag; robust scatter: "
+            f"{metrics['robust_scatter_mag']:.2f} mag."
+        ),
+        (
+            f"After {metrics['smoothing_window_points']}-point smoothing, counted "
+            f"{metrics['local_extrema_count_after_smoothing']} local extrema/sign "
+            "change(s)."
+        ),
+        error_note,
+    ]
+
+    return ModelComparison(
+        **common,
+        status="computed",
+        fit_metrics=metrics,
+        residual_summary=residual_summary,
+        interpretation=interpretation_from_variability_metrics(result, filter_name),
+    )
+
+
+def _build_model_comparisons(detections: pd.DataFrame) -> list[ModelComparison]:
+    """Run the Phase 2C/2D comparator suite.
+
+    Phase 2C fits a Gaussian bump on r-band detections. Phase 2D adds a
+    descriptive r-band variability texture summary. If r-band has insufficient
+    data, each comparator still runs and honestly reports `insufficient_data`.
     """
     if detections is None or detections.empty:
-        return [ModelComparison(
+        gaussian = ModelComparison(
             name="Gaussian bump (r-band)",
             model_type="gaussian_bump",
             filter_used="r",
@@ -176,8 +268,27 @@ def _build_model_comparisons(detections: pd.DataFrame) -> list[ModelComparison]:
             residual_summary=["No detections available in any filter."],
             interpretation="No comparator was fit: no detections survive the quality cut.",
             limitations=list(_PHASE_2C_LIMITATIONS),
-        )]
-    return [_build_gaussian_bump_comparison(detections, "r", fid=2)]
+        )
+        variability = _build_variability_comparison(pd.DataFrame(), "r", fid=2)
+        return [gaussian, variability]
+    return [
+        _build_gaussian_bump_comparison(detections, "r", fid=2),
+        _build_variability_comparison(detections, "r", fid=2),
+    ]
+
+
+def _build_feature_summary(detections: pd.DataFrame, filter_name: str, fid: int):
+    """Compute the Phase 2F standardized feature summary for one filter."""
+    sub = detections[detections["fid"] == fid] if "fid" in detections.columns else detections.iloc[0:0]
+    if {"mjd", "magpsf"}.issubset(sub.columns):
+        sub = sub.dropna(subset=["mjd", "magpsf"])
+    else:
+        sub = pd.DataFrame(columns=["mjd", "magpsf", "sigmapsf"])
+
+    mjd = sub["mjd"].to_numpy(dtype=float) if "mjd" in sub.columns else []
+    mag = sub["magpsf"].to_numpy(dtype=float) if "magpsf" in sub.columns else []
+    magerr = sub["sigmapsf"].to_numpy(dtype=float) if "sigmapsf" in sub.columns else None
+    return extract_light_curve_features(mjd, mag, magerr, band=filter_name)
 
 
 def _extract_coordinates(obj_rows: pd.DataFrame) -> Optional[dict]:
@@ -191,6 +302,21 @@ def _extract_coordinates(obj_rows: pd.DataFrame) -> Optional[dict]:
     return {"ra": float(ra), "dec": float(dec), "ra_unit": "deg", "dec_unit": "deg"}
 
 
+def _extract_redshift_context(obj_rows: pd.DataFrame) -> tuple[Optional[float], Optional[str]]:
+    """Pull redshift if a future local data source provides one."""
+    if obj_rows.empty:
+        return None, None
+    row = obj_rows.iloc[0]
+    for col in ("redshift", "obj_redshift", "host_redshift", "z"):
+        z = _scalar_or_none(row.get(col))
+        if z is not None:
+            try:
+                return float(z), col
+            except (TypeError, ValueError):
+                return None, None
+    return None, None
+
+
 def build_casefile(
     oid: str,
     date: str,
@@ -198,6 +324,8 @@ def build_casefile(
     lightcurves_dir: Path | None = None,
     raw_dir: Path | None = None,
     tensors_dir: Path | None = None,
+    include_cross_survey_context: bool = False,
+    cross_survey_radius_arcsec: float = DEFAULT_CROSS_SURVEY_RADIUS_ARCSEC,
 ) -> CaseFile:
     """Assemble a CaseFile for `oid` from local files for `date`.
 
@@ -251,8 +379,35 @@ def build_casefile(
     summary = summarize_light_curve(detections, non_det)
     classification = _extract_classification(obj_rows)
     coordinates = _extract_coordinates(obj_rows)
+    redshift, redshift_source = _extract_redshift_context(obj_rows)
 
     model_comps = _build_model_comparisons(detections)
+    model_comps.append(
+        build_sncosmo_template_probe(
+            detections,
+            redshift=redshift,
+            redshift_source=redshift_source,
+        )
+    )
+    comp_summary = build_comparison_summary(model_comps)
+    feature_summary = _build_feature_summary(detections, "r", fid=2)
+    cross_survey_context = build_cross_survey_context(
+        coordinates,
+        include=include_cross_survey_context,
+        radius_arcsec=cross_survey_radius_arcsec,
+    )
+    evidence = evidence_notes(summary, classification)
+    candidates = candidate_explanations(summary, classification)
+    uncertainties = uncertainty_notes(summary, classification, available)
+    next_checks = recommended_next_checks(summary, classification, coordinates)
+    evidence_narrative = build_evidence_narrative(
+        model_comparisons=model_comps,
+        comparison_summary=comp_summary,
+        feature_summary=feature_summary,
+        cross_survey_context=cross_survey_context,
+        recommended_next_checks=next_checks,
+        uncertainty_notes=uncertainties,
+    )
 
     return CaseFile(
         oid=oid,
@@ -268,11 +423,15 @@ def build_casefile(
         time_span_days=summary.time_span_days,
         classification_metadata=classification,
         light_curve_summary=summary,
-        evidence_notes=evidence_notes(summary, classification),
-        candidate_explanations=candidate_explanations(summary, classification),
-        uncertainty_notes=uncertainty_notes(summary, classification, available),
-        recommended_next_checks=recommended_next_checks(summary, classification, coordinates),
+        evidence_notes=evidence,
+        candidate_explanations=candidates,
+        uncertainty_notes=uncertainties,
+        recommended_next_checks=next_checks,
         model_comparisons=model_comps,
+        comparison_summary=comp_summary,
+        feature_summary=feature_summary,
+        cross_survey_context=cross_survey_context,
+        evidence_narrative=evidence_narrative,
     )
 
 

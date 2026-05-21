@@ -1,6 +1,7 @@
-"""Phase 2C comparator tests. Offline; synthetic + fixture-derived inputs only."""
+"""Phase 2C/2D comparator tests. Offline; synthetic + fixture-derived inputs only."""
 from __future__ import annotations
 import json
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -11,6 +12,17 @@ from argus.casefile.schema import ModelComparison
 from argus.compare.residuals import compute_residuals, interpret_residuals
 from argus.compare.simple_templates import (
     MIN_POINTS_FOR_FIT, fit_gaussian_bump, gaussian_bump_mag,
+)
+from argus.compare import sncosmo_templates as snc_mod
+from argus.compare.sncosmo_templates import (
+    MODEL_TYPE as SNCOSMO_MODEL_TYPE,
+    build_sncosmo_template_probe,
+    prepare_sncosmo_photometry,
+)
+from argus.compare.variability import (
+    MIN_POINTS_FOR_VARIABILITY,
+    interpretation_from_variability_metrics,
+    summarize_variability_texture,
 )
 from argus.ingest.storage import flatten_to_dataframe
 
@@ -131,6 +143,231 @@ def test_interpret_residuals_flags_peak_outside_data():
     assert any("outside the observed time range" in n for n in notes)
 
 
+# ---- descriptive variability comparator -------------------------------------
+
+
+def test_variability_texture_normal_single_bump_has_few_turns():
+    mjd = np.linspace(60000.0, 60100.0, 40)
+    mag = gaussian_bump_mag(mjd, -1.0, 60050.0, 9.0, 20.0)
+    err = np.full_like(mjd, 0.03)
+
+    metrics = summarize_variability_texture(mjd, mag, err)
+
+    assert metrics["status"] == "computed"
+    assert metrics["observed_mag_range"] == pytest.approx(1.0, abs=0.03)
+    assert metrics["local_extrema_count_after_smoothing"] <= 1
+    assert metrics["behavior_hint"] == "single_smooth_or_monotonic"
+
+
+def test_variability_texture_returns_insufficient_data():
+    metrics = summarize_variability_texture(
+        np.array([1.0, 2.0, 3.0]),
+        np.array([20.0, 19.9, 20.1]),
+        np.array([0.05, 0.05, 0.05]),
+    )
+    assert metrics["status"] == "insufficient_data"
+    assert metrics["n_points"] == 3
+    assert metrics["minimum_points"] == MIN_POINTS_FOR_VARIABILITY
+
+
+def test_variability_texture_handles_missing_and_nan_errors():
+    mjd = np.linspace(0.0, 30.0, 12)
+    mag = 20.0 + 0.2 * np.sin(mjd / 3.0)
+    err = np.full_like(mjd, np.nan)
+    err[0] = 0.0
+
+    metrics = summarize_variability_texture(mjd, mag, err)
+    text = interpretation_from_variability_metrics(metrics, "r")
+
+    assert metrics["status"] == "computed"
+    assert metrics["median_photometric_error_mag"] is None
+    assert metrics["variability_materially_larger_than_errors"] is None
+    assert "missing or unusable" in text
+
+
+def test_variability_texture_constant_data_is_measurement_level():
+    mjd = np.linspace(0.0, 20.0, 15)
+    mag = np.full_like(mjd, 19.7)
+    err = np.full_like(mjd, 0.05)
+
+    metrics = summarize_variability_texture(mjd, mag, err)
+
+    assert metrics["status"] == "computed"
+    assert metrics["observed_mag_range"] == pytest.approx(0.0)
+    assert metrics["robust_scatter_mag"] == pytest.approx(0.0)
+    assert metrics["local_extrema_count_after_smoothing"] == 0
+    assert metrics["variability_materially_larger_than_errors"] is False
+    assert metrics["behavior_hint"] == "flat_or_measurement_level"
+
+
+def test_variability_texture_noisy_repeated_data_is_flagged():
+    rng = np.random.default_rng(123)
+    mjd = np.linspace(0.0, 120.0, 80)
+    mag = 19.8 + 0.35 * np.sin(2.0 * np.pi * mjd / 30.0)
+    mag = mag + rng.normal(0.0, 0.015, size=mjd.size)
+    err = np.full_like(mjd, 0.04)
+
+    metrics = summarize_variability_texture(mjd, mag, err)
+
+    assert metrics["status"] == "computed"
+    assert metrics["local_extrema_count_after_smoothing"] >= 3
+    assert metrics["variability_materially_larger_than_errors"] is True
+    assert metrics["behavior_hint"] == "repeated_or_irregular"
+
+
+def test_variability_interpretation_avoids_forbidden_physical_language():
+    rng = np.random.default_rng(7)
+    mjd = np.linspace(0.0, 80.0, 50)
+    mag = 20.0 + 0.3 * np.sin(2.0 * np.pi * mjd / 20.0)
+    mag = mag + rng.normal(0.0, 0.02, size=mjd.size)
+    err = np.full_like(mjd, 0.05)
+    metrics = summarize_variability_texture(mjd, mag, err)
+    text = interpretation_from_variability_metrics(metrics, "r").lower()
+
+    forbidden = (
+        "variable star", "this confirms a transient", "confirmed transient",
+        "new physics", "supernova", "agn", "definitely a",
+    )
+    for phrase in forbidden:
+        assert phrase not in text
+
+
+# ---- sncosmo template probe --------------------------------------------------
+
+
+def _sncosmo_ready_dataframe(n_per_band: int = 5) -> pd.DataFrame:
+    rows = []
+    for fid, offset in ((1, 0.0), (2, 0.08)):
+        for i in range(n_per_band):
+            rows.append({
+                "mjd": 60000.0 + i * 2.0 + offset,
+                "fid": fid,
+                "magpsf": 20.0 - 0.08 * i + 0.05 * fid,
+                "sigmapsf": 0.05,
+            })
+    return pd.DataFrame(rows)
+
+
+def test_sncosmo_probe_dependency_unavailable(monkeypatch):
+    def fail_import():
+        raise ImportError("forced missing dependency")
+
+    monkeypatch.setattr(snc_mod, "_import_sncosmo", fail_import)
+    df = _sncosmo_ready_dataframe()
+    result = build_sncosmo_template_probe(df, redshift=0.05, redshift_source="test")
+    assert result.status == "dependency_unavailable"
+    assert result.model_type == SNCOSMO_MODEL_TYPE
+    assert result.parameters is None
+    assert result.fit_metrics["bands_used"] == ["g", "r"]
+
+
+def test_sncosmo_probe_template_unavailable_offline():
+    class FakeSncosmo:
+        @staticmethod
+        def Model(source):
+            raise RuntimeError(f"no local template: {source}")
+
+    result = build_sncosmo_template_probe(
+        _sncosmo_ready_dataframe(),
+        redshift=0.05,
+        redshift_source="test",
+        sncosmo_module=FakeSncosmo,
+    )
+    assert result.status == "template_unavailable"
+    assert "unavailable locally" in result.interpretation
+
+
+def test_sncosmo_probe_missing_redshift_context():
+    result = build_sncosmo_template_probe(_sncosmo_ready_dataframe())
+    assert result.status == "missing_required_context"
+    assert "redshift" in result.fit_metrics["missing_context"]
+    assert "does not invent redshift" in result.interpretation
+
+
+def test_sncosmo_probe_insufficient_data():
+    df = _sncosmo_ready_dataframe(n_per_band=2)
+    result = build_sncosmo_template_probe(df, redshift=0.05, redshift_source="test")
+    assert result.status == "insufficient_data"
+    assert result.fit_metrics["n_points"] == 4
+
+
+def test_sncosmo_probe_filters_invalid_nan_values():
+    df = _sncosmo_ready_dataframe(n_per_band=4)
+    df.loc[0, "magpsf"] = np.nan
+    df.loc[1, "sigmapsf"] = np.nan
+    df.loc[2, "sigmapsf"] = 0.0
+
+    prepared = prepare_sncosmo_photometry(df)
+
+    assert prepared["n_points"] == len(df) - 3
+    assert np.isfinite(prepared["data"]["flux"]).all()
+    assert np.isfinite(prepared["data"]["fluxerr"]).all()
+    assert (prepared["data"]["fluxerr"] > 0).all()
+
+
+def test_sncosmo_probe_successful_mocked_fit_path():
+    class FakeModel:
+        param_names = ["z", "t0", "amplitude"]
+        parameters = [0.05, 60005.0, 1.2]
+
+        def __init__(self, source):
+            self.source = source
+
+        def set(self, **kwargs):
+            self.z = kwargs["z"]
+
+    class FakeFittedModel(FakeModel):
+        def __init__(self, data):
+            super().__init__("fake")
+            self._data = data
+            self.parameters = [0.05, 60005.0, 1.2]
+
+        def bandflux(self, bands, times, zp, zpsys):
+            return np.asarray(self._data["flux"]) - 0.2 * np.asarray(self._data["fluxerr"])
+
+    class FakeSncosmo:
+        @staticmethod
+        def Model(source):
+            return FakeModel(source)
+
+        @staticmethod
+        def fit_lc(data, model, params):
+            return {"chisq": 3.0, "ndof": 5}, FakeFittedModel(data)
+
+    result = build_sncosmo_template_probe(
+        _sncosmo_ready_dataframe(),
+        redshift=0.05,
+        redshift_source="test_redshift",
+        sncosmo_module=FakeSncosmo,
+    )
+    assert result.status == "fitted"
+    assert result.parameters["template_name"] == "hsiao"
+    assert result.parameters["assumed_redshift"] == pytest.approx(0.05)
+    assert result.fit_metrics["reduced_chi2"] == pytest.approx(0.6)
+    assert result.fit_metrics["rmse_flux"] > 0
+    assert result.residual_summary
+
+
+def test_sncosmo_probe_avoids_forbidden_physical_claims():
+    results = [
+        build_sncosmo_template_probe(_sncosmo_ready_dataframe()),
+        build_sncosmo_template_probe(_sncosmo_ready_dataframe(n_per_band=2), redshift=0.05),
+    ]
+    forbidden = (
+        "this is a supernova", "this is type ia", "this is type ii",
+        "this is an agn", "confirmed transient", "new physics",
+        "anomaly confirmed",
+    )
+    for result in results:
+        text = " ".join([
+            result.interpretation,
+            " ".join(result.residual_summary),
+            " ".join(result.limitations),
+        ]).lower()
+        for phrase in forbidden:
+            assert phrase not in text
+
+
 # ---- case-file integration ---------------------------------------------------
 
 
@@ -170,7 +407,44 @@ def test_casefile_has_non_empty_model_comparisons(fixture_layout, fixture_lightc
         tensors_dir=layout / "tensors_x")
     assert case.model_comparisons, "model_comparisons must always be populated"
     for mc in case.model_comparisons:
-        assert mc.status in {"fitted_baseline", "insufficient_data", "failed_fit"}
+        assert mc.status in {
+            "fitted_baseline", "computed", "insufficient_data", "failed_fit",
+            "fitted", "missing_required_context", "template_unavailable",
+            "fit_failed", "dependency_unavailable",
+        }
+
+
+def test_casefile_includes_sncosmo_template_probe(fixture_layout, fixture_lightcurves):
+    layout, date = fixture_layout
+    oid = sorted(fixture_lightcurves.keys())[0]
+    case = build_casefile(oid, date,
+        lightcurves_dir=layout / "lightcurves",
+        raw_dir=layout / "raw",
+        tensors_dir=layout / "tensors_x")
+    model_types = [mc.model_type for mc in case.model_comparisons]
+    assert "gaussian_bump" in model_types
+    assert "variability_texture" in model_types
+    assert SNCOSMO_MODEL_TYPE in model_types
+    sn_probe = [mc for mc in case.model_comparisons if mc.model_type == SNCOSMO_MODEL_TYPE][0]
+    assert sn_probe.status == "missing_required_context"
+    assert sn_probe.parameters is None
+
+
+def test_casefile_includes_variability_texture_comparison(fixture_layout, fixture_lightcurves):
+    layout, date = fixture_layout
+    oid = sorted(fixture_lightcurves.keys())[0]
+    case = build_casefile(oid, date,
+        lightcurves_dir=layout / "lightcurves",
+        raw_dir=layout / "raw",
+        tensors_dir=layout / "tensors_x")
+    matches = [mc for mc in case.model_comparisons if mc.model_type == "variability_texture"]
+    assert len(matches) == 1
+    mc = matches[0]
+    assert mc.filter_used == "r"
+    assert mc.parameters is None
+    assert mc.fit_metrics is not None
+    assert "n_points" in mc.fit_metrics
+    assert "phenomenological" in " ".join(mc.limitations).lower()
 
 
 def test_phenomenological_limitation_always_present(fixture_layout, fixture_lightcurves):
@@ -215,6 +489,12 @@ def test_no_fitted_status_without_actual_fit(fixture_layout, fixture_lightcurves
         if mc.status == "fitted_baseline":
             assert mc.parameters is not None and len(mc.parameters) >= 1
             assert mc.fit_metrics is not None and "rmse" in mc.fit_metrics
+        elif mc.status == "fitted":
+            assert mc.parameters is not None and len(mc.parameters) >= 1
+            assert mc.fit_metrics is not None and "n_points" in mc.fit_metrics
+        elif mc.status == "computed":
+            assert mc.parameters is None
+            assert mc.fit_metrics is not None and "n_points" in mc.fit_metrics
         else:
             # insufficient_data / failed_fit ⇒ parameters must NOT pretend to be a fit
             assert mc.parameters is None
@@ -222,13 +502,8 @@ def test_no_fitted_status_without_actual_fit(fixture_layout, fixture_lightcurves
 
 def test_no_network_imports_in_compare_module():
     import argus.compare as pkg
-    import argus.compare.simple_templates as st_mod
-    import argus.compare.residuals as r_mod
-    src = (
-        open(pkg.__file__, encoding="utf-8").read()
-        + open(st_mod.__file__, encoding="utf-8").read()
-        + open(r_mod.__file__, encoding="utf-8").read()
-    )
+    compare_dir = Path(pkg.__file__).parent
+    src = "".join(p.read_text(encoding="utf-8") for p in compare_dir.glob("*.py"))
     for forbidden in ("import requests", "from requests", "urllib.request",
                       "import urllib", "import httpx", "from httpx",
                       "from alerce", "import alerce"):
