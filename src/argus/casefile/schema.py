@@ -8,7 +8,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field, asdict
 from typing import Any, Optional
 
-SCHEMA_VERSION = "1.1"  # 1.1: added model_comparisons (Phase 2C)
+SCHEMA_VERSION = "1.8"  # 1.8: added evidence_narrative (Phase 2I)
 
 
 @dataclass
@@ -62,10 +62,16 @@ class ModelComparison:
     `status` is constrained:
       • "fitted_baseline"   — a phenomenological template was fit; parameters
         and fit_metrics are populated.
+      • "computed"          — descriptive, non-fitted metrics were computed;
+        parameters is None and fit_metrics is populated.
       • "insufficient_data" — the data did not meet the minimum requirements
-        for fitting; parameters and fit_metrics are None.
+        for fitting/computation; parameters is None and fit_metrics may carry
+        bookkeeping such as n_points.
       • "failed_fit"        — the optimizer raised; an error string is recorded
         in fit_metrics; parameters are None.
+      • Phase 2G sncosmo probe statuses:
+        "fitted", "missing_required_context", "template_unavailable",
+        "fit_failed", and "dependency_unavailable".
 
     The schema does NOT yet support a "physical_model" status. Phase 2C is
     intentionally about phenomenological shapes only.
@@ -79,6 +85,61 @@ class ModelComparison:
     residual_summary: list[str]
     interpretation: str
     limitations: list[str]
+
+
+@dataclass
+class ComparisonSummary:
+    """Plain-English synthesis of the model_comparisons list.
+
+    This is a phenomenological summary of comparator outputs, not a new model
+    and not a physical classification.
+    """
+    headline: str
+    summary: str
+    caveat: str
+    recommended_next_check: str
+
+
+@dataclass
+class FeatureSummary:
+    """Standardized descriptive light-curve features for one band."""
+    source: str
+    band: str
+    status: str
+    n_points: int
+    features: dict[str, Any]
+    interpretation: str
+    caveat: str
+
+
+@dataclass
+class CrossSurveyContext:
+    """Optional external catalog context, recorded as metadata only."""
+    status: str
+    coordinates: Optional[dict[str, Any]] = None
+    search_radius_arcsec: Optional[float] = None
+    sources: list[dict[str, Any]] = field(default_factory=list)
+    interpretation: str = ""
+    caveat: str = ""
+
+
+@dataclass
+class EvidenceSection:
+    title: str
+    status: str
+    summary: str
+
+
+@dataclass
+class EvidenceNarrative:
+    """Readable synthesis of the case file's existing evidence layers."""
+    headline: str
+    short_summary: str
+    evidence_sections: list[EvidenceSection]
+    what_argus_can_say: list[str]
+    what_argus_cannot_say: list[str]
+    recommended_next_checks: list[str]
+    caveat: str
 
 
 @dataclass
@@ -101,6 +162,10 @@ class CaseFile:
     uncertainty_notes: list[str]
     recommended_next_checks: list[str]
     model_comparisons: list[ModelComparison] = field(default_factory=list)
+    comparison_summary: Optional[ComparisonSummary] = None
+    feature_summary: Optional[FeatureSummary] = None
+    cross_survey_context: Optional[CrossSurveyContext] = None
+    evidence_narrative: Optional[EvidenceNarrative] = None
     schema_version: str = SCHEMA_VERSION
 
     def to_dict(self) -> dict[str, Any]:

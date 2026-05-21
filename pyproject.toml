@@ -9,6 +9,7 @@ description = "Watching the sky for novel astronomical patterns ZTF pipelines mi
 requires-python = ">=3.10"
 dependencies = [
     "alerce>=2.3.0",
+    "light-curve>=0.12",
     "pandas>=2.0",
     "pyarrow>=14",
     "requests>=2.31",
@@ -17,6 +18,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=7", "matplotlib>=3.8", "jupyter>=1.0"]
+science = ["sncosmo>=2.12", "astroquery>=0.4"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

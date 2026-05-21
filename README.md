@@ -4,7 +4,7 @@ A small system that watches the sky for novel astronomical patterns that current
 transient pipelines miss. The goal is a ranked, human-readable feed of "things
 worth an astronomer's attention" — not another classifier.
 
-**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator complete.**
+**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative complete.**
 
 The product vision and the strategic decision behind Phase 2B live in
 [`docs/ARGUS_VISION.md`](docs/ARGUS_VISION.md) and
@@ -40,6 +40,21 @@ python -m venv .venv
 .venv/Scripts/activate           # PowerShell:  .\.venv\Scripts\Activate.ps1
 pip install -e ".[dev]"
 ```
+
+The `sncosmo` template-probe support and `astroquery` SIMBAD context lookup are
+optional. Base Argus works without them. When `sncosmo` is absent, the
+case-file probe records a non-fitted `dependency_unavailable` status when a fit
+would otherwise be attempted; when `astroquery` is absent, cross-survey context
+records `dependency_unavailable` only if the lookup was explicitly requested.
+Install the science extra to enable the optional science integrations:
+
+```bash
+pip install -e ".[science]"
+```
+
+On Windows with Python 3.14, optional science packages may require source-build
+tooling if compatible wheels are unavailable. Python 3.10 or 3.11 may be the
+smoother path for the full science extras.
 
 ## Run a pull
 
@@ -156,13 +171,19 @@ src/argus/
 │   ├── photometry.py            # mag↔flux, upper-limit noise, asinh + error propagation
 │   ├── grid.py                  # Event, windowing, binning, per-object tensorization
 │   └── dataset.py               # file IO, stacking, manifest, sanity checks
+├── features/
+│   └── light_curve_features.py   # standardized descriptive features via light-curve
 ├── casefile/
-│   ├── schema.py                # CaseFile + LightCurveSummary + CandidateExplanation + ModelComparison
+│   ├── schema.py                # CaseFile + summaries + comparator dataclasses
 │   ├── summarize.py             # pure: evidence, candidates, uncertainty, next checks
 │   └── build.py                 # orchestration: load local files → CaseFile → JSON
+├── context/
+│   └── cross_survey.py          # optional SIMBAD context via astroquery
 └── compare/
     ├── simple_templates.py      # Gaussian-bump template + curve_fit
-    └── residuals.py             # fit-quality scalars + plain-English residual interpretation
+    ├── sncosmo_templates.py     # cautious sncosmo model-family probe
+    ├── residuals.py             # fit-quality scalars + plain-English residual interpretation
+    └── variability.py           # descriptive repeated/irregular variability metrics
 scripts/
 ├── ingest_daily.py              # ingestion CLI
 ├── preprocess_tensors.py        # preprocessing CLI
@@ -191,6 +212,15 @@ human reading and any later UI layer.
 python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq
 ```
 
+Default case-file builds stay offline. To opt in to the Phase 2H SIMBAD lookup,
+install the optional science extra and pass the explicit flag:
+
+```bash
+pip install -e ".[science]"
+python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq --include-cross-survey-context
+python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq --include-cross-survey-context --cross-survey-radius-arcsec 5
+```
+
 This reads only local data (`data/lightcurves/{date}.parquet`,
 `data/raw/{date}/lightcurves/{oid}.json`, and the tensor manifest at
 `data/tensors/{date}.csv` if present) and writes:
@@ -214,46 +244,117 @@ Top-level fields:
 | `candidate_explanations` | external labels and placeholder hypotheses, each with `mismatch_notes` saying "no fit performed" |
 | `uncertainty_notes` | what hasn't been checked (SIMBAD/NED, spectroscopy, forced photometry, fitting…) |
 | `recommended_next_checks` | concrete actions that would tighten the case |
+| `comparison_summary` | Phase 2E synthesis of comparator outputs: headline, summary, caveat, and recommended next check |
+| `feature_summary` | Phase 2F standardized descriptive features from the external `light-curve` package |
+| `cross_survey_context` | Phase 2H optional SIMBAD catalog metadata; default status is `not_requested` |
+| `evidence_narrative` | Phase 2I readable synthesis of comparator, feature, template-family, optional catalog-context, uncertainty, and next-check signals |
 
 Phase 2B emits **no fitted explanations** in `candidate_explanations` — every
 entry there is either an inherited external label or a `placeholder_unfitted`
 hypothesis. The governing principle is in the vision doc: the case file shows
 its work and does not claim things it hasn't checked.
 
-## Fitted comparators (Phase 2C)
+## Comparators (Phase 2C/2D/2E/2G)
 
-Case files now also carry a top-level `model_comparisons` list — fits that
-were actually performed against the data. Phase 2C ships exactly one
-comparator: a **Gaussian bump on a constant baseline**, fit in magnitude
-space to r-band detections via `scipy.optimize.curve_fit`. It is the
-smallest non-trivial transient shape and its parameters mean exactly what
-they say.
+Case files now also carry a top-level `model_comparisons` list: local,
+offline checks that were actually run against the data. Phase 2C added a
+**Gaussian bump on a constant baseline**, fit in magnitude space to r-band
+detections via `scipy.optimize.curve_fit`.
+
+Phase 2D adds a second r-band comparator, `variability_texture`. It does not
+fit a model. It computes descriptive metrics that help distinguish a light
+curve with few smooth turns from one with repeated or irregular changes:
+observed magnitude range, robust scatter, local extrema/sign changes after
+simple smoothing, and whether the scatter is materially larger than the
+reported photometric errors.
+
+Phase 2E adds `comparison_summary`, a short top-level synthesis built from
+the existing `model_comparisons` entries. It explains whether the Gaussian
+bump fit was clean or poor, whether variability texture looks repeated or
+irregular, what that combination suggests, what it does not prove, and the
+next check to run. It does not recompute metrics or add new dependencies.
+
+Phase 2G adds `sncosmo_template_probe`, a conservative adapter for attempting
+external template-family comparisons with `sncosmo`. The adapter prepares ZTF
+detections as AB-zeropoint fluxes, but it will not force a fit when required
+context is missing. In the current local case files, absent redshift normally
+produces `missing_required_context`; unavailable packages or offline template
+data are recorded as non-fitted statuses instead of crashing the build.
+`sncosmo` is provided through the optional `science` extra, so base installs do
+not need it.
 
 The same `python -m scripts.build_casefile --date … --oid …` command now
-runs the comparator and embeds its result. Each entry under
-`model_comparisons` has:
+runs the comparators and embeds their results, then writes the summary.
+Each entry under `model_comparisons` has:
 
 | field | content |
 |---|---|
-| `name`, `model_type`, `filter_used` | identity (`Gaussian bump (r-band)`, `gaussian_bump`, `r`) |
-| `status` | one of `fitted_baseline`, `insufficient_data`, `failed_fit` |
-| `parameters` | `amplitude_mag`, `peak_mjd`, `sigma_days`, `baseline_mag` |
-| `fit_metrics` | `n_points`, `rmse`, `mae`, `residual_mean`, `residual_std`, `largest_abs_residual`, `largest_residual_mjd`, `reduced_chi2` (when defensible) |
-| `residual_summary` | plain-English notes about *where* the fit fails (coverage gaps, peak placement, scatter vs amplitude) |
+| `name`, `model_type`, `filter_used` | identity, such as `Gaussian bump (r-band)` / `gaussian_bump`, `Variability texture (r-band)` / `variability_texture`, or `sncosmo template probe` / `sncosmo_template_probe` |
+| `status` | comparator-specific status such as `fitted_baseline`, `computed`, `insufficient_data`, `missing_required_context`, `template_unavailable`, `fit_failed`, or `dependency_unavailable` |
+| `parameters` | fitted Gaussian parameters when applicable; `null` for the computed variability summary |
+| `fit_metrics` | Gaussian fit metrics, or descriptive variability metrics such as magnitude range, robust scatter, smoothed sign changes, and scatter-vs-error ratios |
+| `residual_summary` | plain-English notes about where the Gaussian fit fails, or the main variability texture metrics |
 | `interpretation` | one templated sentence keyed off the metrics |
 | `limitations` | always includes "phenomenological — not a physical model" |
 
 What this is **not**: a physical light-curve model. A converged Gaussian-bump
-fit does *not* imply the object is a supernova or any specific source class.
+fit, a repeated-change hint, or an attempted `sncosmo` template-family fit
+does *not* imply any specific source class, physical cause, or special status.
 The `limitations` list says so explicitly on every comparator output, and the
-test suite asserts that the `interpretation` string never claims otherwise.
+test suite asserts that interpretation strings never claim otherwise.
+
+## Standardized Features (Phase 2F)
+
+Case files also include `feature_summary`, an offline r-band feature block
+computed from already-ingested detections using the external
+[`light-curve`](https://pypi.org/project/light-curve/) package. Phase 2F keeps
+the subset deliberately basic: amplitude, standard deviation, median, median
+absolute deviation, inter-percentile range, and maximum slope.
+
+These values strengthen the evidence layer by making objects easier to compare
+with each other. They are descriptive summaries only; they do not identify an
+object type or imply a discovery. If the dependency is unavailable,
+`feature_summary.status` is `dependency_unavailable` and the case-file build
+continues.
+
+## Cross-Survey Context (Phase 2H)
+
+Case files include `cross_survey_context`, an optional external catalog-context
+block. Default runs do not query the internet and record:
+
+```json
+{
+  "status": "not_requested",
+  "interpretation": "Cross-survey catalog context was not requested for this run.",
+  "caveat": "No external catalog query was performed."
+}
+```
+
+When `--include-cross-survey-context` is passed, Argus uses optional
+`astroquery` support from the `science` extra to query SIMBAD around the
+case-file coordinates. A nearby SIMBAD source is stored as external catalog
+metadata only. It is not treated as an Argus classification, and a no-match or
+failed query is recorded as a limitation rather than a conclusion.
+
+## Evidence Narrative (Phase 2I)
+
+Case files now include `evidence_narrative`, a top-level plain-English layer
+that turns the separate evidence blocks into one readable case summary. It is
+derived from existing fields such as `model_comparisons`, `comparison_summary`,
+`feature_summary`, optional `cross_survey_context`, `uncertainty_notes`, and
+`recommended_next_checks`; it does not rerun metrics or add new dependencies.
+
+The narrative includes a headline, short summary, evidence sections, what Argus
+can and cannot say, recommended next checks, and a caveat. If an evidence layer
+is missing, unavailable, or not requested, the narrative records that limitation
+instead of filling in assumptions. It remains descriptive only and does not
+identify an object type or assert special status.
 
 ## Next
 
-Replace the Phase 2C Gaussian-bump baseline with physical templates (Type Ia
-SN light curve, AGN damped random walk, stellar-flare profile) and add their
-residuals to `model_comparisons`. Add evidence-source plugins for
-SIMBAD / NED / PanSTARRS to fill in `coordinates` cross-matches. Each step
-is evaluated against the governing standard in
+Add richer comparator families once they can be evaluated with the same
+plain-language limitations and residual summaries. Add more optional
+catalog-context adapters only when they can preserve the same opt-in,
+metadata-only behavior. Each step is evaluated against the governing standard in
 [`docs/ARGUS_VISION.md`](docs/ARGUS_VISION.md): does it help Argus build a
 better scientific case from anomalous public data?
