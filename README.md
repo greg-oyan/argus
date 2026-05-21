@@ -4,7 +4,7 @@ A small system that watches the sky for novel astronomical patterns that current
 transient pipelines miss. The goal is a ranked, human-readable feed of "things
 worth an astronomer's attention" — not another classifier.
 
-**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative complete.**
+**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export complete.**
 
 The product vision and the strategic decision behind Phase 2B live in
 [`docs/ARGUS_VISION.md`](docs/ARGUS_VISION.md) and
@@ -176,6 +176,7 @@ src/argus/
 ├── casefile/
 │   ├── schema.py                # CaseFile + summaries + comparator dataclasses
 │   ├── summarize.py             # pure: evidence, candidates, uncertainty, next checks
+│   ├── markdown.py              # presentation-ready Markdown case-file export
 │   └── build.py                 # orchestration: load local files → CaseFile → JSON
 ├── context/
 │   └── cross_survey.py          # optional SIMBAD context via astroquery
@@ -210,6 +211,7 @@ human reading and any later UI layer.
 
 ```bash
 python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq
+python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq --write-markdown
 ```
 
 Default case-file builds stay offline. To opt in to the Phase 2H SIMBAD lookup,
@@ -227,6 +229,7 @@ This reads only local data (`data/lightcurves/{date}.parquet`,
 
 ```
 data/casefiles/{oid}.json
+data/casefiles/{oid}.casefile.md  # only when --write-markdown is passed
 ```
 
 Top-level fields:
@@ -349,6 +352,19 @@ can and cannot say, recommended next checks, and a caveat. If an evidence layer
 is missing, unavailable, or not requested, the narrative records that limitation
 instead of filling in assumptions. It remains descriptive only and does not
 identify an object type or assert special status.
+
+## Markdown Export (Phase 2J)
+
+Case files can also be exported as presentation-ready Markdown with
+`--write-markdown`. The Markdown report is written next to the JSON file as
+`data/casefiles/{oid}.casefile.md` and renders the evidence narrative near the
+top, followed by object metadata, light-curve summary, feature summary,
+comparison summary, model comparisons, cross-survey context, uncertainty notes,
+and recommended next checks.
+
+Markdown export does not recompute metrics, query external services, or change
+the JSON case file. It is a readable rendering of the existing case-file
+evidence only.
 
 ## Next
 
