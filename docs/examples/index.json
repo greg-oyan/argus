@@ -1,11 +1,168 @@
 {
   "index_version": "1.0",
-  "generated_at": "2026-05-21T21:57:30+00:00",
+  "generated_at": "2026-05-21T23:28:09+00:00",
   "casefile_dir": "docs\\examples",
-  "case_count": 1,
+  "case_count": 6,
   "sort_order": "object_id",
   "description": "Static case-file review index built from existing Argus case-file JSON. Entries are prepared for inspection and are not model-score rankings.",
   "entries": [
+    {
+      "oid": "ZTF17aabblzo",
+      "source_date": "2026-05-20",
+      "generated_at": "2026-05-21T23:11:16+00:00",
+      "schema_version": "1.9",
+      "headline": "Evidence is limited by available comparator context",
+      "short_summary": "Some evidence layers are missing, failed, or limited by the available local detections. The case file supports cautious review rather than a firm conclusion.",
+      "detection_count": 3,
+      "non_detection_count": 246,
+      "filters_observed": [
+        "g",
+        "r"
+      ],
+      "time_span_days": 2865.0232291999273,
+      "classification_metadata": {
+        "kind": "external_metadata",
+        "value": null
+      },
+      "gaussian_comparator_status": "insufficient_data",
+      "variability_texture_status": "insufficient_data",
+      "feature_summary_status": "insufficient_data",
+      "sncosmo_template_probe_status": "insufficient_data",
+      "cross_survey_context_status": "not_requested",
+      "top_recommended_next_check": "Cross-match position (RA=12.50755, Dec=42.65244) against SIMBAD and NED for any known counterpart.",
+      "links": {
+        "json": "ZTF17aabblzo/ZTF17aabblzo.casefile.json",
+        "markdown": "ZTF17aabblzo/ZTF17aabblzo.casefile.md",
+        "html": "ZTF17aabblzo/ZTF17aabblzo.casefile.html",
+        "light_curve_png": "ZTF17aabblzo/ZTF17aabblzo.lightcurve.png"
+      }
+    },
+    {
+      "oid": "ZTF18aaxddtg",
+      "source_date": "2026-05-20",
+      "generated_at": "2026-05-21T23:11:16+00:00",
+      "schema_version": "1.9",
+      "headline": "Mixed evidence with cautious interpretation",
+      "short_summary": "The Gaussian bump comparator fit the r-band detections cleanly within the reported errors. The variability texture comparator found changes that are comparable to the reported photometric errors. Together, these favor a simple one-bump description over repeated or irregular texture in the current r-band detections. Coverage appears sparse or uneven, so cadence may affect the comparison.",
+      "detection_count": 10,
+      "non_detection_count": 212,
+      "filters_observed": [
+        "g",
+        "r"
+      ],
+      "time_span_days": 2917.0511806001887,
+      "classification_metadata": {
+        "kind": "external_metadata",
+        "value": null
+      },
+      "gaussian_comparator_status": "fitted_baseline",
+      "variability_texture_status": "computed",
+      "feature_summary_status": "computed",
+      "sncosmo_template_probe_status": "missing_required_context",
+      "cross_survey_context_status": "not_requested",
+      "top_recommended_next_check": "Cross-match position (RA=284.45227, Dec=9.60622) against SIMBAD and NED for any known counterpart.",
+      "links": {
+        "json": "ZTF18aaxddtg/ZTF18aaxddtg.casefile.json",
+        "markdown": "ZTF18aaxddtg/ZTF18aaxddtg.casefile.md",
+        "html": "ZTF18aaxddtg/ZTF18aaxddtg.casefile.html",
+        "light_curve_png": "ZTF18aaxddtg/ZTF18aaxddtg.lightcurve.png",
+        "residual_png": "ZTF18aaxddtg/ZTF18aaxddtg.residuals.png"
+      }
+    },
+    {
+      "oid": "ZTF18abbdazk",
+      "source_date": "2026-05-20",
+      "generated_at": "2026-05-21T23:11:17+00:00",
+      "schema_version": "1.9",
+      "headline": "Mixed evidence with cautious interpretation",
+      "short_summary": "The Gaussian bump comparator fit, but reduced chi-squared is 2.2, so the single smooth bump captures only part of the point-to-point behavior. The variability texture comparator found changes that are comparable to the reported photometric errors. Together, these suggest the r-band detections are not fully captured by one smooth bump.",
+      "detection_count": 19,
+      "non_detection_count": 201,
+      "filters_observed": [
+        "g",
+        "r"
+      ],
+      "time_span_days": 2897.036608800292,
+      "classification_metadata": {
+        "kind": "external_metadata",
+        "value": null
+      },
+      "gaussian_comparator_status": "fitted_baseline",
+      "variability_texture_status": "computed",
+      "feature_summary_status": "computed",
+      "sncosmo_template_probe_status": "missing_required_context",
+      "cross_survey_context_status": "not_requested",
+      "top_recommended_next_check": "Cross-match position (RA=286.62936, Dec=1.94183) against SIMBAD and NED for any known counterpart.",
+      "links": {
+        "json": "ZTF18abbdazk/ZTF18abbdazk.casefile.json",
+        "markdown": "ZTF18abbdazk/ZTF18abbdazk.casefile.md",
+        "html": "ZTF18abbdazk/ZTF18abbdazk.casefile.html",
+        "light_curve_png": "ZTF18abbdazk/ZTF18abbdazk.lightcurve.png",
+        "residual_png": "ZTF18abbdazk/ZTF18abbdazk.residuals.png"
+      }
+    },
+    {
+      "oid": "ZTF18abdtfcl",
+      "source_date": "2026-05-20",
+      "generated_at": "2026-05-21T23:11:17+00:00",
+      "schema_version": "1.9",
+      "headline": "Evidence is limited by available comparator context",
+      "short_summary": "Some evidence layers are missing, failed, or limited by the available local detections. The case file supports cautious review rather than a firm conclusion.",
+      "detection_count": 17,
+      "non_detection_count": 174,
+      "filters_observed": [
+        "g",
+        "r"
+      ],
+      "time_span_days": 2503.074722299818,
+      "classification_metadata": {
+        "kind": "external_metadata",
+        "value": null
+      },
+      "gaussian_comparator_status": "insufficient_data",
+      "variability_texture_status": "insufficient_data",
+      "feature_summary_status": "insufficient_data",
+      "sncosmo_template_probe_status": "missing_required_context",
+      "cross_survey_context_status": "not_requested",
+      "top_recommended_next_check": "Cross-match position (RA=254.67831, Dec=-23.74590) against SIMBAD and NED for any known counterpart.",
+      "links": {
+        "json": "ZTF18abdtfcl/ZTF18abdtfcl.casefile.json",
+        "markdown": "ZTF18abdtfcl/ZTF18abdtfcl.casefile.md",
+        "html": "ZTF18abdtfcl/ZTF18abdtfcl.casefile.html",
+        "light_curve_png": "ZTF18abdtfcl/ZTF18abdtfcl.lightcurve.png"
+      }
+    },
+    {
+      "oid": "ZTF18abduuff",
+      "source_date": "2026-05-20",
+      "generated_at": "2026-05-21T23:11:17+00:00",
+      "schema_version": "1.9",
+      "headline": "Evidence is limited by available comparator context",
+      "short_summary": "Some evidence layers are missing, failed, or limited by the available local detections. The case file supports cautious review rather than a firm conclusion.",
+      "detection_count": 2,
+      "non_detection_count": 153,
+      "filters_observed": [
+        "g",
+        "r"
+      ],
+      "time_span_days": 2546.081412000116,
+      "classification_metadata": {
+        "kind": "external_metadata",
+        "value": null
+      },
+      "gaussian_comparator_status": "insufficient_data",
+      "variability_texture_status": "insufficient_data",
+      "feature_summary_status": "insufficient_data",
+      "sncosmo_template_probe_status": "insufficient_data",
+      "cross_survey_context_status": "not_requested",
+      "top_recommended_next_check": "Cross-match position (RA=258.22591, Dec=-20.73201) against SIMBAD and NED for any known counterpart.",
+      "links": {
+        "json": "ZTF18abduuff/ZTF18abduuff.casefile.json",
+        "markdown": "ZTF18abduuff/ZTF18abduuff.casefile.md",
+        "html": "ZTF18abduuff/ZTF18abduuff.casefile.html",
+        "light_curve_png": "ZTF18abduuff/ZTF18abduuff.lightcurve.png"
+      }
+    },
     {
       "oid": "ZTF18abujsbq",
       "source_date": "2026-05-20",

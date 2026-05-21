@@ -4,16 +4,21 @@ A small system that watches the sky for novel astronomical patterns that current
 transient pipelines miss. The current product spine is a readable, inspectable
 case-file evidence package for one object at a time — not another classifier.
 
-**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export + Phase 2K static figures + Phase 2L static HTML export + Phase 2M public example bundle + Phase 2N GitHub Pages demo page + Phase 2O Gaussian residual plots + Phase 2P static case-file index + Phase 2Q batch case-file generation complete.**
+**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export + Phase 2K static figures + Phase 2L static HTML export + Phase 2M public example bundle + Phase 2N GitHub Pages demo page + Phase 2O Gaussian residual plots + Phase 2P static case-file index + Phase 2Q batch case-file generation + Phase 2S multi-object public demo complete.**
 
 The product vision and the strategic decision behind Phase 2B live in
 [`docs/ARGUS_VISION.md`](docs/ARGUS_VISION.md) and
 [`docs/PHASE_2B_DECISION.md`](docs/PHASE_2B_DECISION.md).
 Read them first if you're new to the repo.
 
-## Example Case File
+## Public Demo Case Files
 
-A generated public demo bundle is available at
+A curated public demo review queue is available at
+[`examples/index.html`](examples/index.html), with the structured version at
+[`examples/index.json`](examples/index.json). It summarizes multiple generated
+case-file bundles and links to their reports, figures, and JSON artifacts.
+
+The original canonical case remains available at
 [`examples/ZTF18abujsbq/`](examples/ZTF18abujsbq/). It includes:
 
 - [HTML report](examples/ZTF18abujsbq/ZTF18abujsbq.casefile.html)
@@ -22,19 +27,16 @@ A generated public demo bundle is available at
 - [Gaussian residual figure](examples/ZTF18abujsbq/ZTF18abujsbq.residuals.png)
 - [structured JSON](examples/ZTF18abujsbq/ZTF18abujsbq.casefile.json)
 
-This is a presentation/demo artifact for the case-file workflow, not a
-physical classification.
-
-A static example index is available as
-[`examples/index.html`](examples/index.html), with the structured version at
-[`examples/index.json`](examples/index.json). It is a review index over the
-public case-file bundle, not an anomaly-ranking model.
+These are presentation/demo artifacts for the case-file workflow, not physical
+classifications. The public examples are curated generated outputs, not raw
+ALeRCE JSON, Parquet, tensors, or the full local `data/` directory. The index
+is a case-file review index, not an anomaly-ranking model.
 
 ## Demo Page
 
 The static demo landing page lives at [`docs/index.html`](docs/index.html).
 GitHub Pages can serve it by setting the Pages source to the repository's
-`docs/` folder. The page duplicates the small ZTF18abujsbq demo artifacts under
+`docs/` folder. The page duplicates the small multi-object demo artifacts under
 `docs/examples/` so the image and report links work with relative paths on
 GitHub Pages and when opened directly from disk. The Pages-ready case-file
 index lives at [`docs/examples/index.html`](docs/examples/index.html).
@@ -507,6 +509,18 @@ rest of the queue; `--fail-fast` is available when stopping early is preferable.
 
 This is still a case-file review queue. It does not add an anomaly-ranking model
 or decide object identity.
+
+## Public Review Queue Demo (Phase 2S)
+
+The public demo now includes a small multi-object review queue generated from
+local batch outputs. Curated artifacts are committed under `examples/` for repo
+browsing and mirrored under `docs/examples/` for GitHub Pages. These bundles
+contain case-file JSON, Markdown, HTML, and generated figures where available;
+they do not include raw broker responses, Parquet tables, tensors, or local
+`data/` outputs.
+
+The demo index is a case-file review index for objects prepared for inspection.
+It is not an anomaly-ranking model.
 
 ## Next
 

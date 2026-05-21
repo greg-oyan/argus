@@ -1,0 +1,385 @@
+{
+  "oid": "ZTF18abbdazk",
+  "source_date": "2026-05-20",
+  "generated_at": "2026-05-21T23:11:17+00:00",
+  "coordinates": {
+    "ra": 286.62936495340404,
+    "dec": 1.9418299857015655,
+    "ra_unit": "deg",
+    "dec_unit": "deg"
+  },
+  "available_data_sources": [
+    "parquet_detections",
+    "raw_lightcurve_json",
+    "tensor_manifest"
+  ],
+  "detection_count": 19,
+  "non_detection_count": 201,
+  "filters_observed": [
+    "g",
+    "r"
+  ],
+  "first_mjd": 58283.39969909983,
+  "last_mjd": 61180.43630790012,
+  "time_span_days": 2897.036608800292,
+  "classification_metadata": null,
+  "light_curve_summary": {
+    "n_detections": 19,
+    "n_non_detections": 201,
+    "filters_observed": [
+      "g",
+      "r"
+    ],
+    "first_mjd": 58283.39969909983,
+    "last_mjd": 61180.43630790012,
+    "time_span_days": 2897.036608800292,
+    "most_recent_detection_mjd": 61180.43630790012,
+    "longest_detection_gap_days": 623.1403240999207,
+    "per_filter": [
+      {
+        "filter": "g",
+        "n_detections": 5,
+        "n_non_detections": 82,
+        "first_mjd": 58284.394895799924,
+        "last_mjd": 60193.23394680023,
+        "mag_min": 19.9722,
+        "mag_max": 20.156042,
+        "mag_median": 20.080671,
+        "delta_mag": 0.1838419999999985
+      },
+      {
+        "filter": "r",
+        "n_detections": 13,
+        "n_non_detections": 98,
+        "first_mjd": 58433.07282410003,
+        "last_mjd": 61180.43630790012,
+        "mag_min": 18.39862,
+        "mag_max": 18.884424,
+        "mag_median": 18.5573,
+        "delta_mag": 0.4858039999999981
+      }
+    ]
+  },
+  "evidence_notes": [
+    "Object has 19 rb-filtered detection(s) and 201 non-detection(s) on file.",
+    "Filters observed: g, r.",
+    "Coverage spans MJD 58283.40 to 61180.44 (2897 days).",
+    "Most recent detection: MJD 61180.44.",
+    "Longest gap between consecutive detections: 623 days.",
+    "In g-band: 5 detection(s), magnitude 19.97\u201320.16 (\u0394m = 0.18); 82 non-detection(s).",
+    "In r-band: 13 detection(s), magnitude 18.40\u201318.88 (\u0394m = 0.49); 98 non-detection(s).",
+    "No external classification label is attached to this object in local data."
+  ],
+  "candidate_explanations": [
+    {
+      "name": "Type Ia supernova",
+      "status": "placeholder_unfitted",
+      "rationale": "Rise + decline over ~30\u201360 days with characteristic g\u2013r color evolution. Worth fitting once a template comparator is wired in.",
+      "mismatch_notes": "No fit has been performed in Phase 2B. This is a placeholder for the comparator that will replace it.",
+      "source": "default placeholder set"
+    },
+    {
+      "name": "AGN variability",
+      "status": "placeholder_unfitted",
+      "rationale": "Stochastic variability on month-to-year timescales, often coincident with a galactic nucleus. Worth checking host galaxy proximity.",
+      "mismatch_notes": "No fit has been performed in Phase 2B. This is a placeholder for the comparator that will replace it.",
+      "source": "default placeholder set"
+    },
+    {
+      "name": "Stellar flare / CV outburst",
+      "status": "placeholder_unfitted",
+      "rationale": "Short, blue-leaning brightening. Worth checking the timescale of any detection cluster and presence of a nearby stellar host.",
+      "mismatch_notes": "No fit has been performed in Phase 2B. This is a placeholder for the comparator that will replace it.",
+      "source": "default placeholder set"
+    }
+  ],
+  "uncertainty_notes": [
+    "No SIMBAD/NED/Gaia cross-match has been performed in Phase 2B.",
+    "No spectroscopic information is on file.",
+    "No forced-photometry follow-up has been requested.",
+    "Candidate explanations above are placeholders, not fits, so mismatch magnitudes and goodness-of-fit values are not yet available.",
+    "No external classification label is present in local data."
+  ],
+  "recommended_next_checks": [
+    "Cross-match position (RA=286.62936, Dec=1.94183) against SIMBAD and NED for any known counterpart.",
+    "Search PanSTARRS at this position for a candidate host galaxy and record offset from any nearby extended source.",
+    "Pull ZTF forced photometry in a \u00b190-day window around the most recent detection (MJD 61180.44).",
+    "Replace the Phase 2C Gaussian-bump baseline with physical templates (Type Ia SN light curve, AGN damped random walk, stellar-flare profile) and add their residuals to model_comparisons.",
+    "If the source is still active (last detection within ~60 days), request follow-up spectroscopy."
+  ],
+  "model_comparisons": [
+    {
+      "name": "Gaussian bump (r-band)",
+      "model_type": "gaussian_bump",
+      "filter_used": "r",
+      "status": "fitted_baseline",
+      "parameters": {
+        "amplitude_mag": -857.8769118945556,
+        "peak_mjd": 60200.91641307293,
+        "sigma_days": 86854.93644069406,
+        "baseline_mag": 876.4339551065873
+      },
+      "fit_metrics": {
+        "n_points": 13,
+        "rmse": 0.14328849319227502,
+        "mae": 0.11140111967575532,
+        "residual_mean": 0.006256332668825484,
+        "residual_std": 0.14315184449684756,
+        "largest_abs_residual": 0.32737748839796055,
+        "largest_residual_mjd": 60193.29868059978,
+        "reduced_chi2": 2.2375030700927336
+      },
+      "residual_summary": [
+        "No striking residual structure relative to the fit."
+      ],
+      "interpretation": "A single Gaussian bump was fit to the r-band detections. RMSE = 0.14 mag, reduced \u03c7\u00b2 \u2248 2.2 \u2014 the bump shape captures the average behavior but not the point-to-point variability. See residual_summary for where the fit fails.",
+      "limitations": [
+        "Phenomenological template \u2014 not a physical model. A good fit does not imply a supernova or any specific source class.",
+        "Fit performed in magnitude space directly, not flux. Magnitude errors are treated as Gaussian; this is approximate for low-SNR detections.",
+        "Only detections that passed the rb\u22650.55 quality cut are used. Non-detections and forced photometry are not consumed by this comparator."
+      ],
+      "residual_points": [
+        {
+          "mjd": 58433.07282410003,
+          "observed_mag": 18.847727,
+          "model_mag": 18.734727352892605,
+          "residual_mag": 0.11299964710739374,
+          "magerr": 0.19451317
+        },
+        {
+          "mjd": 58648.474976900034,
+          "observed_mag": 18.745369,
+          "model_mag": 18.694068819462245,
+          "residual_mag": 0.05130018053775487,
+          "magerr": 0.12522048
+        },
+        {
+          "mjd": 59249.57295140019,
+          "observed_mag": 18.39862,
+          "model_mag": 18.608502955877157,
+          "residual_mag": -0.20988295587715555,
+          "magerr": 0.18773663
+        },
+        {
+          "mjd": 59310.49168979982,
+          "observed_mag": 18.662115,
+          "model_mag": 18.60212373850959,
+          "residual_mag": 0.0599912614904099,
+          "magerr": 0.097919844
+        },
+        {
+          "mjd": 59630.53994210018,
+          "observed_mag": 18.4235,
+          "model_mag": 18.575541199965528,
+          "residual_mag": -0.15204119996552734,
+          "magerr": 0.092076
+        },
+        {
+          "mjd": 59630.54245370021,
+          "observed_mag": 18.518042,
+          "model_mag": 18.575541037059224,
+          "residual_mag": -0.05749903705922321,
+          "magerr": 0.13206577
+        },
+        {
+          "mjd": 59630.54496529978,
+          "observed_mag": 18.5037,
+          "model_mag": 18.57554087415383,
+          "residual_mag": -0.07184087415383189,
+          "magerr": 0.115829
+        },
+        {
+          "mjd": 59630.54748839978,
+          "observed_mag": 18.52044,
+          "model_mag": 18.57554071050299,
+          "residual_mag": -0.055100710502991035,
+          "magerr": 0.12195292
+        },
+        {
+          "mjd": 59630.5500115999,
+          "observed_mag": 18.57344,
+          "model_mag": 18.575540546846582,
+          "residual_mag": -0.0021005468465808974,
+          "magerr": 0.10629108
+        },
+        {
+          "mjd": 60193.29868059978,
+          "observed_mag": 18.884424,
+          "model_mag": 18.55704651160204,
+          "residual_mag": 0.32737748839796055,
+          "magerr": 0.10281778
+        },
+        {
+          "mjd": 60535.26701389998,
+          "observed_mag": 18.5573,
+          "model_mag": 18.56339957337036,
+          "residual_mag": -0.006099573370359934,
+          "magerr": 0.12561291
+        },
+        {
+          "mjd": 61158.4073379999,
+          "observed_mag": 18.822275,
+          "model_mag": 18.609170137293745,
+          "residual_mag": 0.21310486270625617,
+          "magerr": 0.14425811
+        },
+        {
+          "mjd": 61180.43630790012,
+          "observed_mag": 18.48272,
+          "model_mag": 18.611596217769375,
+          "residual_mag": -0.12887621776937408,
+          "magerr": 0.087310866
+        }
+      ]
+    },
+    {
+      "name": "Variability texture (r-band)",
+      "model_type": "variability_texture",
+      "filter_used": "r",
+      "status": "computed",
+      "parameters": null,
+      "fit_metrics": {
+        "n_points": 13,
+        "time_span_days": 2747.363483800087,
+        "mag_min": 18.39862,
+        "mag_max": 18.884424,
+        "mag_median": 18.5573,
+        "observed_mag_range": 0.4858039999999981,
+        "robust_scatter_mag": 0.15539871899999783,
+        "median_photometric_error_mag": 0.12195292,
+        "scatter_to_error_ratio": 1.274251727633892,
+        "range_to_error_ratio": 3.9835372535565208,
+        "variability_materially_larger_than_errors": false,
+        "smoothing_window_points": 3,
+        "sign_change_tolerance_mag": 0.06097646,
+        "smoothed_sign_changes": 3,
+        "local_extrema_count_after_smoothing": 3,
+        "behavior_hint": "flat_or_measurement_level"
+      },
+      "residual_summary": [
+        "Observed r-band range: 0.49 mag; robust scatter: 0.16 mag.",
+        "After 3-point smoothing, counted 3 local extrema/sign change(s).",
+        "Robust scatter is comparable to the reported errors."
+      ],
+      "interpretation": "The r-band detections (13 point(s)) span 0.49 mag with robust scatter 0.16 mag. After 3-point smoothing, 3 local extrema/sign change(s) were counted. The scatter is comparable to the reported photometric errors. The measured changes are small relative to the reported errors, so this check treats the sequence as measurement-level or nearly flat. This is descriptive only: it does not identify an object type, physical cause, or special status.",
+      "limitations": [
+        "Phenomenological summary - not a physical model. It does not imply any source class or physical cause.",
+        "Uses only local r-band detections that passed the rb>=0.55 quality cut. Non-detections and forced photometry are not consumed by this comparator.",
+        "Turning-point counts use simple rolling-median smoothing, so cadence, gaps, and noisy measurements can affect the result."
+      ],
+      "residual_points": null
+    },
+    {
+      "name": "sncosmo template probe",
+      "model_type": "sncosmo_template_probe",
+      "filter_used": "g,r",
+      "status": "missing_required_context",
+      "parameters": null,
+      "fit_metrics": {
+        "model_family": "sncosmo_template_family",
+        "template_name": "hsiao",
+        "bands_used": [
+          "g",
+          "r"
+        ],
+        "n_points": 18,
+        "zeropoint": 25.0,
+        "magnitude_system": "ab",
+        "missing_context": [
+          "redshift"
+        ]
+      },
+      "residual_summary": [
+        "Redshift is unavailable in the local case-file context."
+      ],
+      "interpretation": "sncosmo template fitting was not attempted because redshift is unavailable. Argus does not invent redshift for template-family comparisons.",
+      "limitations": [
+        "Phenomenological model-family probe - not a physical model.",
+        "sncosmo templates require contextual assumptions such as redshift, usable bandpasses, and flux-calibrated photometry.",
+        "ZTF magnitudes are converted to relative flux using an AB zeropoint convention with zp=25.0; this is a preparation step, not a physical conclusion.",
+        "This provides a model-family comparison only. It does not identify the object type, physical cause, or special status."
+      ],
+      "residual_points": null
+    }
+  ],
+  "comparison_summary": {
+    "headline": "Single smooth bump leaves residual structure",
+    "summary": "The Gaussian bump comparator fit, but reduced chi-squared is 2.2, so the single smooth bump captures only part of the point-to-point behavior. The variability texture comparator found changes that are comparable to the reported photometric errors. Together, these suggest the r-band detections are not fully captured by one smooth bump.",
+    "caveat": "This is not a physical classification. It does not identify the object type, physical cause, or special status.",
+    "recommended_next_check": "Inspect the largest residuals and review cadence gaps before adding richer comparators."
+  },
+  "feature_summary": {
+    "source": "light-curve",
+    "band": "r",
+    "status": "computed",
+    "n_points": 13,
+    "features": {
+      "amplitude": 0.24290199999999906,
+      "standard_deviation": 0.16468953394999497,
+      "median": 18.5573,
+      "median_absolute_deviation": 0.10481499999999855,
+      "inter_percentile_range_25": 0.2661404999999988,
+      "maximum_slope": 37.64213998190774
+    },
+    "interpretation": "Descriptive light-curve features were computed for r-band detections using the light-curve package. The r-band observed brightness range is moderate (0.49 mag). Standardized scatter is moderate for this detection set (0.16 mag). These features support comparison across objects.",
+    "caveat": "Feature values are descriptive summaries only and do not identify the object type."
+  },
+  "cross_survey_context": {
+    "status": "not_requested",
+    "coordinates": null,
+    "search_radius_arcsec": null,
+    "sources": [],
+    "interpretation": "Cross-survey catalog context was not requested for this run.",
+    "caveat": "No external catalog query was performed."
+  },
+  "evidence_narrative": {
+    "headline": "Mixed evidence with cautious interpretation",
+    "short_summary": "The Gaussian bump comparator fit, but reduced chi-squared is 2.2, so the single smooth bump captures only part of the point-to-point behavior. The variability texture comparator found changes that are comparable to the reported photometric errors. Together, these suggest the r-band detections are not fully captured by one smooth bump.",
+    "evidence_sections": [
+      {
+        "title": "Baseline transient-shape check",
+        "status": "not_well_fit",
+        "summary": "The Gaussian bump comparator fit the detections but left substantial residual structure (reduced chi-squared about 2.2)."
+      },
+      {
+        "title": "Variability texture",
+        "status": "measurement_level",
+        "summary": "The measured changes are comparable to reported photometric errors."
+      },
+      {
+        "title": "Standard feature summary",
+        "status": "computed",
+        "summary": "Descriptive light-curve features were computed from 13 usable r-band point(s) for comparison across objects."
+      },
+      {
+        "title": "Template-family probe",
+        "status": "limited",
+        "summary": "Template-family probing was limited because required context such as redshift is unavailable."
+      },
+      {
+        "title": "Cross-survey context",
+        "status": "not_requested",
+        "summary": "External catalog context was not requested for this case-file run."
+      }
+    ],
+    "what_argus_can_say": [
+      "The r-band detections are not well explained by a single smooth bump.",
+      "Standard descriptive features are available for comparison across objects.",
+      "No spectroscopic information is recorded in this case file."
+    ],
+    "what_argus_cannot_say": [
+      "Argus does not identify the object type.",
+      "Argus does not certify that the source is unusual.",
+      "Argus does not treat broker or catalog labels as ground truth.",
+      "Argus does not treat template-family probes as object identity."
+    ],
+    "recommended_next_checks": [
+      "Inspect residual structure visually.",
+      "Add verified redshift or context before interpreting template-family probes.",
+      "Run cross-survey context if network access and optional dependencies are available.",
+      "Inspect forced photometry around recent detections if available."
+    ],
+    "caveat": "This narrative summarizes evidence layers. It is not a physical classification."
+  },
+  "schema_version": "1.9"
+}
