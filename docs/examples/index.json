@@ -1,0 +1,42 @@
+{
+  "index_version": "1.0",
+  "generated_at": "2026-05-21T21:57:30+00:00",
+  "casefile_dir": "docs\\examples",
+  "case_count": 1,
+  "sort_order": "object_id",
+  "description": "Static case-file review index built from existing Argus case-file JSON. Entries are prepared for inspection and are not model-score rankings.",
+  "entries": [
+    {
+      "oid": "ZTF18abujsbq",
+      "source_date": "2026-05-20",
+      "generated_at": "2026-05-21T18:05:21+00:00",
+      "schema_version": "1.9",
+      "headline": "Complex light-curve behavior with limited physical interpretation",
+      "short_summary": "The object is not well explained by a single smooth bump. Its r-band detections show repeated or irregular variability texture, while template and catalog-context checks remain limited by available context.",
+      "detection_count": 147,
+      "non_detection_count": 674,
+      "filters_observed": [
+        "g",
+        "r"
+      ],
+      "time_span_days": 2840.1387963001616,
+      "classification_metadata": {
+        "kind": "external_metadata",
+        "value": null
+      },
+      "gaussian_comparator_status": "fitted_baseline",
+      "variability_texture_status": "computed",
+      "feature_summary_status": "computed",
+      "sncosmo_template_probe_status": "missing_required_context",
+      "cross_survey_context_status": "not_requested",
+      "top_recommended_next_check": "Cross-match position (RA=286.67280, Dec=9.63316) against SIMBAD and NED for any known counterpart.",
+      "links": {
+        "json": "ZTF18abujsbq/ZTF18abujsbq.casefile.json",
+        "markdown": "ZTF18abujsbq/ZTF18abujsbq.casefile.md",
+        "html": "ZTF18abujsbq/ZTF18abujsbq.casefile.html",
+        "light_curve_png": "ZTF18abujsbq/ZTF18abujsbq.lightcurve.png",
+        "residual_png": "ZTF18abujsbq/ZTF18abujsbq.residuals.png"
+      }
+    }
+  ]
+}

@@ -4,7 +4,7 @@ A small system that watches the sky for novel astronomical patterns that current
 transient pipelines miss. The current product spine is a readable, inspectable
 case-file evidence package for one object at a time — not another classifier.
 
-**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export + Phase 2K static figures + Phase 2L static HTML export + Phase 2M public example bundle + Phase 2N GitHub Pages demo page + Phase 2O Gaussian residual plots complete.**
+**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export + Phase 2K static figures + Phase 2L static HTML export + Phase 2M public example bundle + Phase 2N GitHub Pages demo page + Phase 2O Gaussian residual plots + Phase 2P static case-file index + Phase 2Q batch case-file generation complete.**
 
 The product vision and the strategic decision behind Phase 2B live in
 [`docs/ARGUS_VISION.md`](docs/ARGUS_VISION.md) and
@@ -25,13 +25,19 @@ A generated public demo bundle is available at
 This is a presentation/demo artifact for the case-file workflow, not a
 physical classification.
 
+A static example index is available as
+[`examples/index.html`](examples/index.html), with the structured version at
+[`examples/index.json`](examples/index.json). It is a review index over the
+public case-file bundle, not an anomaly-ranking model.
+
 ## Demo Page
 
 The static demo landing page lives at [`docs/index.html`](docs/index.html).
 GitHub Pages can serve it by setting the Pages source to the repository's
 `docs/` folder. The page duplicates the small ZTF18abujsbq demo artifacts under
 `docs/examples/` so the image and report links work with relative paths on
-GitHub Pages and when opened directly from disk.
+GitHub Pages and when opened directly from disk. The Pages-ready case-file
+index lives at [`docs/examples/index.html`](docs/examples/index.html).
 
 ## Architecture
 
@@ -289,6 +295,8 @@ data/casefiles/{oid}.casefile.md  # only when --write-markdown is passed
 data/casefiles/{oid}.casefile.html  # only when --write-html is passed
 data/casefiles/{oid}.lightcurve.png  # only when --write-figures is passed
 data/casefiles/{oid}.residuals.png   # only when point-level residual data exists
+data/casefiles/index.json            # case-file review index
+data/casefiles/index.html            # only when index HTML is requested
 ```
 
 Top-level fields:
@@ -457,6 +465,41 @@ light-curve summary, feature summary, comparison summary, model comparisons,
 cross-survey context, uncertainty notes, and recommended next checks. When
 `--write-figures` is used in the same run, the HTML links only to generated PNG
 files, so skipped residual plots do not create broken image links.
+
+## Case-File Index (Phase 2P)
+
+Generated case files can be summarized into a static review index with:
+
+```bash
+python -m scripts.build_casefile_index --casefile-dir data/casefiles --write-html
+```
+
+This writes `data/casefiles/index.json` and, with `--write-html`,
+`data/casefiles/index.html`. The index scans existing case-file JSON, extracts
+evidence headlines, data counts, comparator statuses, feature/context statuses,
+the top recommended next check, and links to available artifacts. It does not
+recompute metrics, query external services, or assign anomaly scores.
+
+The index is a mini-feed for objects prepared for inspection. It is not an
+anomaly-ranking model and does not classify objects.
+
+## Batch Case-File Generation (Phase 2Q)
+
+Multiple local objects from one pull date can be built into a review queue with:
+
+```bash
+python -m scripts.build_casefiles_batch --date 2026-05-20 --limit 10 --write-markdown --write-figures --write-html --write-index
+```
+
+The batch builder discovers deterministic sorted OIDs from local Parquet/raw
+data, or uses explicit IDs passed with `--oids`. It calls the existing
+single-object case-file builder for each object, can write Markdown, HTML, and
+figures for each case, and can refresh the static index at the end. Per-object
+failures are recorded in the summary so one difficult object does not hide the
+rest of the queue; `--fail-fast` is available when stopping early is preferable.
+
+This is still a case-file review queue. It does not add an anomaly-ranking model
+or decide object identity.
 
 ## Next
 
