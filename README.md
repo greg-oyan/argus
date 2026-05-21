@@ -4,7 +4,7 @@ A small system that watches the sky for novel astronomical patterns that current
 transient pipelines miss. The current product spine is a readable, inspectable
 case-file evidence package for one object at a time — not another classifier.
 
-**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export + Phase 2K static figures + Phase 2L static HTML export complete.**
+**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export + Phase 2K static figures + Phase 2L static HTML export + Phase 2M public example bundle + Phase 2N GitHub Pages demo page complete.**
 
 The product vision and the strategic decision behind Phase 2B live in
 [`docs/ARGUS_VISION.md`](docs/ARGUS_VISION.md) and
@@ -23,6 +23,14 @@ A generated public demo bundle is available at
 
 This is a presentation/demo artifact for the case-file workflow, not a
 physical classification.
+
+## Demo Page
+
+The static demo landing page lives at [`docs/index.html`](docs/index.html).
+GitHub Pages can serve it by setting the Pages source to the repository's
+`docs/` folder. The page duplicates the small ZTF18abujsbq demo artifacts under
+`docs/examples/` so the image and report links work with relative paths on
+GitHub Pages and when opened directly from disk.
 
 ## Architecture
 
@@ -366,7 +374,7 @@ absolute deviation, inter-percentile range, and maximum slope.
 
 These values strengthen the evidence layer by making objects easier to compare
 with each other. They are descriptive summaries only; they do not identify an
-object type or imply a discovery. If the dependency is unavailable,
+object type or assert a final finding. If the dependency is unavailable,
 `feature_summary.status` is `dependency_unavailable` and the case-file build
 continues.
 

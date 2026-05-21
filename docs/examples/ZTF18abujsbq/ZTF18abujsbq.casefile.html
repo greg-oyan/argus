@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Argus Case File: ZTF18abujsbq</title>
+<style>
+:root { color-scheme: light; }
+body {
+  margin: 0;
+  background: #f6f7f9;
+  color: #1f2933;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.55;
+}
+main { max-width: 1080px; margin: 0 auto; padding: 32px 20px 48px; }
+.hero {
+  background: #0f172a;
+  color: #ffffff;
+  border-radius: 10px;
+  padding: 28px 32px;
+  margin-bottom: 22px;
+}
+.hero p { margin: 6px 0 0; color: #dbe4ee; }
+h1, h2, h3, h4 { line-height: 1.2; }
+h1 { margin: 0; font-size: 2rem; }
+h2 { margin: 0 0 16px; font-size: 1.35rem; }
+h3 { margin: 20px 0 8px; font-size: 1.05rem; }
+h4 { margin: 18px 0 8px; }
+.section {
+  background: #ffffff;
+  border: 1px solid #d9e2ec;
+  border-radius: 10px;
+  padding: 22px 24px;
+  margin: 18px 0;
+}
+.headline { font-size: 1.1rem; font-weight: 700; margin-top: 0; }
+.lede { font-size: 1.02rem; color: #334e68; }
+.muted { color: #627d98; }
+.caveat {
+  color: #52606d;
+  background: #f0f4f8;
+  border-left: 4px solid #9fb3c8;
+  padding: 10px 12px;
+  border-radius: 6px;
+}
+.pill {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 2px 8px;
+  margin-left: 6px;
+  background: #e0f2fe;
+  color: #075985;
+  font-size: 0.85rem;
+  font-weight: 650;
+}
+.facts {
+  display: grid;
+  grid-template-columns: minmax(160px, 260px) 1fr;
+  gap: 8px 18px;
+}
+.facts dt { font-weight: 700; color: #334e68; }
+.facts dd { margin: 0; }
+.kv { width: 100%; border-collapse: collapse; margin: 10px 0 16px; }
+.kv th, .kv td {
+  border-bottom: 1px solid #e4e7eb;
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+.kv th { color: #334e68; background: #f8fafc; }
+.evidence-list { padding-left: 20px; }
+.evidence-item { margin-bottom: 12px; }
+.evidence-item p { margin: 6px 0 0; }
+.comparison {
+  border: 1px solid #e4e7eb;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin: 14px 0;
+}
+.figure-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+}
+.figure-card { margin: 0; }
+.figure-card img {
+  width: 100%;
+  height: auto;
+  border: 1px solid #d9e2ec;
+  border-radius: 8px;
+  background: #fff;
+}
+.figure-card figcaption { margin-top: 6px; color: #52606d; font-size: 0.95rem; }
+footer { color: #627d98; font-size: 0.9rem; margin-top: 28px; text-align: center; }
+</style>
+</head>
+<body>
+<main>
+<header class="hero">
+<h1>Argus Case File: ZTF18abujsbq</h1>
+<p>Static evidence report generated from the local case-file JSON.</p>
+</header>
+<section class="section">
+<h2>Evidence Narrative</h2>
+<p class="headline">Complex light-curve behavior with limited physical interpretation</p>
+<p class="lede">The object is not well explained by a single smooth bump. Its r-band detections show repeated or irregular variability texture, while template and catalog-context checks remain limited by available context.</p>
+<h3>Evidence Sections</h3>
+<ul class="evidence-list">
+<li class="evidence-item"><strong>Baseline transient-shape check</strong> <span class="pill">not_well_fit</span><p>The Gaussian bump comparator fit the detections but left substantial residual structure (reduced chi-squared about 2.4).</p></li>
+<li class="evidence-item"><strong>Variability texture</strong> <span class="pill">complex_variability</span><p>The light curve shows repeated or irregular directional changes (8 smoothed turn(s)) beyond a simple smooth event shape.</p></li>
+<li class="evidence-item"><strong>Standard feature summary</strong> <span class="pill">computed</span><p>Descriptive light-curve features were computed from 145 usable r-band point(s) for comparison across objects.</p></li>
+<li class="evidence-item"><strong>Template-family probe</strong> <span class="pill">limited</span><p>Template-family probing was limited because required context such as redshift is unavailable.</p></li>
+<li class="evidence-item"><strong>Cross-survey context</strong> <span class="pill">not_requested</span><p>External catalog context was not requested for this case-file run.</p></li>
+</ul>
+<h3>What Argus Can Say</h3>
+<ul>
+<li>The r-band detections are not well explained by a single smooth bump.</li>
+<li>The r-band detections show repeated or irregular variability texture.</li>
+<li>Standard descriptive features are available for comparison across objects.</li>
+<li>No spectroscopic information is recorded in this case file.</li>
+</ul>
+<h3>What Argus Cannot Say</h3>
+<ul>
+<li>Argus does not identify the object type.</li>
+<li>Argus does not certify that the source is unusual.</li>
+<li>Argus does not treat broker or catalog labels as ground truth.</li>
+<li>Argus does not treat template-family probes as object identity.</li>
+</ul>
+<h3>Recommended Next Checks</h3>
+<ul>
+<li>Inspect residual structure visually.</li>
+<li>Compare against known repeated-variability behavior.</li>
+<li>Add verified redshift or context before interpreting template-family probes.</li>
+<li>Run cross-survey context if network access and optional dependencies are available.</li>
+<li>Inspect forced photometry around recent detections if available.</li>
+</ul>
+<p class="caveat"><strong>Caveat:</strong> This narrative summarizes evidence layers. It is not a physical classification.</p>
+</section>
+<section class="section">
+<h2>Visual Summary</h2>
+<div class="figure-grid">
+<figure class="figure-card"><img src="ZTF18abujsbq.lightcurve.png" alt="Observed light curve"><figcaption>Observed light curve</figcaption></figure>
+</div>
+</section>
+<section class="section">
+<h2>Object Summary</h2>
+<dl class="facts">
+<dt>Object ID</dt><dd>ZTF18abujsbq</dd>
+<dt>Source date</dt><dd>2026-05-20</dd>
+<dt>Coordinates</dt><dd>RA=286.673, Dec=9.63316</dd>
+<dt>Detections</dt><dd>147</dd>
+<dt>Non-detections</dt><dd>674</dd>
+<dt>Filters observed</dt><dd>g, r</dd>
+<dt>First MJD</dt><dd>58340.3</dd>
+<dt>Last MJD</dt><dd>61180.4</dd>
+<dt>Time span days</dt><dd>2840.14</dd>
+<dt>Schema version</dt><dd>1.8</dd>
+</dl>
+</section>
+<section class="section">
+<h2>Classification Metadata</h2>
+<p class="muted">No broker or catalog classification metadata is attached.</p><p class="caveat">Any external labels shown here are metadata only, not Argus conclusions.</p>
+</section>
+<section class="section">
+<h2>Light-Curve Summary</h2>
+<dl class="facts">
+<dt>Detections</dt><dd>147</dd>
+<dt>Non-detections</dt><dd>674</dd>
+<dt>Filters observed</dt><dd>g, r</dd>
+<dt>First MJD</dt><dd>58340.3</dd>
+<dt>Last MJD</dt><dd>61180.4</dd>
+<dt>Time span days</dt><dd>2840.14</dd>
+<dt>Most recent detection MJD</dt><dd>61180.4</dd>
+<dt>Longest detection gap days</dt><dd>938.291</dd>
+</dl><h3>Per-Filter Summary</h3><table class="kv"><thead><tr><th>Filter</th><th>Detections</th><th>Non-detections</th><th>Mag min</th><th>Mag max</th><th>Delta mag</th></tr></thead><tbody><tr><td>g</td><td>1</td><td>130</td><td>21.0457</td><td>21.0457</td><td>0</td></tr>
+<tr><td>r</td><td>146</td><td>526</td><td>19.2748</td><td>20.3721</td><td>1.0973</td></tr></tbody></table>
+</section>
+<section class="section">
+<h2>Feature Summary</h2>
+<dl class="facts">
+<dt>Source</dt><dd>light-curve</dd>
+<dt>Band</dt><dd>r</dd>
+<dt>Status</dt><dd>computed</dd>
+<dt>Usable points</dt><dd>145</dd>
+</dl><h3>Feature Values</h3><table class="kv"><tbody>
+<tr><th>amplitude</th><td>0.54865</td></tr>
+<tr><th>inter_percentile_range_25</th><td>0.351097</td></tr>
+<tr><th>maximum_slope</th><td>502.942</td></tr>
+<tr><th>median</th><td>19.4947</td></tr>
+<tr><th>median_absolute_deviation</th><td>0.124377</td></tr>
+<tr><th>standard_deviation</th><td>0.255895</td></tr>
+</tbody></table><dl class="facts">
+<dt>Interpretation</dt><dd>Descriptive light-curve features were computed for r-band detections using the light-curve package. The r-band observed brightness range is wide (1.10 mag). Standardized scatter is high for this detection set (0.26 mag). These features support comparison across objects.</dd>
+<dt>Caveat</dt><dd>Feature values are descriptive summaries only and do not identify the object type.</dd>
+</dl>
+</section>
+<section class="section">
+<h2>Comparison Summary</h2>
+<p class="headline">Not well explained by a single smooth bump</p>
+<p>The Gaussian bump comparator fit, but reduced chi-squared is 2.4, so the single smooth bump captures only part of the point-to-point behavior. The variability texture comparator found repeated or irregular directional changes (8 smoothed turn(s)) and the scatter is larger than typical reported errors. Together, these suggest the r-band light curve is more complex than a single clean one-bump event. Coverage appears sparse or uneven, so cadence may affect the comparison.</p>
+<dl class="facts">
+<dt>Caveat</dt><dd>This is not a physical classification. It does not identify the object type, physical cause, or special status.</dd>
+<dt>Recommended next check</dt><dd>Inspect the residual structure and compare against known repeated-variability behavior.</dd>
+</dl>
+</section>
+<section class="section">
+<h2>Model Comparisons</h2>
+<article class="comparison"><h3>Gaussian bump (r-band)</h3><dl class="facts">
+<dt>Model type</dt><dd>gaussian_bump</dd>
+<dt>Filter used</dt><dd>r</dd>
+<dt>Status</dt><dd>fitted_baseline</dd>
+</dl><h4>Parameters</h4><table class="kv"><tbody>
+<tr><th>amplitude_mag</th><td>0.357512</td></tr>
+<tr><th>baseline_mag</th><td>19.5076</td></tr>
+<tr><th>peak_mjd</th><td>59702.1</td></tr>
+<tr><th>sigma_days</th><td>205.354</td></tr>
+</tbody></table><h4>Fit Metrics</h4><table class="kv"><tbody>
+<tr><th>largest_abs_residual</th><td>0.813989</td></tr>
+<tr><th>largest_residual_mjd</th><td>60108.4</td></tr>
+<tr><th>mae</th><td>0.190765</td></tr>
+<tr><th>n_points</th><td>146</td></tr>
+<tr><th>reduced_chi2</th><td>2.35454</td></tr>
+<tr><th>residual_mean</th><td>0.0715583</td></tr>
+<tr><th>residual_std</th><td>0.251967</td></tr>
+<tr><th>rmse</th><td>0.261932</td></tr>
+</tbody></table><h4>Residual Summary</h4><ul>
+<li>Coverage is highly uneven (largest gap 938 days vs median gap 0.00 days); fit quality is limited by sparse coverage.</li>
+<li>Residual scatter (σ ≈ 0.25 mag) is comparable to the fitted bump amplitude (0.36 mag) — the data is not well described by a single bump.</li>
+</ul><dl class="facts">
+<dt>Interpretation</dt><dd>A single Gaussian bump was fit to the r-band detections. RMSE = 0.26 mag, reduced χ² ≈ 2.4 — the bump shape captures the average behavior but not the point-to-point variability. See residual_summary for where the fit fails.</dd>
+</dl></article>
+<article class="comparison"><h3>Variability texture (r-band)</h3><dl class="facts">
+<dt>Model type</dt><dd>variability_texture</dd>
+<dt>Filter used</dt><dd>r</dd>
+<dt>Status</dt><dd>computed</dd>
+</dl><h4>Parameters</h4><p class="muted">None recorded.</p><h4>Fit Metrics</h4><table class="kv"><tbody>
+<tr><th>behavior_hint</th><td>repeated_or_irregular</td></tr>
+<tr><th>local_extrema_count_after_smoothing</th><td>8</td></tr>
+<tr><th>mag_max</th><td>20.3721</td></tr>
+<tr><th>mag_median</th><td>19.4998</td></tr>
+<tr><th>mag_min</th><td>19.2748</td></tr>
+<tr><th>median_photometric_error_mag</th><td>0.12814</td></tr>
+<tr><th>n_points</th><td>146</td></tr>
+<tr><th>observed_mag_range</th><td>1.0973</td></tr>
+<tr><th>range_to_error_ratio</th><td>8.56327</td></tr>
+<tr><th>robust_scatter_mag</th><td>0.192464</td></tr>
+<tr><th>scatter_to_error_ratio</th><td>1.50198</td></tr>
+<tr><th>sign_change_tolerance_mag</th><td>0.0640701</td></tr>
+<tr><th>smoothed_sign_changes</th><td>8</td></tr>
+<tr><th>smoothing_window_points</th><td>5</td></tr>
+<tr><th>time_span_days</th><td>2810.29</td></tr>
+<tr><th>variability_materially_larger_than_errors</th><td>True</td></tr>
+</tbody></table><h4>Residual Summary</h4><ul>
+<li>Observed r-band range: 1.10 mag; robust scatter: 0.19 mag.</li>
+<li>After 5-point smoothing, counted 8 local extrema/sign change(s).</li>
+<li>Robust scatter is materially larger than the reported errors.</li>
+</ul><dl class="facts">
+<dt>Interpretation</dt><dd>The r-band detections (146 point(s)) span 1.10 mag with robust scatter 0.19 mag. After 5-point smoothing, 8 local extrema/sign change(s) were counted. The scatter is materially larger than the reported photometric errors. The smoothed sequence has multiple meaningful turns, which suggests repeated or irregular brightness changes more than one smooth bump. This is descriptive only: it does not identify an object type, physical cause, or special status.</dd>
+</dl></article>
+<article class="comparison"><h3>sncosmo template probe</h3><dl class="facts">
+<dt>Model type</dt><dd>sncosmo_template_probe</dd>
+<dt>Filter used</dt><dd>g,r</dd>
+<dt>Status</dt><dd>missing_required_context</dd>
+</dl><h4>Parameters</h4><p class="muted">None recorded.</p><h4>Fit Metrics</h4><table class="kv"><tbody>
+<tr><th>bands_used</th><td>[&quot;g&quot;, &quot;r&quot;]</td></tr>
+<tr><th>magnitude_system</th><td>ab</td></tr>
+<tr><th>missing_context</th><td>[&quot;redshift&quot;]</td></tr>
+<tr><th>model_family</th><td>sncosmo_template_family</td></tr>
+<tr><th>n_points</th><td>147</td></tr>
+<tr><th>template_name</th><td>hsiao</td></tr>
+<tr><th>zeropoint</th><td>25</td></tr>
+</tbody></table><h4>Residual Summary</h4><ul>
+<li>Redshift is unavailable in the local case-file context.</li>
+</ul><dl class="facts">
+<dt>Interpretation</dt><dd>sncosmo template fitting was not attempted because redshift is unavailable. Argus does not invent redshift for template-family comparisons.</dd>
+</dl></article>
+</section>
+<section class="section">
+<h2>Cross-Survey Context</h2>
+<dl class="facts">
+<dt>Status</dt><dd>not_requested</dd>
+<dt>Coordinates</dt><dd>Not available.</dd>
+<dt>Search radius arcsec</dt><dd>Not available.</dd>
+</dl><h3>Sources</h3><p class="muted">No catalog sources recorded.</p><dl class="facts">
+<dt>Interpretation</dt><dd>Cross-survey catalog context was not requested for this run.</dd>
+<dt>Caveat</dt><dd>No external catalog query was performed.</dd>
+</dl>
+</section>
+<section class="section">
+<h2>Uncertainty and Recommended Next Checks</h2>
+<h3>Evidence Notes</h3><ul>
+<li>Object has 147 rb-filtered detection(s) and 674 non-detection(s) on file.</li>
+<li>Filters observed: g, r.</li>
+<li>Coverage spans MJD 58340.30 to 61180.44 (2840 days).</li>
+<li>Most recent detection: MJD 61180.44.</li>
+<li>Longest gap between consecutive detections: 938 days.</li>
+<li>In g-band: 1 detection(s), magnitude 21.05–21.05 (Δm = 0.00); 130 non-detection(s).</li>
+<li>In r-band: 146 detection(s), magnitude 19.27–20.37 (Δm = 1.10); 526 non-detection(s).</li>
+<li>No external classification label is attached to this object in local data.</li>
+</ul><h3>Uncertainty Notes</h3><ul>
+<li>No SIMBAD/NED/Gaia cross-match has been performed in Phase 2B.</li>
+<li>No spectroscopic information is on file.</li>
+<li>No forced-photometry follow-up has been requested.</li>
+<li>Candidate explanations above are placeholders, not fits, so mismatch magnitudes and goodness-of-fit values are not yet available.</li>
+<li>No external classification label is present in local data.</li>
+</ul><h3>Recommended Next Checks</h3><ul>
+<li>Cross-match position (RA=286.67280, Dec=9.63316) against SIMBAD and NED for any known counterpart.</li>
+<li>Search PanSTARRS at this position for a candidate host galaxy and record offset from any nearby extended source.</li>
+<li>Pull ZTF forced photometry in a ±90-day window around the most recent detection (MJD 61180.44).</li>
+<li>Replace the Phase 2C Gaussian-bump baseline with physical templates (Type Ia SN light curve, AGN damped random walk, stellar-flare profile) and add their residuals to model_comparisons.</li>
+<li>If the source is still active (last detection within ~60 days), request follow-up spectroscopy.</li>
+</ul>
+</section>
+<footer>Schema version 1.8 · Generated 2026-05-21T17:43:18+00:00</footer>
+</main>
+</body>
+</html>

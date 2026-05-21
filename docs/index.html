@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Argus Demo</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f8fb;
+      --panel: #ffffff;
+      --text: #1b2430;
+      --muted: #5e6a78;
+      --line: #d8dee8;
+      --accent: #1f6feb;
+      --accent-dark: #174ea6;
+      --chip: #eef4ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    main {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 48px 20px 56px;
+    }
+
+    header {
+      padding: 56px 0 32px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.4rem, 7vw, 5rem);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      font-size: 1.45rem;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0 0 16px;
+    }
+
+    a {
+      color: var(--accent-dark);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    .lede {
+      max-width: 760px;
+      margin-top: 18px;
+      font-size: 1.25rem;
+      color: var(--muted);
+    }
+
+    .section {
+      padding: 32px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      min-height: 42px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: #ffffff;
+      font-weight: 650;
+      text-decoration: none;
+    }
+
+    .button.secondary {
+      background: var(--panel);
+      color: var(--accent-dark);
+    }
+
+    figure {
+      margin: 0;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    figcaption {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    .flow li {
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: var(--chip);
+      color: #24476f;
+      font-size: 0.92rem;
+      font-weight: 650;
+    }
+
+    .plain-list {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .plain-list li {
+      margin: 6px 0;
+    }
+
+    .caveat {
+      background: #fff8e8;
+      border-color: #ead18f;
+    }
+
+    footer {
+      padding-top: 28px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 760px) {
+      main {
+        padding: 28px 16px 40px;
+      }
+
+      header {
+        padding-top: 32px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Argus</h1>
+      <p class="lede">A case-file-first system for finding astronomical objects worth human attention.</p>
+      <p>Argus turns real ZTF/ALeRCE light-curve data into readable evidence packages. It preserves broker classifications as metadata, runs cautious comparison layers, and explains what the evidence can and cannot support.</p>
+      <div class="actions" aria-label="Primary links">
+        <a class="button" href="examples/ZTF18abujsbq/ZTF18abujsbq.casefile.html">Open HTML case file</a>
+        <a class="button secondary" href="examples/ZTF18abujsbq/ZTF18abujsbq.casefile.md">Read Markdown</a>
+        <a class="button secondary" href="examples/ZTF18abujsbq/ZTF18abujsbq.casefile.json">View JSON</a>
+        <a class="button secondary" href="https://github.com/greg-oyan/argus">GitHub repo</a>
+      </div>
+    </header>
+
+    <section class="section" aria-labelledby="visual-summary">
+      <h2 id="visual-summary">Canonical Example: ZTF18abujsbq</h2>
+      <figure>
+        <img src="examples/ZTF18abujsbq/ZTF18abujsbq.lightcurve.png" alt="Observed ZTF light curve for ZTF18abujsbq">
+        <figcaption>Observed light-curve figure from the public example case-file bundle.</figcaption>
+      </figure>
+    </section>
+
+    <section class="section" aria-labelledby="example-demonstrates">
+      <h2 id="example-demonstrates">What The Example Shows</h2>
+      <div class="grid">
+        <article class="panel">
+          <h3>Evidence Narrative</h3>
+          <p>A short, readable synthesis of the separate evidence layers and their limits.</p>
+        </article>
+        <article class="panel">
+          <h3>Descriptive Features</h3>
+          <p>Standard light-curve summary values that support comparison across objects.</p>
+        </article>
+        <article class="panel">
+          <h3>Comparators</h3>
+          <p>Phenomenological checks that make simple model fit and model failure easier to inspect.</p>
+        </article>
+        <article class="panel">
+          <h3>Optional Context</h3>
+          <p>Catalog context is handled as external metadata and is kept separate from Argus conclusions.</p>
+        </article>
+        <article class="panel">
+          <h3>Uncertainty</h3>
+          <p>The case file records caveats, sparse-context limits, and recommended next checks.</p>
+        </article>
+        <article class="panel">
+          <h3>Portable Exports</h3>
+          <p>The same case can be inspected as JSON, Markdown, HTML, and a static figure.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="architecture-snapshot">
+      <h2 id="architecture-snapshot">Architecture Snapshot</h2>
+      <ul class="flow" aria-label="Argus pipeline steps">
+        <li>Ingestion</li>
+        <li>Preprocessing</li>
+        <li>Case file</li>
+        <li>Comparators</li>
+        <li>Features</li>
+        <li>Context</li>
+        <li>Evidence narrative</li>
+        <li>Exports</li>
+      </ul>
+    </section>
+
+    <section class="section" aria-labelledby="links">
+      <h2 id="links">Example Links</h2>
+      <ul class="plain-list">
+        <li><a href="examples/ZTF18abujsbq/ZTF18abujsbq.casefile.html">Open the browser-readable case file</a></li>
+        <li><a href="examples/ZTF18abujsbq/ZTF18abujsbq.casefile.md">Read the Markdown case file</a></li>
+        <li><a href="examples/ZTF18abujsbq/ZTF18abujsbq.casefile.json">Inspect the structured JSON case file</a></li>
+        <li><a href="examples/ZTF18abujsbq/ZTF18abujsbq.lightcurve.png">Open the light-curve PNG</a></li>
+        <li><a href="https://github.com/greg-oyan/argus">View the GitHub repository</a></li>
+      </ul>
+    </section>
+
+    <section class="section" aria-labelledby="caveat">
+      <div class="panel caveat">
+        <h2 id="caveat">Caveat</h2>
+        <p>Argus is a case-file-first astronomy system, not another classifier. This example does not decide the object's physical identity or assert a final finding. It organizes evidence for further review.</p>
+      </div>
+    </section>
+
+    <footer>
+      <p>This static page has no build step, external stylesheets, external fonts, or JavaScript. It can be opened from disk or served from the repository's <code>docs/</code> folder with GitHub Pages.</p>
+    </footer>
+  </main>
+</body>
+</html>
