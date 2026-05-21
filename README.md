@@ -213,6 +213,13 @@ The pipeline is deterministic given the broker's state:
 python -m pytest -q
 ```
 
+## AI Coding Agent Instructions
+
+Repo-specific instructions for AI coding agents live in [`AGENTS.md`](AGENTS.md)
+and [`CLAUDE.md`](CLAUDE.md). They summarize Argus's case-file-first
+architecture, cautious scientific language rules, dependency/network limits,
+data boundaries, testing expectations, and commit/push workflow.
+
 ## Repository layout
 
 ```
