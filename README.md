@@ -11,6 +11,19 @@ The product vision and the strategic decision behind Phase 2B live in
 [`docs/PHASE_2B_DECISION.md`](docs/PHASE_2B_DECISION.md).
 Read them first if you're new to the repo.
 
+## Example Case File
+
+A generated public demo bundle is available at
+[`examples/ZTF18abujsbq/`](examples/ZTF18abujsbq/). It includes:
+
+- [HTML report](examples/ZTF18abujsbq/ZTF18abujsbq.casefile.html)
+- [Markdown report](examples/ZTF18abujsbq/ZTF18abujsbq.casefile.md)
+- [light-curve figure](examples/ZTF18abujsbq/ZTF18abujsbq.lightcurve.png)
+- [structured JSON](examples/ZTF18abujsbq/ZTF18abujsbq.casefile.json)
+
+This is a presentation/demo artifact for the case-file workflow, not a
+physical classification.
+
 ## Architecture
 
 Argus is currently a case-file-first system. The near-term product is not a
