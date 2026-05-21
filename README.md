@@ -1,8 +1,8 @@
 # Argus
 
 A small system that watches the sky for novel astronomical patterns that current
-transient pipelines miss. The goal is a ranked, human-readable feed of "things
-worth an astronomer's attention" — not another classifier.
+transient pipelines miss. The current product spine is a readable, inspectable
+case-file evidence package for one object at a time — not another classifier.
 
 **Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export + Phase 2K static figures complete.**
 
@@ -11,17 +11,46 @@ The product vision and the strategic decision behind Phase 2B live in
 [`docs/PHASE_2B_DECISION.md`](docs/PHASE_2B_DECISION.md).
 Read them first if you're new to the repo.
 
-## Architecture (target)
+## Architecture
 
-1. **Ingestion** — pull live transient alerts from the Zwicky Transient Facility
-   via the [ALeRCE](https://alerce.online) broker. *(this phase)*
-2. **Detection** — convolutional autoencoder on light curves; flag
-   reconstruction-error outliers.
-3. **Validation** — agent that cross-references flagged anomalies against SIMBAD
-   and NED to filter known objects.
-4. **Context** — agent that writes a plain-English explanation of why each
-   surviving anomaly is weird.
-5. **Output** — ranked feed.
+Argus is currently a case-file-first system. The near-term product is not a
+black-box anomaly score; it is a readable, inspectable evidence package for one
+astronomical object at a time.
+
+Current pipeline:
+
+1. **Ingestion** — pull recent ZTF objects and light curves from ALeRCE; write
+   raw JSON first and flattened Parquet second.
+2. **Preprocessing** — convert local light-curve data into deterministic tensors
+   and manifests for later modeling, while keeping classifier metadata out of
+   the model input.
+3. **Case-file assembly** — build a per-object JSON document from local data
+   that separates observed evidence, external metadata, candidate explanations,
+   uncertainty, and recommended next checks.
+4. **Phenomenological comparison** — run simple offline comparators such as the
+   Gaussian bump and variability-texture checks to make model fit and model
+   failure legible.
+5. **Feature extraction** — compute standardized descriptive light-curve
+   features for cross-object comparison without turning those features into
+   classifications.
+6. **Optional science/context probes** — lazily use optional dependencies such
+   as `sncosmo` and `astroquery`/SIMBAD for template-family probing and catalog
+   context. These are external evidence layers, not Argus classifications.
+7. **Evidence synthesis** — assemble comparison summaries and an evidence
+   narrative that explains what Argus can say, what it cannot say, and what
+   should be checked next.
+8. **Presentation exports** — write JSON, optional Markdown reports, and
+   optional static figures so a case file can be inspected outside the codebase.
+
+Future work:
+
+- Add richer physical/template comparisons when required context is available.
+- Add more catalog/context sources behind the same optional, non-blocking pattern.
+- Add batch comparison across objects.
+- Add an autoencoder or other anomaly-ranking model only after the case-file
+  layer has clarified what signal is worth ranking.
+- Add a lightweight viewer/frontend once the JSON/Markdown/figure artifacts are
+  stable.
 
 ## Why ALeRCE for ingestion
 
@@ -121,9 +150,9 @@ data/tensors/YYYY-MM-DD.csv
   median_g_fallback, median_r_fallback
 ```
 
-Classification metadata is intentionally dropped at preprocessing — the
-autoencoder must be classifier-blind. It can be rejoined by `oid` downstream
-(audit, validation agent).
+Classification metadata is intentionally dropped at preprocessing. Any future
+ranking or modeling layer must be classifier-blind. Metadata can be rejoined by
+`oid` downstream for audit and case-file context.
 
 Before writing, sanity checks fail loudly on: any NaN/inf in `X`, duplicate
 oids, length mismatches across parallel arrays, or `mask=0` bins with nonzero
