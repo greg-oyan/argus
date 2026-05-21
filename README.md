@@ -4,7 +4,7 @@ A small system that watches the sky for novel astronomical patterns that current
 transient pipelines miss. The current product spine is a readable, inspectable
 case-file evidence package for one object at a time — not another classifier.
 
-**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export + Phase 2K static figures complete.**
+**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export + Phase 2K static figures + Phase 2L static HTML export complete.**
 
 The product vision and the strategic decision behind Phase 2B live in
 [`docs/ARGUS_VISION.md`](docs/ARGUS_VISION.md) and
@@ -39,7 +39,7 @@ Current pipeline:
 7. **Evidence synthesis** — assemble comparison summaries and an evidence
    narrative that explains what Argus can say, what it cannot say, and what
    should be checked next.
-8. **Presentation exports** — write JSON, optional Markdown reports, and
+8. **Presentation exports** — write JSON, optional Markdown/HTML reports, and
    optional static figures so a case file can be inspected outside the codebase.
 
 Future work:
@@ -206,6 +206,7 @@ src/argus/
 │   ├── schema.py                # CaseFile + summaries + comparator dataclasses
 │   ├── summarize.py             # pure: evidence, candidates, uncertainty, next checks
 │   ├── figures.py               # optional static PNG figures for case files
+│   ├── html.py                  # static browser-readable case-file reports
 │   ├── markdown.py              # presentation-ready Markdown case-file export
 │   └── build.py                 # orchestration: load local files → CaseFile → JSON
 ├── context/
@@ -242,8 +243,9 @@ human reading and any later UI layer.
 ```bash
 python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq
 python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq --write-markdown
+python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq --write-html
 python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq --write-figures
-python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq --write-markdown --write-figures
+python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq --write-markdown --write-figures --write-html
 ```
 
 Default case-file builds stay offline. To opt in to the Phase 2H SIMBAD lookup,
@@ -262,6 +264,7 @@ This reads only local data (`data/lightcurves/{date}.parquet`,
 ```
 data/casefiles/{oid}.json
 data/casefiles/{oid}.casefile.md  # only when --write-markdown is passed
+data/casefiles/{oid}.casefile.html  # only when --write-html is passed
 data/casefiles/{oid}.lightcurve.png  # only when --write-figures is passed
 data/casefiles/{oid}.residuals.png   # only when point-level residual data exists
 ```
@@ -413,6 +416,21 @@ also writes `{oid}.residuals.png`. Current case files do not store point-level
 residual arrays, so residual plots are skipped gracefully rather than inferred.
 When `--write-markdown` and `--write-figures` are used together, the Markdown
 report includes image links only for generated files, avoiding broken links.
+
+## Static HTML Export (Phase 2L)
+
+Case files can also be exported as static, browser-readable HTML with
+`--write-html`. The report is written as
+`data/casefiles/{oid}.casefile.html` and can be opened directly from disk. It
+uses inline CSS only: no JavaScript, external stylesheets, fonts, CDN assets,
+web server, or network access.
+
+The HTML report renders the same evidence layers as the JSON and Markdown
+artifacts: evidence narrative, optional visual summary, object metadata,
+light-curve summary, feature summary, comparison summary, model comparisons,
+cross-survey context, uncertainty notes, and recommended next checks. When
+`--write-figures` is used in the same run, the HTML links only to generated PNG
+files, so skipped residual plots do not create broken image links.
 
 ## Next
 

@@ -3,6 +3,7 @@
 Usage:
     python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq
     python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq --write-markdown
+    python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq --write-html
     python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq --write-figures
     python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq --include-cross-survey-context
 """
@@ -13,6 +14,7 @@ import sys
 
 from argus.casefile.build import build_casefile, write_casefile
 from argus.casefile.figures import write_casefile_figures
+from argus.casefile.html import write_casefile_html
 from argus.casefile.markdown import write_casefile_markdown
 from argus.context.cross_survey import DEFAULT_CROSS_SURVEY_RADIUS_ARCSEC
 
@@ -38,6 +40,11 @@ def main(argv: list[str] | None = None) -> int:
         "--write-markdown",
         action="store_true",
         help="Write a presentation-ready Markdown report next to the JSON case file.",
+    )
+    p.add_argument(
+        "--write-html",
+        action="store_true",
+        help="Write a static HTML report next to the JSON case file.",
     )
     p.add_argument(
         "--write-figures",
@@ -71,6 +78,14 @@ def main(argv: list[str] | None = None) -> int:
         )
         if args.write_markdown else None
     )
+    html_path = (
+        write_casefile_html(
+            case,
+            json_path=path,
+            figure_paths=figure_outputs.paths() if figure_outputs is not None else None,
+        )
+        if args.write_html else None
+    )
     log.info("oid: %s", case.oid)
     log.info("data sources used: %s", ", ".join(case.available_data_sources) or "(none)")
     log.info(
@@ -93,6 +108,8 @@ def main(argv: list[str] | None = None) -> int:
             log.info("skipped %s figure: %s", name, reason)
     if markdown_path is not None:
         log.info("wrote %s", markdown_path)
+    if html_path is not None:
+        log.info("wrote %s", html_path)
     return 0
 
 
