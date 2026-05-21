@@ -78,12 +78,26 @@ def _figure_alt_text(path: Path) -> str:
     return "Case-file figure"
 
 
+def _figure_caption(path: Path) -> str | None:
+    name = path.name.lower()
+    if "residual" in name:
+        return (
+            "Gaussian comparator residuals show where the simple bump model "
+            "under- or over-predicts the observed magnitudes."
+        )
+    return None
+
+
 def _render_visual_summary(figure_paths: list[Path] | None) -> list[str]:
     if not figure_paths:
         return []
     lines: list[str] = []
     for path in figure_paths:
         lines.append(f"![{_figure_alt_text(path)}]({path.name})")
+        caption = _figure_caption(path)
+        if caption:
+            lines.append("")
+            lines.append(caption)
         lines.append("")
     return _section("Visual Summary", lines)
 

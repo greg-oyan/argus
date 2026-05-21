@@ -202,14 +202,18 @@ def test_cli_does_not_write_html_without_flag(tmp_path, monkeypatch):
 
 def test_html_references_figures_only_when_present(tmp_path):
     present = tmp_path / "ZTFhtml.lightcurve.png"
-    missing = tmp_path / "ZTFhtml.residuals.png"
+    residual = tmp_path / "ZTFhtml.residuals.png"
+    missing = tmp_path / "ZTFhtml.extra.png"
     present.write_bytes(b"\x89PNG\r\n\x1a\n")
+    residual.write_bytes(b"\x89PNG\r\n\x1a\n")
 
-    html = render_casefile_html(_full_case(), figure_paths=[present, missing])
+    html = render_casefile_html(_full_case(), figure_paths=[present, residual, missing])
 
     assert "Visual Summary" in html
     assert 'src="ZTFhtml.lightcurve.png"' in html
-    assert "ZTFhtml.residuals.png" not in html
+    assert 'src="ZTFhtml.residuals.png"' in html
+    assert "under- or over-predicts" in html
+    assert "ZTFhtml.extra.png" not in html
 
 
 def test_cli_html_references_generated_figures(tmp_path, monkeypatch):

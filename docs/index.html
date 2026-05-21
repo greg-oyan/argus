@@ -87,6 +87,12 @@
       gap: 16px;
     }
 
+    .visual-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
     .panel {
       background: var(--panel);
       border: 1px solid var(--line);
@@ -189,6 +195,10 @@
         grid-template-columns: 1fr;
       }
 
+      .visual-grid {
+        grid-template-columns: 1fr;
+      }
+
       .button {
         width: 100%;
         justify-content: center;
@@ -212,10 +222,16 @@
 
     <section class="section" aria-labelledby="visual-summary">
       <h2 id="visual-summary">Canonical Example: ZTF18abujsbq</h2>
-      <figure>
-        <img src="examples/ZTF18abujsbq/ZTF18abujsbq.lightcurve.png" alt="Observed ZTF light curve for ZTF18abujsbq">
-        <figcaption>Observed light-curve figure from the public example case-file bundle.</figcaption>
-      </figure>
+      <div class="visual-grid">
+        <figure>
+          <img src="examples/ZTF18abujsbq/ZTF18abujsbq.lightcurve.png" alt="Observed ZTF light curve for ZTF18abujsbq">
+          <figcaption>Observed light-curve figure from the public example case-file bundle.</figcaption>
+        </figure>
+        <figure>
+          <img src="examples/ZTF18abujsbq/ZTF18abujsbq.residuals.png" alt="Gaussian comparator residuals for ZTF18abujsbq">
+          <figcaption>Gaussian comparator residuals show where the simple bump model under- or over-predicts observed magnitudes.</figcaption>
+        </figure>
+      </div>
     </section>
 
     <section class="section" aria-labelledby="example-demonstrates">
@@ -269,6 +285,7 @@
         <li><a href="examples/ZTF18abujsbq/ZTF18abujsbq.casefile.md">Read the Markdown case file</a></li>
         <li><a href="examples/ZTF18abujsbq/ZTF18abujsbq.casefile.json">Inspect the structured JSON case file</a></li>
         <li><a href="examples/ZTF18abujsbq/ZTF18abujsbq.lightcurve.png">Open the light-curve PNG</a></li>
+        <li><a href="examples/ZTF18abujsbq/ZTF18abujsbq.residuals.png">Open the Gaussian residual PNG</a></li>
         <li><a href="https://github.com/greg-oyan/argus">View the GitHub repository</a></li>
       </ul>
     </section>

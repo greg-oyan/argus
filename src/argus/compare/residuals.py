@@ -50,6 +50,46 @@ def compute_residuals(
     return out
 
 
+def build_residual_points(
+    mjd: np.ndarray,
+    observed: np.ndarray,
+    predicted: np.ndarray,
+    errors: Optional[np.ndarray] = None,
+) -> list[dict[str, float]]:
+    """Return point-level magnitude residuals using observed - model convention."""
+    mjd = np.asarray(mjd, dtype=float)
+    observed = np.asarray(observed, dtype=float)
+    predicted = np.asarray(predicted, dtype=float)
+    err = None if errors is None else np.asarray(errors, dtype=float)
+
+    points: list[dict[str, float]] = []
+    for i in range(min(len(mjd), len(observed), len(predicted))):
+        t = float(mjd[i])
+        obs = float(observed[i])
+        model = float(predicted[i])
+        residual = obs - model
+        if not (
+            np.isfinite(t)
+            and np.isfinite(obs)
+            and np.isfinite(model)
+            and np.isfinite(residual)
+        ):
+            continue
+        point = {
+            "mjd": t,
+            "observed_mag": obs,
+            "model_mag": model,
+            "residual_mag": float(residual),
+        }
+        if err is not None and i < len(err):
+            magerr = float(err[i])
+            if np.isfinite(magerr) and magerr > 0:
+                point["magerr"] = magerr
+        points.append(point)
+
+    return sorted(points, key=lambda point: point["mjd"])
+
+
 def interpret_residuals(
     mjd: np.ndarray,
     observed: np.ndarray,

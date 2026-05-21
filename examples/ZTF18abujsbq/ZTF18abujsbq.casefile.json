@@ -1,7 +1,7 @@
 {
   "oid": "ZTF18abujsbq",
   "source_date": "2026-05-20",
-  "generated_at": "2026-05-21T17:43:18+00:00",
+  "generated_at": "2026-05-21T18:05:21+00:00",
   "coordinates": {
     "ra": 286.6727968319866,
     "dec": 9.633162069760422,
@@ -138,6 +138,1030 @@
         "Phenomenological template \u2014 not a physical model. A good fit does not imply a supernova or any specific source class.",
         "Fit performed in magnitude space directly, not flux. Magnitude errors are treated as Gaussian; this is approximate for low-SNR detections.",
         "Only detections that passed the rb\u22650.55 quality cut are used. Non-detections and forced photometry are not consumed by this comparator."
+      ],
+      "residual_points": [
+        {
+          "mjd": 58370.147916700225,
+          "observed_mag": 19.370323,
+          "model_mag": 19.50763038614915,
+          "residual_mag": -0.13730738614914983,
+          "magerr": 0.10798946
+        },
+        {
+          "mjd": 58428.10165510001,
+          "observed_mag": 19.407467,
+          "model_mag": 19.50763038745673,
+          "residual_mag": -0.10016338745672826,
+          "magerr": 0.16500705
+        },
+        {
+          "mjd": 59366.393067100085,
+          "observed_mag": 19.635496,
+          "model_mag": 19.601603080837958,
+          "residual_mag": 0.03389291916204229,
+          "magerr": 0.14035696
+        },
+        {
+          "mjd": 59381.39320599986,
+          "observed_mag": 19.321503,
+          "model_mag": 19.61323957133564,
+          "residual_mag": -0.29173657133564035,
+          "magerr": 0.18737358
+        },
+        {
+          "mjd": 59440.24929400021,
+          "observed_mag": 20.047417,
+          "model_mag": 19.666211000654926,
+          "residual_mag": 0.3812059993450738,
+          "magerr": 0.21288826
+        },
+        {
+          "mjd": 59440.24929400021,
+          "observed_mag": 20.0474,
+          "model_mag": 19.666211000654926,
+          "residual_mag": 0.3811889993450741,
+          "magerr": 0.212888
+        },
+        {
+          "mjd": 59454.253692099825,
+          "observed_mag": 19.520317,
+          "model_mag": 19.680215924597256,
+          "residual_mag": -0.15989892459725752,
+          "magerr": 0.14154056
+        },
+        {
+          "mjd": 59694.464803200215,
+          "observed_mag": 19.7236,
+          "model_mag": 19.864895981080025,
+          "residual_mag": -0.14129598108002384,
+          "magerr": 0.24755
+        },
+        {
+          "mjd": 59723.45643519983,
+          "observed_mag": 19.723707,
+          "model_mag": 19.86321266428682,
+          "residual_mag": -0.1395056642868191,
+          "magerr": 0.1525187
+        },
+        {
+          "mjd": 59812.193113400135,
+          "observed_mag": 20.145561,
+          "model_mag": 19.817278571061404,
+          "residual_mag": 0.3282824289385964,
+          "magerr": 0.1964363
+        },
+        {
+          "mjd": 60108.421400499996,
+          "observed_mag": 20.3721,
+          "model_mag": 19.558110544162474,
+          "residual_mag": 0.8139894558375254,
+          "magerr": 0.327682
+        },
+        {
+          "mjd": 60123.423472200055,
+          "observed_mag": 19.397432,
+          "model_mag": 19.55120000608005,
+          "residual_mag": -0.15376800608005325,
+          "magerr": 0.112585746
+        },
+        {
+          "mjd": 60198.18435190013,
+          "observed_mag": 19.424046,
+          "model_mag": 19.526950368881877,
+          "residual_mag": -0.1029043688818767,
+          "magerr": 0.13578618
+        },
+        {
+          "mjd": 60452.400289400015,
+          "observed_mag": 19.295761,
+          "model_mag": 19.508081646382827,
+          "residual_mag": -0.21232064638282822,
+          "magerr": 0.16668217
+        },
+        {
+          "mjd": 60495.337511599995,
+          "observed_mag": 20.2092,
+          "model_mag": 19.507836047478854,
+          "residual_mag": 0.7013639525211453,
+          "magerr": 0.181794
+        },
+        {
+          "mjd": 60495.3379861,
+          "observed_mag": 20.226995,
+          "model_mag": 19.50783604564321,
+          "residual_mag": 0.7191589543567893,
+          "magerr": 0.19798149
+        },
+        {
+          "mjd": 60495.33987270016,
+          "observed_mag": 20.2523,
+          "model_mag": 19.507836038344884,
+          "residual_mag": 0.7444639616551179,
+          "magerr": 0.223873
+        },
+        {
+          "mjd": 60495.34034720017,
+          "observed_mag": 20.2055,
+          "model_mag": 19.507836036509318,
+          "residual_mag": 0.6976639634906832,
+          "magerr": 0.223016
+        },
+        {
+          "mjd": 60495.3408102002,
+          "observed_mag": 20.2399,
+          "model_mag": 19.50783603471825,
+          "residual_mag": 0.7320639652817498,
+          "magerr": 0.225912
+        },
+        {
+          "mjd": 60495.34550930001,
+          "observed_mag": 19.9894,
+          "model_mag": 19.507836016541102,
+          "residual_mag": 0.48156398345889784,
+          "magerr": 0.207501
+        },
+        {
+          "mjd": 60495.34645830002,
+          "observed_mag": 20.2213,
+          "model_mag": 19.507836012870342,
+          "residual_mag": 0.7134639871296571,
+          "magerr": 0.230551
+        },
+        {
+          "mjd": 60495.35069439979,
+          "observed_mag": 19.829847,
+          "model_mag": 19.50783599648574,
+          "residual_mag": 0.3220110035142625,
+          "magerr": 0.13827972
+        },
+        {
+          "mjd": 60495.35351849999,
+          "observed_mag": 19.943,
+          "model_mag": 19.507835985563215,
+          "residual_mag": 0.4351640144367863,
+          "magerr": 0.189957
+        },
+        {
+          "mjd": 60495.35446760012,
+          "observed_mag": 19.9347,
+          "model_mag": 19.507835981892583,
+          "residual_mag": 0.42686401810741614,
+          "magerr": 0.184089
+        },
+        {
+          "mjd": 60495.35493060015,
+          "observed_mag": 19.8536,
+          "model_mag": 19.507835980101962,
+          "residual_mag": 0.34576401989803784,
+          "magerr": 0.147675
+        },
+        {
+          "mjd": 60495.35587960016,
+          "observed_mag": 19.8357,
+          "model_mag": 19.50783597643181,
+          "residual_mag": 0.3278640235681891,
+          "magerr": 0.136343
+        },
+        {
+          "mjd": 60495.35634260019,
+          "observed_mag": 19.920494,
+          "model_mag": 19.50783597464123,
+          "residual_mag": 0.4126580253587697,
+          "magerr": 0.21370915
+        },
+        {
+          "mjd": 60495.35729169985,
+          "observed_mag": 19.861475,
+          "model_mag": 19.507835970970785,
+          "residual_mag": 0.35363902902921396,
+          "magerr": 0.13427293
+        },
+        {
+          "mjd": 60495.35775459977,
+          "observed_mag": 19.841408,
+          "model_mag": 19.50783596918064,
+          "residual_mag": 0.3335720308193615,
+          "magerr": 0.17830816
+        },
+        {
+          "mjd": 60495.35822919989,
+          "observed_mag": 19.78603,
+          "model_mag": 19.507835967345258,
+          "residual_mag": 0.2781940326547421,
+          "magerr": 0.14337659
+        },
+        {
+          "mjd": 60495.35964119993,
+          "observed_mag": 19.7168,
+          "model_mag": 19.507835961884847,
+          "residual_mag": 0.20896403811515185,
+          "magerr": 0.171992
+        },
+        {
+          "mjd": 60495.36057869997,
+          "observed_mag": 19.644794,
+          "model_mag": 19.50783595825947,
+          "residual_mag": 0.13695804174053094,
+          "magerr": 0.1510233
+        },
+        {
+          "mjd": 60495.36105319997,
+          "observed_mag": 19.6438,
+          "model_mag": 19.507835956424568,
+          "residual_mag": 0.1359640435754308,
+          "magerr": 0.116215
+        },
+        {
+          "mjd": 60495.361527800094,
+          "observed_mag": 19.6686,
+          "model_mag": 19.507835954589293,
+          "residual_mag": 0.16076404541070843,
+          "magerr": 0.139678
+        },
+        {
+          "mjd": 60495.36199070001,
+          "observed_mag": 19.6851,
+          "model_mag": 19.50783595279928,
+          "residual_mag": 0.17726404720071898,
+          "magerr": 0.137834
+        },
+        {
+          "mjd": 60495.36246530013,
+          "observed_mag": 19.7554,
+          "model_mag": 19.507835950964036,
+          "residual_mag": 0.24756404903596518,
+          "magerr": 0.142285
+        },
+        {
+          "mjd": 60495.36387730017,
+          "observed_mag": 19.637,
+          "model_mag": 19.50783594550403,
+          "residual_mag": 0.1291640544959698,
+          "magerr": 0.138828
+        },
+        {
+          "mjd": 60495.36435189983,
+          "observed_mag": 19.562,
+          "model_mag": 19.507835943668848,
+          "residual_mag": 0.054164056331153176,
+          "magerr": 0.110359
+        },
+        {
+          "mjd": 60495.36482639983,
+          "observed_mag": 19.579489,
+          "model_mag": 19.50783594183407,
+          "residual_mag": 0.07165305816592848,
+          "magerr": 0.119894415
+        },
+        {
+          "mjd": 60495.36530089984,
+          "observed_mag": 19.594297,
+          "model_mag": 19.507835939999303,
+          "residual_mag": 0.08646106000069764,
+          "magerr": 0.11188599
+        },
+        {
+          "mjd": 60495.366238399874,
+          "observed_mag": 19.615883,
+          "model_mag": 19.50783593637429,
+          "residual_mag": 0.10804706362571181,
+          "magerr": 0.10638635
+        },
+        {
+          "mjd": 60495.366712999996,
+          "observed_mag": 19.520609,
+          "model_mag": 19.50783593453918,
+          "residual_mag": 0.012773065460820021,
+          "magerr": 0.1150078
+        },
+        {
+          "mjd": 60495.36765050003,
+          "observed_mag": 19.4882,
+          "model_mag": 19.507835930914254,
+          "residual_mag": -0.019635930914255084,
+          "magerr": 0.150096
+        },
+        {
+          "mjd": 60495.36812500004,
+          "observed_mag": 19.524628,
+          "model_mag": 19.50783592907958,
+          "residual_mag": 0.016792070920420343,
+          "magerr": 0.1229474
+        },
+        {
+          "mjd": 60495.37094909977,
+          "observed_mag": 19.4405,
+          "model_mag": 19.5078359181604,
+          "residual_mag": -0.06733591816039919,
+          "magerr": 0.096944
+        },
+        {
+          "mjd": 60495.37141200015,
+          "observed_mag": 19.459179,
+          "model_mag": 19.50783591637068,
+          "residual_mag": -0.04865691637068181,
+          "magerr": 0.13987613
+        },
+        {
+          "mjd": 60495.37188659981,
+          "observed_mag": 19.4721,
+          "model_mag": 19.507835914535743,
+          "residual_mag": -0.0357359145357421,
+          "magerr": 0.126382
+        },
+        {
+          "mjd": 60495.37236109981,
+          "observed_mag": 19.3735,
+          "model_mag": 19.507835912701204,
+          "residual_mag": -0.1343359127012036,
+          "magerr": 0.127273
+        },
+        {
+          "mjd": 60495.37283559982,
+          "observed_mag": 19.3601,
+          "model_mag": 19.50783591086668,
+          "residual_mag": -0.14773591086668247,
+          "magerr": 0.139727
+        },
+        {
+          "mjd": 60495.37329859985,
+          "observed_mag": 19.397,
+          "model_mag": 19.507835909076636,
+          "residual_mag": -0.11083590907663776,
+          "magerr": 0.124168
+        },
+        {
+          "mjd": 60495.373773099855,
+          "observed_mag": 19.504953,
+          "model_mag": 19.507835907242146,
+          "residual_mag": -0.0028829072421459045,
+          "magerr": 0.11778001
+        },
+        {
+          "mjd": 60495.37423609989,
+          "observed_mag": 19.43295,
+          "model_mag": 19.50783590545213,
+          "residual_mag": -0.07488590545212759,
+          "magerr": 0.14665502
+        },
+        {
+          "mjd": 60495.37518520001,
+          "observed_mag": 19.569021,
+          "model_mag": 19.507835901782833,
+          "residual_mag": 0.061185098217166,
+          "magerr": 0.1141339
+        },
+        {
+          "mjd": 60495.37612270005,
+          "observed_mag": 19.491705,
+          "model_mag": 19.507835898158447,
+          "residual_mag": -0.016130898158447593,
+          "magerr": 0.13238718
+        },
+        {
+          "mjd": 60495.376597200055,
+          "observed_mag": 19.525427,
+          "model_mag": 19.507835896324046,
+          "residual_mag": 0.0175911036759544,
+          "magerr": 0.1148186
+        },
+        {
+          "mjd": 60495.377071800176,
+          "observed_mag": 19.365253,
+          "model_mag": 19.507835894489272,
+          "residual_mag": -0.14258289448927286,
+          "magerr": 0.114605054
+        },
+        {
+          "mjd": 60495.37753470009,
+          "observed_mag": 19.476637,
+          "model_mag": 19.507835892699745,
+          "residual_mag": -0.031198892699745073,
+          "magerr": 0.12356191
+        },
+        {
+          "mjd": 60495.37800930021,
+          "observed_mag": 19.4009,
+          "model_mag": 19.507835890865003,
+          "residual_mag": -0.1069358908650031,
+          "magerr": 0.106972
+        },
+        {
+          "mjd": 60495.37942129979,
+          "observed_mag": 19.4209,
+          "model_mag": 19.50783588540649,
+          "residual_mag": -0.08693588540648989,
+          "magerr": 0.131519
+        },
+        {
+          "mjd": 60495.37989579979,
+          "observed_mag": 19.4232,
+          "model_mag": 19.50783588357219,
+          "residual_mag": -0.0846358835721901,
+          "magerr": 0.104039
+        },
+        {
+          "mjd": 60495.380358799826,
+          "observed_mag": 19.3777,
+          "model_mag": 19.50783588178237,
+          "residual_mag": -0.130135881782369,
+          "magerr": 0.114015
+        },
+        {
+          "mjd": 60495.38083329983,
+          "observed_mag": 19.3822,
+          "model_mag": 19.507835879948104,
+          "residual_mag": -0.12563587994810277,
+          "magerr": 0.10569
+        },
+        {
+          "mjd": 60495.38130789995,
+          "observed_mag": 19.514,
+          "model_mag": 19.507835878113468,
+          "residual_mag": 0.006164121886531149,
+          "magerr": 0.115879
+        },
+        {
+          "mjd": 60495.38224539999,
+          "observed_mag": 19.397,
+          "model_mag": 19.50783587448947,
+          "residual_mag": -0.11083587448947085,
+          "magerr": 0.12823
+        },
+        {
+          "mjd": 60495.38271989999,
+          "observed_mag": 19.4266,
+          "model_mag": 19.507835872655267,
+          "residual_mag": -0.08123587265526666,
+          "magerr": 0.132337
+        },
+        {
+          "mjd": 60495.3831944,
+          "observed_mag": 19.325113,
+          "model_mag": 19.50783587082108,
+          "residual_mag": -0.18272287082107752,
+          "magerr": 0.1280506
+        },
+        {
+          "mjd": 60495.38365740003,
+          "observed_mag": 19.383596,
+          "model_mag": 19.507835869031357,
+          "residual_mag": -0.12423986903135642,
+          "magerr": 0.11437824
+        },
+        {
+          "mjd": 60495.384131900035,
+          "observed_mag": 19.4541,
+          "model_mag": 19.507835867197198,
+          "residual_mag": -0.05373586719719725,
+          "magerr": 0.126219
+        },
+        {
+          "mjd": 60495.384606500156,
+          "observed_mag": 19.460068,
+          "model_mag": 19.50783586536267,
+          "residual_mag": -0.04776786536266897,
+          "magerr": 0.101667285
+        },
+        {
+          "mjd": 60495.38508100016,
+          "observed_mag": 19.418789,
+          "model_mag": 19.50783586352854,
+          "residual_mag": -0.08904686352854085,
+          "magerr": 0.11351522
+        },
+        {
+          "mjd": 60495.385555599816,
+          "observed_mag": 19.4051,
+          "model_mag": 19.507835861694044,
+          "residual_mag": -0.10273586169404325,
+          "magerr": 0.131949
+        },
+        {
+          "mjd": 60495.3860185002,
+          "observed_mag": 19.360586,
+          "model_mag": 19.507835859904784,
+          "residual_mag": -0.14724985990478245,
+          "magerr": 0.112114
+        },
+        {
+          "mjd": 60495.38649309985,
+          "observed_mag": 19.508587,
+          "model_mag": 19.507835858070315,
+          "residual_mag": 0.0007511419296832855,
+          "magerr": 0.15035021
+        },
+        {
+          "mjd": 60495.38696759986,
+          "observed_mag": 19.334532,
+          "model_mag": 19.507835856236248,
+          "residual_mag": -0.17330385623624878,
+          "magerr": 0.1189481
+        },
+        {
+          "mjd": 60495.38743059989,
+          "observed_mag": 19.35969,
+          "model_mag": 19.507835854446647,
+          "residual_mag": -0.1481458544466463,
+          "magerr": 0.111869685
+        },
+        {
+          "mjd": 60495.3883795999,
+          "observed_mag": 19.4445,
+          "model_mag": 19.507835850778587,
+          "residual_mag": -0.06333585077858572,
+          "magerr": 0.105947
+        },
+        {
+          "mjd": 60495.38885420002,
+          "observed_mag": 19.4355,
+          "model_mag": 19.507835848944193,
+          "residual_mag": -0.0723358489441921,
+          "magerr": 0.099141
+        },
+        {
+          "mjd": 60495.389317099936,
+          "observed_mag": 19.3164,
+          "model_mag": 19.50783584715504,
+          "residual_mag": -0.19143584715503792,
+          "magerr": 0.097688
+        },
+        {
+          "mjd": 60495.38979170006,
+          "observed_mag": 19.3305,
+          "model_mag": 19.507835845320674,
+          "residual_mag": -0.17733584532067326,
+          "magerr": 0.096984
+        },
+        {
+          "mjd": 60495.39026620006,
+          "observed_mag": 19.3533,
+          "model_mag": 19.507835843486713,
+          "residual_mag": -0.15453584348671257,
+          "magerr": 0.107914
+        },
+        {
+          "mjd": 60495.390729200095,
+          "observed_mag": 19.3033,
+          "model_mag": 19.507835841697215,
+          "residual_mag": -0.20453584169721495,
+          "magerr": 0.107984
+        },
+        {
+          "mjd": 60495.3912037001,
+          "observed_mag": 19.4737,
+          "model_mag": 19.507835839863287,
+          "residual_mag": -0.03413583986328561,
+          "magerr": 0.116371
+        },
+        {
+          "mjd": 60495.3916782001,
+          "observed_mag": 19.3495,
+          "model_mag": 19.507835838029372,
+          "residual_mag": -0.15833583802937312,
+          "magerr": 0.094866
+        },
+        {
+          "mjd": 60495.392152800225,
+          "observed_mag": 19.382,
+          "model_mag": 19.507835836195085,
+          "residual_mag": -0.12583583619508332,
+          "magerr": 0.100773
+        },
+        {
+          "mjd": 60495.39261570014,
+          "observed_mag": 19.3645,
+          "model_mag": 19.50783583440603,
+          "residual_mag": -0.14333583440603093,
+          "magerr": 0.114921
+        },
+        {
+          "mjd": 60495.393090299796,
+          "observed_mag": 19.3461,
+          "model_mag": 19.507835832571775,
+          "residual_mag": -0.16173583257177526,
+          "magerr": 0.115338
+        },
+        {
+          "mjd": 60495.3935647998,
+          "observed_mag": 19.4686,
+          "model_mag": 19.50783583073792,
+          "residual_mag": -0.03923583073792258,
+          "magerr": 0.122882
+        },
+        {
+          "mjd": 60495.39402779983,
+          "observed_mag": 19.3726,
+          "model_mag": 19.507835828948526,
+          "residual_mag": -0.13523582894852737,
+          "magerr": 0.116807
+        },
+        {
+          "mjd": 60495.39450229984,
+          "observed_mag": 19.3496,
+          "model_mag": 19.507835827114704,
+          "residual_mag": -0.15823582711470507,
+          "magerr": 0.155253
+        },
+        {
+          "mjd": 60495.39497689996,
+          "observed_mag": 19.3826,
+          "model_mag": 19.507835825280505,
+          "residual_mag": -0.12523582528050525,
+          "magerr": 0.124291
+        },
+        {
+          "mjd": 60495.395439799875,
+          "observed_mag": 19.3473,
+          "model_mag": 19.507835823491543,
+          "residual_mag": -0.16053582349154283,
+          "magerr": 0.115722
+        },
+        {
+          "mjd": 60495.3959144,
+          "observed_mag": 19.3488,
+          "model_mag": 19.507835821657377,
+          "residual_mag": -0.15903582165737618,
+          "magerr": 0.113043
+        },
+        {
+          "mjd": 60495.396851900034,
+          "observed_mag": 19.3728,
+          "model_mag": 19.50783581803431,
+          "residual_mag": -0.1350358180343072,
+          "magerr": 0.083081
+        },
+        {
+          "mjd": 60495.39732640004,
+          "observed_mag": 19.4758,
+          "model_mag": 19.507835816200572,
+          "residual_mag": -0.0320358162005725,
+          "magerr": 0.109295
+        },
+        {
+          "mjd": 60495.39780090004,
+          "observed_mag": 19.3796,
+          "model_mag": 19.507835814366857,
+          "residual_mag": -0.12823581436685672,
+          "magerr": 0.097179
+        },
+        {
+          "mjd": 60495.39827550016,
+          "observed_mag": 19.3347,
+          "model_mag": 19.507835812532765,
+          "residual_mag": -0.1731358125327631,
+          "magerr": 0.109213
+        },
+        {
+          "mjd": 60495.39873840008,
+          "observed_mag": 19.351006,
+          "model_mag": 19.507835810743906,
+          "residual_mag": -0.15682981074390412,
+          "magerr": 0.08745576
+        },
+        {
+          "mjd": 60495.3992130002,
+          "observed_mag": 19.5094,
+          "model_mag": 19.507835808909846,
+          "residual_mag": 0.0015641910901535994,
+          "magerr": 0.110408
+        },
+        {
+          "mjd": 60495.399687500205,
+          "observed_mag": 19.2748,
+          "model_mag": 19.507835807076187,
+          "residual_mag": -0.2330358070761882,
+          "magerr": 0.124229
+        },
+        {
+          "mjd": 60495.40015049977,
+          "observed_mag": 19.381128,
+          "model_mag": 19.507835805286987,
+          "residual_mag": -0.126707805286987,
+          "magerr": 0.100590855
+        },
+        {
+          "mjd": 60495.40062499978,
+          "observed_mag": 19.37042,
+          "model_mag": 19.50783580345336,
+          "residual_mag": -0.13741580345336146,
+          "magerr": 0.09388947
+        },
+        {
+          "mjd": 60495.40109949978,
+          "observed_mag": 19.329,
+          "model_mag": 19.50783580161975,
+          "residual_mag": -0.17883580161974777,
+          "magerr": 0.141498
+        },
+        {
+          "mjd": 60495.4015740999,
+          "observed_mag": 19.484423,
+          "model_mag": 19.507835799785763,
+          "residual_mag": -0.023412799785763383,
+          "magerr": 0.120047055
+        },
+        {
+          "mjd": 60495.402048599906,
+          "observed_mag": 19.313957,
+          "model_mag": 19.507835797952183,
+          "residual_mag": -0.1938787979521841,
+          "magerr": 0.113254316
+        },
+        {
+          "mjd": 60495.40251159994,
+          "observed_mag": 19.5257,
+          "model_mag": 19.507835796163054,
+          "residual_mag": 0.017864203836946757,
+          "magerr": 0.15615486
+        },
+        {
+          "mjd": 60495.40298609994,
+          "observed_mag": 19.43023,
+          "model_mag": 19.5078357943295,
+          "residual_mag": -0.0776057943295001,
+          "magerr": 0.13590159
+        },
+        {
+          "mjd": 60495.40344909998,
+          "observed_mag": 19.488596,
+          "model_mag": 19.507835792540405,
+          "residual_mag": -0.019239792540403755,
+          "magerr": 0.15226902
+        },
+        {
+          "mjd": 60495.40392359998,
+          "observed_mag": 19.382925,
+          "model_mag": 19.50783579070688,
+          "residual_mag": -0.12491079070688116,
+          "magerr": 0.10978736
+        },
+        {
+          "mjd": 60495.404398099985,
+          "observed_mag": 19.3697,
+          "model_mag": 19.507835788873376,
+          "residual_mag": -0.13813578887337385,
+          "magerr": 0.11178
+        },
+        {
+          "mjd": 60495.40486110002,
+          "observed_mag": 19.436815,
+          "model_mag": 19.50783578708432,
+          "residual_mag": -0.07102078708432202,
+          "magerr": 0.124910906
+        },
+        {
+          "mjd": 60495.40533560002,
+          "observed_mag": 19.441975,
+          "model_mag": 19.507835785250847,
+          "residual_mag": -0.06586078525084815,
+          "magerr": 0.12520686
+        },
+        {
+          "mjd": 60495.40627310006,
+          "observed_mag": 19.4334,
+          "model_mag": 19.507835781628376,
+          "residual_mag": -0.07443578162837738,
+          "magerr": 0.112761
+        },
+        {
+          "mjd": 60495.40674770018,
+          "observed_mag": 19.4811,
+          "model_mag": 19.507835779794558,
+          "residual_mag": -0.026735779794556436,
+          "magerr": 0.12044
+        },
+        {
+          "mjd": 60495.4072106001,
+          "observed_mag": 19.5756,
+          "model_mag": 19.507835778005965,
+          "residual_mag": 0.06776422199403598,
+          "magerr": 0.106225
+        },
+        {
+          "mjd": 60495.40768520022,
+          "observed_mag": 19.3988,
+          "model_mag": 19.50783577617218,
+          "residual_mag": -0.10903577617217763,
+          "magerr": 0.116699
+        },
+        {
+          "mjd": 60495.40815970022,
+          "observed_mag": 19.5685,
+          "model_mag": 19.507835774338794,
+          "residual_mag": 0.06066422566120622,
+          "magerr": 0.113892
+        },
+        {
+          "mjd": 60495.40862269979,
+          "observed_mag": 19.5777,
+          "model_mag": 19.507835772549857,
+          "residual_mag": 0.06986422745014309,
+          "magerr": 0.122885
+        },
+        {
+          "mjd": 60495.409097199794,
+          "observed_mag": 19.4947,
+          "model_mag": 19.507835770716504,
+          "residual_mag": -0.013135770716502293,
+          "magerr": 0.11648
+        },
+        {
+          "mjd": 60495.409571799915,
+          "observed_mag": 19.5752,
+          "model_mag": 19.507835768882778,
+          "residual_mag": 0.0673642311172209,
+          "magerr": 0.143114
+        },
+        {
+          "mjd": 60495.41003469983,
+          "observed_mag": 19.6119,
+          "model_mag": 19.50783576709427,
+          "residual_mag": 0.10406423290572775,
+          "magerr": 0.139707
+        },
+        {
+          "mjd": 60495.41050929995,
+          "observed_mag": 19.6183,
+          "model_mag": 19.507835765260577,
+          "residual_mag": 0.11046423473942468,
+          "magerr": 0.127803
+        },
+        {
+          "mjd": 60495.41097219987,
+          "observed_mag": 19.55919,
+          "model_mag": 19.5078357634721,
+          "residual_mag": 0.05135423652789939,
+          "magerr": 0.14574742
+        },
+        {
+          "mjd": 60495.411921299994,
+          "observed_mag": 19.5441,
+          "model_mag": 19.50783575980517,
+          "residual_mag": 0.036264240194828545,
+          "magerr": 0.121191
+        },
+        {
+          "mjd": 60495.41238430003,
+          "observed_mag": 19.552986,
+          "model_mag": 19.507835758016352,
+          "residual_mag": 0.0451502419836487,
+          "magerr": 0.14335953
+        },
+        {
+          "mjd": 60495.41285880003,
+          "observed_mag": 19.443956,
+          "model_mag": 19.50783575618312,
+          "residual_mag": -0.0638797561831197,
+          "magerr": 0.14052117
+        },
+        {
+          "mjd": 60495.41427080007,
+          "observed_mag": 19.438837,
+          "model_mag": 19.50783575072794,
+          "residual_mag": -0.06899875072793904,
+          "magerr": 0.108099535
+        },
+        {
+          "mjd": 60495.4152199002,
+          "observed_mag": 19.514338,
+          "model_mag": 19.50783574706122,
+          "residual_mag": 0.006502252938780373,
+          "magerr": 0.15025127
+        },
+        {
+          "mjd": 60495.41568290023,
+          "observed_mag": 19.7472,
+          "model_mag": 19.507835745272505,
+          "residual_mag": 0.23936425472749434,
+          "magerr": 0.127983
+        },
+        {
+          "mjd": 60495.41615739977,
+          "observed_mag": 19.66557,
+          "model_mag": 19.50783574343938,
+          "residual_mag": 0.15773425656061946,
+          "magerr": 0.15095872
+        },
+        {
+          "mjd": 60495.41709489981,
+          "observed_mag": 19.7255,
+          "model_mag": 19.507835739817597,
+          "residual_mag": 0.2176642601824028,
+          "magerr": 0.141179
+        },
+        {
+          "mjd": 60495.41756939981,
+          "observed_mag": 19.8041,
+          "model_mag": 19.507835737984514,
+          "residual_mag": 0.29626426201548384,
+          "magerr": 0.175041
+        },
+        {
+          "mjd": 60495.41804399993,
+          "observed_mag": 20.0234,
+          "model_mag": 19.507835736151062,
+          "residual_mag": 0.5155642638489368,
+          "magerr": 0.207472
+        },
+        {
+          "mjd": 60495.419455999974,
+          "observed_mag": 19.795,
+          "model_mag": 19.507835730696375,
+          "residual_mag": 0.28716426930362715,
+          "magerr": 0.162349
+        },
+        {
+          "mjd": 60495.419930600096,
+          "observed_mag": 19.7303,
+          "model_mag": 19.507835728862982,
+          "residual_mag": 0.22246427113701728,
+          "magerr": 0.137171
+        },
+        {
+          "mjd": 60495.4204051001,
+          "observed_mag": 19.7658,
+          "model_mag": 19.507835727029992,
+          "residual_mag": 0.2579642729700069,
+          "magerr": 0.153485
+        },
+        {
+          "mjd": 60495.422280100174,
+          "observed_mag": 19.892,
+          "model_mag": 19.50783571978703,
+          "residual_mag": 0.3841642802129712,
+          "magerr": 0.156085
+        },
+        {
+          "mjd": 60495.42275460018,
+          "observed_mag": 19.8656,
+          "model_mag": 19.507835717954112,
+          "residual_mag": 0.3577642820458884,
+          "magerr": 0.164133
+        },
+        {
+          "mjd": 60495.42416669987,
+          "observed_mag": 19.79184,
+          "model_mag": 19.507835712499492,
+          "residual_mag": 0.2840042875005082,
+          "magerr": 0.16568431
+        },
+        {
+          "mjd": 60495.424641199876,
+          "observed_mag": 19.836723,
+          "model_mag": 19.507835710666637,
+          "residual_mag": 0.32888728933336253,
+          "magerr": 0.15896864
+        },
+        {
+          "mjd": 60495.42510419991,
+          "observed_mag": 19.76602,
+          "model_mag": 19.50783570887822,
+          "residual_mag": 0.25818429112178265,
+          "magerr": 0.18841018
+        },
+        {
+          "mjd": 60495.42840280011,
+          "observed_mag": 20.1261,
+          "model_mag": 19.507835696137217,
+          "residual_mag": 0.6182643038627837,
+          "magerr": 0.201005
+        },
+        {
+          "mjd": 60495.42935189977,
+          "observed_mag": 19.879604,
+          "model_mag": 19.50783569247141,
+          "residual_mag": 0.37176830752859047,
+          "magerr": 0.18895969
+        },
+        {
+          "mjd": 60495.430763899814,
+          "observed_mag": 19.8403,
+          "model_mag": 19.50783568701781,
+          "residual_mag": 0.33246431298218937,
+          "magerr": 0.16433
+        },
+        {
+          "mjd": 60495.432175899856,
+          "observed_mag": 20.1115,
+          "model_mag": 19.50783568156434,
+          "residual_mag": 0.6036643184356585,
+          "magerr": 0.179281
+        },
+        {
+          "mjd": 60495.43453700002,
+          "observed_mag": 20.099577,
+          "model_mag": 19.507835672445538,
+          "residual_mag": 0.5917413275544625,
+          "magerr": 0.17488655
+        },
+        {
+          "mjd": 61180.43982640002,
+          "observed_mag": 20.097027,
+          "model_mag": 19.50763038588927,
+          "residual_mag": 0.5893966141107292,
+          "magerr": 0.19792
+        }
       ]
     },
     {
@@ -174,7 +1198,8 @@
         "Phenomenological summary - not a physical model. It does not imply any source class or physical cause.",
         "Uses only local r-band detections that passed the rb>=0.55 quality cut. Non-detections and forced photometry are not consumed by this comparator.",
         "Turning-point counts use simple rolling-median smoothing, so cadence, gaps, and noisy measurements can affect the result."
-      ]
+      ],
+      "residual_points": null
     },
     {
       "name": "sncosmo template probe",
@@ -205,7 +1230,8 @@
         "sncosmo templates require contextual assumptions such as redshift, usable bandpasses, and flux-calibrated photometry.",
         "ZTF magnitudes are converted to relative flux using an AB zeropoint convention with zp=25.0; this is a preparation step, not a physical conclusion.",
         "This provides a model-family comparison only. It does not identify the object type, physical cause, or special status."
-      ]
+      ],
+      "residual_points": null
     }
   ],
   "comparison_summary": {
@@ -289,5 +1315,5 @@
     ],
     "caveat": "This narrative summarizes evidence layers. It is not a physical classification."
   },
-  "schema_version": "1.8"
+  "schema_version": "1.9"
 }

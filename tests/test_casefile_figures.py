@@ -109,15 +109,26 @@ def test_casefile_figures_write_residuals_when_point_data_exists(tmp_path):
         filter_used="r",
         status="fitted_baseline",
         parameters={},
-        fit_metrics={
-            "point_residuals": [
-                {"mjd": 60000.0, "residual_mag": 0.1},
-                {"mjd": 60001.0, "residual_mag": -0.2},
-            ]
-        },
+        fit_metrics={"n_points": 2},
         residual_summary=[],
         interpretation="Comparator residuals were recorded.",
         limitations=[],
+        residual_points=[
+            {
+                "mjd": 60000.0,
+                "observed_mag": 19.9,
+                "model_mag": 19.8,
+                "residual_mag": 0.1,
+                "magerr": 0.08,
+            },
+            {
+                "mjd": 60001.0,
+                "observed_mag": 19.7,
+                "model_mag": 19.9,
+                "residual_mag": -0.2,
+                "magerr": 0.07,
+            },
+        ],
     )
 
     outputs = write_casefile_figures(
@@ -174,19 +185,23 @@ def test_cli_does_not_write_figures_unless_requested(tmp_path, monkeypatch):
 def test_markdown_references_figures_only_when_present(tmp_path):
     json_path = tmp_path / "ZTFfig.json"
     present = tmp_path / "ZTFfig.lightcurve.png"
-    missing = tmp_path / "ZTFfig.residuals.png"
+    residual = tmp_path / "ZTFfig.residuals.png"
+    missing = tmp_path / "ZTFfig.extra.png"
     present.write_bytes(b"\x89PNG\r\n\x1a\n")
+    residual.write_bytes(b"\x89PNG\r\n\x1a\n")
 
     markdown_path = write_casefile_markdown(
         _case(),
         json_path=json_path,
-        figure_paths=[present, missing],
+        figure_paths=[present, residual, missing],
     )
     text = markdown_path.read_text(encoding="utf-8")
 
     assert "## Visual Summary" in text
     assert "![Observed light curve](ZTFfig.lightcurve.png)" in text
-    assert "ZTFfig.residuals.png" not in text
+    assert "![Gaussian comparator residuals](ZTFfig.residuals.png)" in text
+    assert "under- or over-predicts" in text
+    assert "ZTFfig.extra.png" not in text
 
 
 def test_cli_markdown_references_generated_figures(tmp_path, monkeypatch):

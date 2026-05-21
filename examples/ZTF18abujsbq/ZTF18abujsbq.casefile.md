@@ -4,6 +4,10 @@
 
 ![Observed light curve](ZTF18abujsbq.lightcurve.png)
 
+![Gaussian comparator residuals](ZTF18abujsbq.residuals.png)
+
+Gaussian comparator residuals show where the simple bump model under- or over-predicts the observed magnitudes.
+
 
 ## Evidence Narrative
 
@@ -54,7 +58,7 @@ The object is not well explained by a single smooth bump. Its r-band detections 
 - **First MJD:** 58340.3
 - **Last MJD:** 61180.4
 - **Time span days:** 2840.14
-- **Schema version:** 1.8
+- **Schema version:** 1.9
 
 ## Classification Metadata
 

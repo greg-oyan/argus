@@ -171,8 +171,10 @@ def _gaussian_residual_points(case: CaseFile) -> list[dict[str, float]]:
     for comparison in case.model_comparisons or []:
         if _field(comparison, "model_type") != "gaussian_bump":
             continue
-        metrics = _field(comparison, "fit_metrics") or {}
-        points = metrics.get("point_residuals") or metrics.get("residual_points")
+        points = _field(comparison, "residual_points")
+        if points is None:
+            metrics = _field(comparison, "fit_metrics") or {}
+            points = metrics.get("point_residuals") or metrics.get("residual_points")
         if isinstance(points, list):
             cleaned: list[dict[str, float]] = []
             for point in points:
@@ -183,8 +185,17 @@ def _gaussian_residual_points(case: CaseFile) -> list[dict[str, float]]:
                     residual = float(point.get("residual_mag", point.get("residual")))
                 except (TypeError, ValueError):
                     continue
-                if np.isfinite(mjd) and np.isfinite(residual):
-                    cleaned.append({"mjd": mjd, "residual_mag": residual})
+                if not (np.isfinite(mjd) and np.isfinite(residual)):
+                    continue
+                cleaned_point = {"mjd": mjd, "residual_mag": residual}
+                for key in ("observed_mag", "model_mag", "magerr"):
+                    try:
+                        value = float(point.get(key))
+                    except (TypeError, ValueError):
+                        continue
+                    if np.isfinite(value):
+                        cleaned_point[key] = value
+                cleaned.append(cleaned_point)
             return cleaned
     return []
 
@@ -200,7 +211,27 @@ def write_residual_figure_if_available(case: CaseFile, path: Path) -> Path | Non
     path.parent.mkdir(parents=True, exist_ok=True)
     fig, ax = plt.subplots(figsize=(9.5, 4.2), dpi=140)
     ax.axhline(0.0, color="#525252", linewidth=1.0, alpha=0.8)
-    ax.scatter(df["mjd"], df["residual_mag"], color="#2b6cb0", s=22, alpha=0.85)
+    if "magerr" in df.columns:
+        errors = pd.to_numeric(df["magerr"], errors="coerce")
+        yerr = errors.where(np.isfinite(errors) & (errors > 0))
+    else:
+        yerr = pd.Series([np.nan] * len(df), index=df.index)
+    if yerr.notna().any():
+        ax.errorbar(
+            df["mjd"],
+            df["residual_mag"],
+            yerr=yerr,
+            fmt="o",
+            color="#2b6cb0",
+            ecolor="#2b6cb0",
+            elinewidth=0.8,
+            capsize=2,
+            markersize=4,
+            linestyle="none",
+            alpha=0.85,
+        )
+    else:
+        ax.scatter(df["mjd"], df["residual_mag"], color="#2b6cb0", s=22, alpha=0.85)
     ax.set_title(f"Gaussian comparator residuals: {case.oid}")
     ax.set_xlabel("MJD")
     ax.set_ylabel("Residual magnitude")

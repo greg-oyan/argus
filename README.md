@@ -4,7 +4,7 @@ A small system that watches the sky for novel astronomical patterns that current
 transient pipelines miss. The current product spine is a readable, inspectable
 case-file evidence package for one object at a time — not another classifier.
 
-**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export + Phase 2K static figures + Phase 2L static HTML export + Phase 2M public example bundle + Phase 2N GitHub Pages demo page complete.**
+**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export + Phase 2K static figures + Phase 2L static HTML export + Phase 2M public example bundle + Phase 2N GitHub Pages demo page + Phase 2O Gaussian residual plots complete.**
 
 The product vision and the strategic decision behind Phase 2B live in
 [`docs/ARGUS_VISION.md`](docs/ARGUS_VISION.md) and
@@ -19,6 +19,7 @@ A generated public demo bundle is available at
 - [HTML report](examples/ZTF18abujsbq/ZTF18abujsbq.casefile.html)
 - [Markdown report](examples/ZTF18abujsbq/ZTF18abujsbq.casefile.md)
 - [light-curve figure](examples/ZTF18abujsbq/ZTF18abujsbq.lightcurve.png)
+- [Gaussian residual figure](examples/ZTF18abujsbq/ZTF18abujsbq.residuals.png)
 - [structured JSON](examples/ZTF18abujsbq/ZTF18abujsbq.casefile.json)
 
 This is a presentation/demo artifact for the case-file workflow, not a
@@ -354,6 +355,7 @@ Each entry under `model_comparisons` has:
 | `status` | comparator-specific status such as `fitted_baseline`, `computed`, `insufficient_data`, `missing_required_context`, `template_unavailable`, `fit_failed`, or `dependency_unavailable` |
 | `parameters` | fitted Gaussian parameters when applicable; `null` for the computed variability summary |
 | `fit_metrics` | Gaussian fit metrics, or descriptive variability metrics such as magnitude range, robust scatter, smoothed sign changes, and scatter-vs-error ratios |
+| `residual_points` | point-level Gaussian residuals when the Gaussian comparator fit succeeds; each point records MJD, observed magnitude, model magnitude, residual magnitude, and usable magnitude error |
 | `residual_summary` | plain-English notes about where the Gaussian fit fails, or the main variability texture metrics |
 | `interpretation` | one templated sentence keyed off the metrics |
 | `limitations` | always includes "phenomenological — not a physical model" |
@@ -424,17 +426,20 @@ Markdown export does not recompute metrics, query external services, or change
 the JSON case file. It is a readable rendering of the existing case-file
 evidence only.
 
-## Static Figures (Phase 2K)
+## Static Figures (Phase 2K/2O)
 
 Case files can optionally write static PNG figures with `--write-figures`.
-Phase 2K currently writes an observed light-curve plot as
+Phase 2K writes an observed light-curve plot as
 `data/casefiles/{oid}.lightcurve.png`, using local flattened detections,
 per-band markers, and magnitude error bars when usable errors are available.
 The magnitude axis is inverted so brighter detections appear higher.
 
-If point-level Gaussian residual data is present in a future case file, Argus
-also writes `{oid}.residuals.png`. Current case files do not store point-level
-residual arrays, so residual plots are skipped gracefully rather than inferred.
+Phase 2O stores point-level residuals for fitted Gaussian-bump comparator
+outputs and writes `data/casefiles/{oid}.residuals.png` when that data is
+available. The residual figure shows where the simple bump model under- or
+over-predicts the observed magnitudes, which helps inspect model mismatch.
+If residual points are absent, residual plots are still skipped gracefully
+rather than inferred.
 When `--write-markdown` and `--write-figures` are used together, the Markdown
 report includes image links only for generated files, avoiding broken links.
 

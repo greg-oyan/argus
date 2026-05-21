@@ -7,9 +7,11 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from argus.casefile.build import build_casefile
+from argus.casefile.build import build_casefile, _build_gaussian_bump_comparison
 from argus.casefile.schema import ModelComparison
-from argus.compare.residuals import compute_residuals, interpret_residuals
+from argus.compare.residuals import (
+    build_residual_points, compute_residuals, interpret_residuals,
+)
 from argus.compare.simple_templates import (
     MIN_POINTS_FOR_FIT, fit_gaussian_bump, gaussian_bump_mag,
 )
@@ -120,6 +122,54 @@ def test_compute_residuals_matches_manual_calculation():
 def test_compute_residuals_omits_reduced_chi2_when_errors_missing():
     m = compute_residuals(np.array([1.0, 2.0]), np.array([1.0, 2.0]))
     assert "reduced_chi2" not in m
+
+
+def test_build_residual_points_uses_observed_minus_model_convention():
+    points = build_residual_points(
+        mjd=np.array([2.0, 1.0]),
+        observed=np.array([20.2, 19.9]),
+        predicted=np.array([20.0, 20.1]),
+        errors=np.array([0.08, 0.07]),
+    )
+
+    assert [point["mjd"] for point in points] == [1.0, 2.0]
+    assert points[0]["residual_mag"] == pytest.approx(19.9 - 20.1)
+    assert points[1]["residual_mag"] == pytest.approx(20.2 - 20.0)
+    assert points[0]["magerr"] == pytest.approx(0.07)
+
+
+def test_gaussian_comparator_records_point_level_residuals():
+    rng = np.random.default_rng(17)
+    mjd = np.linspace(60000.0, 60060.0, 12)
+    truth = gaussian_bump_mag(
+        mjd,
+        amplitude_mag=-0.8,
+        peak_mjd=60030.0,
+        sigma_days=9.0,
+        baseline_mag=20.0,
+    )
+    magerr = np.full_like(mjd, 0.04)
+    mag = truth + rng.normal(0.0, magerr, size=mjd.size)
+    detections = pd.DataFrame({
+        "mjd": mjd,
+        "fid": 2,
+        "magpsf": mag,
+        "sigmapsf": magerr,
+    })
+
+    comparison = _build_gaussian_bump_comparison(detections, "r", fid=2)
+
+    assert comparison.status == "fitted_baseline"
+    assert comparison.residual_points is not None
+    assert len(comparison.residual_points) == len(detections)
+    assert [p["mjd"] for p in comparison.residual_points] == sorted(mjd)
+    first = comparison.residual_points[0]
+    assert set(first).issuperset(
+        {"mjd", "observed_mag", "model_mag", "residual_mag", "magerr"}
+    )
+    assert first["residual_mag"] == pytest.approx(
+        first["observed_mag"] - first["model_mag"]
+    )
 
 
 def test_interpret_residuals_flags_uneven_coverage():

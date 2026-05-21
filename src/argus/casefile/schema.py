@@ -8,7 +8,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field, asdict
 from typing import Any, Optional
 
-SCHEMA_VERSION = "1.8"  # 1.8: added evidence_narrative (Phase 2I)
+SCHEMA_VERSION = "1.9"  # 1.9: added ModelComparison.residual_points (Phase 2O)
 
 
 @dataclass
@@ -85,6 +85,7 @@ class ModelComparison:
     residual_summary: list[str]
     interpretation: str
     limitations: list[str]
+    residual_points: Optional[list[dict[str, float]]] = None
 
 
 @dataclass

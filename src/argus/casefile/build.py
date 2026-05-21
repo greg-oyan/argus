@@ -18,7 +18,9 @@ from argus.casefile.summarize import (
     evidence_notes, recommended_next_checks, summarize_light_curve,
     uncertainty_notes,
 )
-from argus.compare.residuals import compute_residuals, interpret_residuals
+from argus.compare.residuals import (
+    build_residual_points, compute_residuals, interpret_residuals,
+)
 from argus.compare.simple_templates import MIN_POINTS_FOR_FIT, fit_gaussian_bump
 from argus.compare.sncosmo_templates import build_sncosmo_template_probe
 from argus.compare.variability import (
@@ -141,6 +143,12 @@ def _build_gaussian_bump_comparison(
         observed=mag, predicted=predicted, errors=magerr, mjd=mjd,
         n_params=result["n_params"],
     )
+    residual_points = build_residual_points(
+        mjd=mjd,
+        observed=mag,
+        predicted=predicted,
+        errors=magerr,
+    )
     residual_notes = interpret_residuals(mjd, mag, predicted, result["params"])
 
     # Templated interpretation built from the metrics. Deterministic, not generative.
@@ -176,6 +184,7 @@ def _build_gaussian_bump_comparison(
         fit_metrics=metrics,
         residual_summary=residual_notes,
         interpretation=interpretation,
+        residual_points=residual_points,
     )
 
 
