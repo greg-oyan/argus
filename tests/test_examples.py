@@ -86,6 +86,28 @@ def test_public_example_index_links_case_bundle():
         assert f"{oid}/{oid}.residuals.png" in text
 
 
+def test_public_demo_pages_and_integrity_files_exist():
+    assert (Path("examples") / "index.html").exists()
+    assert (Path("docs") / "index.html").exists()
+    assert (Path("docs") / "examples" / "index.html").exists()
+
+    example_dirs = [
+        path for path in (Path("examples")).iterdir() if path.is_dir()
+    ]
+    assert any(
+        {
+            f"{path.name}.casefile.json",
+            f"{path.name}.casefile.md",
+            f"{path.name}.casefile.html",
+            f"{path.name}.lightcurve.png",
+        }.issubset({child.name for child in path.iterdir()})
+        for path in example_dirs
+    )
+
+    _assert_no_raw_data_files(Path("examples"))
+    _assert_no_raw_data_files(Path("docs") / "examples")
+
+
 def test_public_example_bundle_avoids_forbidden_physical_claims():
     text = "\n".join(
         path.read_text(encoding="utf-8", errors="ignore")

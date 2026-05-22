@@ -1,10 +1,12 @@
 # Argus
 
+[![Tests](https://github.com/greg-oyan/argus/actions/workflows/tests.yml/badge.svg)](https://github.com/greg-oyan/argus/actions/workflows/tests.yml)
+
 A small system that watches the sky for novel astronomical patterns that current
 transient pipelines miss. The current product spine is a readable, inspectable
 case-file evidence package for one object at a time — not another classifier.
 
-**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export + Phase 2K static figures + Phase 2L static HTML export + Phase 2M public example bundle + Phase 2N GitHub Pages demo page + Phase 2O Gaussian residual plots + Phase 2P static case-file index + Phase 2Q batch case-file generation + Phase 2S multi-object public demo complete.**
+**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export + Phase 2K static figures + Phase 2L static HTML export + Phase 2M public example bundle + Phase 2N GitHub Pages demo page + Phase 2O Gaussian residual plots + Phase 2P static case-file index + Phase 2Q batch case-file generation + Phase 2S multi-object public demo + Phase 2T GitHub Actions CI complete.**
 
 The product vision and the strategic decision behind Phase 2B live in
 [`docs/ARGUS_VISION.md`](docs/ARGUS_VISION.md) and
@@ -214,6 +216,11 @@ The pipeline is deterministic given the broker's state:
 ```bash
 python -m pytest -q
 ```
+
+GitHub Actions runs the same offline test suite on pushes to `main` and pull
+requests targeting `main` using Python 3.11 and `pip install -e ".[dev]"`.
+The CI path does not install optional `science` extras, so `sncosmo` and
+`astroquery` are not required for the default reliability check.
 
 ## AI Coding Agent Instructions
 
