@@ -6,8 +6,10 @@ from pathlib import Path
 
 from argus.casefile.index import (
     build_casefile_index,
+    compute_review_priority,
     extract_index_entry,
     render_index_html,
+    review_priority_level,
     write_index_html,
     write_index_json,
 )
@@ -32,12 +34,31 @@ def _case_data(*, oid: str = "ZTFindex") -> dict:
             "headline": "Complex light-curve behavior with limited physical interpretation",
             "short_summary": "The case file records repeated evidence-layer signals.",
         },
+        "comparison_summary": {
+            "headline": "Not well explained by a single smooth bump",
+            "summary": "The simple smooth bump captures only part of the structure.",
+        },
         "recommended_next_checks": ["Inspect residual structure visually."],
         "feature_summary": {"status": "computed"},
         "cross_survey_context": {"status": "not_requested"},
         "model_comparisons": [
-            {"model_type": "gaussian_bump", "status": "fitted_baseline"},
-            {"model_type": "variability_texture", "status": "computed"},
+            {
+                "model_type": "gaussian_bump",
+                "status": "fitted_baseline",
+                "fit_metrics": {"reduced_chi2": 2.7},
+                "residual_summary": [
+                    "The data is not well described by a single bump."
+                ],
+            },
+            {
+                "model_type": "variability_texture",
+                "status": "computed",
+                "fit_metrics": {
+                    "behavior_hint": "repeated_or_irregular",
+                    "smoothed_sign_changes": 4,
+                    "variability_materially_larger_than_errors": True,
+                },
+            },
             {
                 "model_type": "sncosmo_template_probe",
                 "status": "missing_required_context",
@@ -65,6 +86,40 @@ def _write_case_bundle(root: Path, *, oid: str = "ZTFindex") -> Path:
     return json_path
 
 
+def _write_low_priority_case(root: Path, *, oid: str = "ZTFlow") -> Path:
+    case_dir = root / oid
+    case_dir.mkdir(parents=True)
+    json_path = case_dir / f"{oid}.casefile.json"
+    json_path.write_text(
+        json.dumps({
+            "oid": oid,
+            "source_date": "2026-05-20",
+            "schema_version": "1.9",
+        }),
+        encoding="utf-8",
+    )
+    return json_path
+
+
+def test_review_priority_score_level_and_reasons():
+    priority = compute_review_priority(_case_data())
+
+    assert priority["score"] == 9
+    assert priority["level"] == "high"
+    assert "not a clean fit" in priority["reasons"][0]
+    assert "repeated or irregular behavior" in priority["reasons"][1]
+    assert "review-priority heuristic" in priority["caveat"]
+
+
+def test_review_priority_level_mapping():
+    assert review_priority_level(0) == "low"
+    assert review_priority_level(2) == "low"
+    assert review_priority_level(3) == "medium"
+    assert review_priority_level(5) == "medium"
+    assert review_priority_level(6) == "high"
+    assert review_priority_level(10) == "high"
+
+
 def test_index_entry_extraction_from_full_case_file(tmp_path):
     json_path = _write_case_bundle(tmp_path)
     data = json.loads(json_path.read_text(encoding="utf-8"))
@@ -79,6 +134,8 @@ def test_index_entry_extraction_from_full_case_file(tmp_path):
     assert entry["sncosmo_template_probe_status"] == "missing_required_context"
     assert entry["cross_survey_context_status"] == "not_requested"
     assert entry["classification_metadata"]["kind"] == "external_metadata"
+    assert entry["review_priority"]["score"] == 9
+    assert entry["review_priority"]["level"] == "high"
     assert entry["top_recommended_next_check"] == "Inspect residual structure visually."
 
 
@@ -118,7 +175,24 @@ def test_index_handles_missing_optional_fields(tmp_path):
     assert entry["gaussian_comparator_status"] == "missing"
     assert entry["feature_summary_status"] == "missing"
     assert entry["cross_survey_context_status"] == "missing"
+    assert entry["review_priority"]["score"] == 0
+    assert entry["review_priority"]["level"] == "low"
     assert entry["top_recommended_next_check"] == "No next check recorded."
+
+
+def test_index_sorts_by_review_priority_then_oid(tmp_path):
+    _write_low_priority_case(tmp_path, oid="ZTF000low")
+    _write_case_bundle(tmp_path, oid="ZTFtieB")
+    _write_case_bundle(tmp_path, oid="ZTFtieA")
+
+    index = build_casefile_index(tmp_path, generated_at="2026-05-21T00:00:00+00:00")
+
+    assert index["sort_order"] == "review_priority_desc_then_oid"
+    assert [entry["oid"] for entry in index["entries"]] == [
+        "ZTFtieA",
+        "ZTFtieB",
+        "ZTF000low",
+    ]
 
 
 def test_index_handles_zero_case_files(tmp_path):
@@ -142,6 +216,8 @@ def test_index_json_and_html_writers(tmp_path):
     html = html_path.read_text(encoding="utf-8")
     assert parsed["case_count"] == 1
     assert "Argus Case-File Index" in html
+    assert "Review priority" in html
+    assert "review-priority heuristic" in html
     assert "ZTFindex/ZTFindex.casefile.html" in html
     assert "ZTFindex/ZTFindex.residuals.png" in html
     assert "<script" not in html.lower()

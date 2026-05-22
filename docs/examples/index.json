@@ -1,56 +1,25 @@
 {
-  "index_version": "1.0",
-  "generated_at": "2026-05-21T23:28:09+00:00",
+  "index_version": "1.1",
+  "generated_at": "2026-05-22T02:21:39+00:00",
   "casefile_dir": "docs\\examples",
   "case_count": 6,
-  "sort_order": "object_id",
-  "description": "Static case-file review index built from existing Argus case-file JSON. Entries are prepared for inspection and are not model-score rankings.",
+  "sort_order": "review_priority_desc_then_oid",
+  "description": "Static case-file review index built from existing Argus case-file JSON. Entries are sorted by a transparent review-priority heuristic for inspection.",
   "entries": [
     {
-      "oid": "ZTF17aabblzo",
+      "oid": "ZTF18abujsbq",
       "source_date": "2026-05-20",
-      "generated_at": "2026-05-21T23:11:16+00:00",
+      "generated_at": "2026-05-21T18:05:21+00:00",
       "schema_version": "1.9",
-      "headline": "Evidence is limited by available comparator context",
-      "short_summary": "Some evidence layers are missing, failed, or limited by the available local detections. The case file supports cautious review rather than a firm conclusion.",
-      "detection_count": 3,
-      "non_detection_count": 246,
+      "headline": "Complex light-curve behavior with limited physical interpretation",
+      "short_summary": "The object is not well explained by a single smooth bump. Its r-band detections show repeated or irregular variability texture, while template and catalog-context checks remain limited by available context.",
+      "detection_count": 147,
+      "non_detection_count": 674,
       "filters_observed": [
         "g",
         "r"
       ],
-      "time_span_days": 2865.0232291999273,
-      "classification_metadata": {
-        "kind": "external_metadata",
-        "value": null
-      },
-      "gaussian_comparator_status": "insufficient_data",
-      "variability_texture_status": "insufficient_data",
-      "feature_summary_status": "insufficient_data",
-      "sncosmo_template_probe_status": "insufficient_data",
-      "cross_survey_context_status": "not_requested",
-      "top_recommended_next_check": "Cross-match position (RA=12.50755, Dec=42.65244) against SIMBAD and NED for any known counterpart.",
-      "links": {
-        "json": "ZTF17aabblzo/ZTF17aabblzo.casefile.json",
-        "markdown": "ZTF17aabblzo/ZTF17aabblzo.casefile.md",
-        "html": "ZTF17aabblzo/ZTF17aabblzo.casefile.html",
-        "light_curve_png": "ZTF17aabblzo/ZTF17aabblzo.lightcurve.png"
-      }
-    },
-    {
-      "oid": "ZTF18aaxddtg",
-      "source_date": "2026-05-20",
-      "generated_at": "2026-05-21T23:11:16+00:00",
-      "schema_version": "1.9",
-      "headline": "Mixed evidence with cautious interpretation",
-      "short_summary": "The Gaussian bump comparator fit the r-band detections cleanly within the reported errors. The variability texture comparator found changes that are comparable to the reported photometric errors. Together, these favor a simple one-bump description over repeated or irregular texture in the current r-band detections. Coverage appears sparse or uneven, so cadence may affect the comparison.",
-      "detection_count": 10,
-      "non_detection_count": 212,
-      "filters_observed": [
-        "g",
-        "r"
-      ],
-      "time_span_days": 2917.0511806001887,
+      "time_span_days": 2840.1387963001616,
       "classification_metadata": {
         "kind": "external_metadata",
         "value": null
@@ -60,13 +29,26 @@
       "feature_summary_status": "computed",
       "sncosmo_template_probe_status": "missing_required_context",
       "cross_survey_context_status": "not_requested",
-      "top_recommended_next_check": "Cross-match position (RA=284.45227, Dec=9.60622) against SIMBAD and NED for any known counterpart.",
+      "review_priority": {
+        "score": 9,
+        "level": "high",
+        "reasons": [
+          "Gaussian bump comparator indicates the single smooth bump is not a clean fit.",
+          "Variability texture suggests repeated or irregular behavior.",
+          "Standard descriptive features were computed.",
+          "Template-family probe is limited by missing required context.",
+          "Cross-survey context was not requested.",
+          "A recommended next check is recorded for human review."
+        ],
+        "caveat": "This is a review-priority heuristic for inspection only, not a model result or object-identity claim."
+      },
+      "top_recommended_next_check": "Cross-match position (RA=286.67280, Dec=9.63316) against SIMBAD and NED for any known counterpart.",
       "links": {
-        "json": "ZTF18aaxddtg/ZTF18aaxddtg.casefile.json",
-        "markdown": "ZTF18aaxddtg/ZTF18aaxddtg.casefile.md",
-        "html": "ZTF18aaxddtg/ZTF18aaxddtg.casefile.html",
-        "light_curve_png": "ZTF18aaxddtg/ZTF18aaxddtg.lightcurve.png",
-        "residual_png": "ZTF18aaxddtg/ZTF18aaxddtg.residuals.png"
+        "json": "ZTF18abujsbq/ZTF18abujsbq.casefile.json",
+        "markdown": "ZTF18abujsbq/ZTF18abujsbq.casefile.md",
+        "html": "ZTF18abujsbq/ZTF18abujsbq.casefile.html",
+        "light_curve_png": "ZTF18abujsbq/ZTF18abujsbq.lightcurve.png",
+        "residual_png": "ZTF18abujsbq/ZTF18abujsbq.residuals.png"
       }
     },
     {
@@ -92,6 +74,18 @@
       "feature_summary_status": "computed",
       "sncosmo_template_probe_status": "missing_required_context",
       "cross_survey_context_status": "not_requested",
+      "review_priority": {
+        "score": 7,
+        "level": "high",
+        "reasons": [
+          "Gaussian bump comparator indicates the single smooth bump is not a clean fit.",
+          "Standard descriptive features were computed.",
+          "Template-family probe is limited by missing required context.",
+          "Cross-survey context was not requested.",
+          "A recommended next check is recorded for human review."
+        ],
+        "caveat": "This is a review-priority heuristic for inspection only, not a model result or object-identity claim."
+      },
       "top_recommended_next_check": "Cross-match position (RA=286.62936, Dec=1.94183) against SIMBAD and NED for any known counterpart.",
       "links": {
         "json": "ZTF18abbdazk/ZTF18abbdazk.casefile.json",
@@ -99,6 +93,90 @@
         "html": "ZTF18abbdazk/ZTF18abbdazk.casefile.html",
         "light_curve_png": "ZTF18abbdazk/ZTF18abbdazk.lightcurve.png",
         "residual_png": "ZTF18abbdazk/ZTF18abbdazk.residuals.png"
+      }
+    },
+    {
+      "oid": "ZTF18aaxddtg",
+      "source_date": "2026-05-20",
+      "generated_at": "2026-05-21T23:11:16+00:00",
+      "schema_version": "1.9",
+      "headline": "Mixed evidence with cautious interpretation",
+      "short_summary": "The Gaussian bump comparator fit the r-band detections cleanly within the reported errors. The variability texture comparator found changes that are comparable to the reported photometric errors. Together, these favor a simple one-bump description over repeated or irregular texture in the current r-band detections. Coverage appears sparse or uneven, so cadence may affect the comparison.",
+      "detection_count": 10,
+      "non_detection_count": 212,
+      "filters_observed": [
+        "g",
+        "r"
+      ],
+      "time_span_days": 2917.0511806001887,
+      "classification_metadata": {
+        "kind": "external_metadata",
+        "value": null
+      },
+      "gaussian_comparator_status": "fitted_baseline",
+      "variability_texture_status": "computed",
+      "feature_summary_status": "computed",
+      "sncosmo_template_probe_status": "missing_required_context",
+      "cross_survey_context_status": "not_requested",
+      "review_priority": {
+        "score": 4,
+        "level": "medium",
+        "reasons": [
+          "Standard descriptive features were computed.",
+          "Template-family probe is limited by missing required context.",
+          "Cross-survey context was not requested.",
+          "A recommended next check is recorded for human review."
+        ],
+        "caveat": "This is a review-priority heuristic for inspection only, not a model result or object-identity claim."
+      },
+      "top_recommended_next_check": "Cross-match position (RA=284.45227, Dec=9.60622) against SIMBAD and NED for any known counterpart.",
+      "links": {
+        "json": "ZTF18aaxddtg/ZTF18aaxddtg.casefile.json",
+        "markdown": "ZTF18aaxddtg/ZTF18aaxddtg.casefile.md",
+        "html": "ZTF18aaxddtg/ZTF18aaxddtg.casefile.html",
+        "light_curve_png": "ZTF18aaxddtg/ZTF18aaxddtg.lightcurve.png",
+        "residual_png": "ZTF18aaxddtg/ZTF18aaxddtg.residuals.png"
+      }
+    },
+    {
+      "oid": "ZTF17aabblzo",
+      "source_date": "2026-05-20",
+      "generated_at": "2026-05-21T23:11:16+00:00",
+      "schema_version": "1.9",
+      "headline": "Evidence is limited by available comparator context",
+      "short_summary": "Some evidence layers are missing, failed, or limited by the available local detections. The case file supports cautious review rather than a firm conclusion.",
+      "detection_count": 3,
+      "non_detection_count": 246,
+      "filters_observed": [
+        "g",
+        "r"
+      ],
+      "time_span_days": 2865.0232291999273,
+      "classification_metadata": {
+        "kind": "external_metadata",
+        "value": null
+      },
+      "gaussian_comparator_status": "insufficient_data",
+      "variability_texture_status": "insufficient_data",
+      "feature_summary_status": "insufficient_data",
+      "sncosmo_template_probe_status": "insufficient_data",
+      "cross_survey_context_status": "not_requested",
+      "review_priority": {
+        "score": 3,
+        "level": "medium",
+        "reasons": [
+          "Template-family probe is limited by insufficient usable data.",
+          "Cross-survey context was not requested.",
+          "A recommended next check is recorded for human review."
+        ],
+        "caveat": "This is a review-priority heuristic for inspection only, not a model result or object-identity claim."
+      },
+      "top_recommended_next_check": "Cross-match position (RA=12.50755, Dec=42.65244) against SIMBAD and NED for any known counterpart.",
+      "links": {
+        "json": "ZTF17aabblzo/ZTF17aabblzo.casefile.json",
+        "markdown": "ZTF17aabblzo/ZTF17aabblzo.casefile.md",
+        "html": "ZTF17aabblzo/ZTF17aabblzo.casefile.html",
+        "light_curve_png": "ZTF17aabblzo/ZTF17aabblzo.lightcurve.png"
       }
     },
     {
@@ -124,6 +202,16 @@
       "feature_summary_status": "insufficient_data",
       "sncosmo_template_probe_status": "missing_required_context",
       "cross_survey_context_status": "not_requested",
+      "review_priority": {
+        "score": 3,
+        "level": "medium",
+        "reasons": [
+          "Template-family probe is limited by missing required context.",
+          "Cross-survey context was not requested.",
+          "A recommended next check is recorded for human review."
+        ],
+        "caveat": "This is a review-priority heuristic for inspection only, not a model result or object-identity claim."
+      },
       "top_recommended_next_check": "Cross-match position (RA=254.67831, Dec=-23.74590) against SIMBAD and NED for any known counterpart.",
       "links": {
         "json": "ZTF18abdtfcl/ZTF18abdtfcl.casefile.json",
@@ -155,44 +243,22 @@
       "feature_summary_status": "insufficient_data",
       "sncosmo_template_probe_status": "insufficient_data",
       "cross_survey_context_status": "not_requested",
+      "review_priority": {
+        "score": 3,
+        "level": "medium",
+        "reasons": [
+          "Template-family probe is limited by insufficient usable data.",
+          "Cross-survey context was not requested.",
+          "A recommended next check is recorded for human review."
+        ],
+        "caveat": "This is a review-priority heuristic for inspection only, not a model result or object-identity claim."
+      },
       "top_recommended_next_check": "Cross-match position (RA=258.22591, Dec=-20.73201) against SIMBAD and NED for any known counterpart.",
       "links": {
         "json": "ZTF18abduuff/ZTF18abduuff.casefile.json",
         "markdown": "ZTF18abduuff/ZTF18abduuff.casefile.md",
         "html": "ZTF18abduuff/ZTF18abduuff.casefile.html",
         "light_curve_png": "ZTF18abduuff/ZTF18abduuff.lightcurve.png"
-      }
-    },
-    {
-      "oid": "ZTF18abujsbq",
-      "source_date": "2026-05-20",
-      "generated_at": "2026-05-21T18:05:21+00:00",
-      "schema_version": "1.9",
-      "headline": "Complex light-curve behavior with limited physical interpretation",
-      "short_summary": "The object is not well explained by a single smooth bump. Its r-band detections show repeated or irregular variability texture, while template and catalog-context checks remain limited by available context.",
-      "detection_count": 147,
-      "non_detection_count": 674,
-      "filters_observed": [
-        "g",
-        "r"
-      ],
-      "time_span_days": 2840.1387963001616,
-      "classification_metadata": {
-        "kind": "external_metadata",
-        "value": null
-      },
-      "gaussian_comparator_status": "fitted_baseline",
-      "variability_texture_status": "computed",
-      "feature_summary_status": "computed",
-      "sncosmo_template_probe_status": "missing_required_context",
-      "cross_survey_context_status": "not_requested",
-      "top_recommended_next_check": "Cross-match position (RA=286.67280, Dec=9.63316) against SIMBAD and NED for any known counterpart.",
-      "links": {
-        "json": "ZTF18abujsbq/ZTF18abujsbq.casefile.json",
-        "markdown": "ZTF18abujsbq/ZTF18abujsbq.casefile.md",
-        "html": "ZTF18abujsbq/ZTF18abujsbq.casefile.html",
-        "light_curve_png": "ZTF18abujsbq/ZTF18abujsbq.lightcurve.png",
-        "residual_png": "ZTF18abujsbq/ZTF18abujsbq.residuals.png"
       }
     }
   ]

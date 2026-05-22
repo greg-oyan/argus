@@ -74,11 +74,14 @@ def test_public_example_index_links_case_bundle():
     assert index_html.exists()
     index = json.loads(index_json.read_text(encoding="utf-8"))
     indexed_oids = {entry["oid"] for entry in index["entries"]}
+    assert index["sort_order"] == "review_priority_desc_then_oid"
     assert index["case_count"] >= len(PUBLIC_DEMO_OIDS)
     assert PUBLIC_DEMO_OIDS.issubset(indexed_oids)
+    assert all("review_priority" in entry for entry in index["entries"])
 
     text = index_html.read_text(encoding="utf-8")
     assert "6 case files available." in text
+    assert "Review priority" in text
     for oid in PUBLIC_DEMO_OIDS:
         assert f"{oid}/{oid}.casefile.html" in text
         assert f"{oid}/{oid}.casefile.json" in text

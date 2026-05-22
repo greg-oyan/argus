@@ -6,7 +6,7 @@ A small system that watches the sky for novel astronomical patterns that current
 transient pipelines miss. The current product spine is a readable, inspectable
 case-file evidence package for one object at a time — not another classifier.
 
-**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export + Phase 2K static figures + Phase 2L static HTML export + Phase 2M public example bundle + Phase 2N GitHub Pages demo page + Phase 2O Gaussian residual plots + Phase 2P static case-file index + Phase 2Q batch case-file generation + Phase 2S multi-object public demo + Phase 2T GitHub Actions CI + Phase 2U CI documentation polish complete.**
+**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export + Phase 2K static figures + Phase 2L static HTML export + Phase 2M public example bundle + Phase 2N GitHub Pages demo page + Phase 2O Gaussian residual plots + Phase 2P static case-file index + Phase 2Q batch case-file generation + Phase 2S multi-object public demo + Phase 2T GitHub Actions CI + Phase 2U CI documentation polish + Phase 2V review-priority index heuristic complete.**
 
 The product vision and the strategic decision behind Phase 2B live in
 [`docs/ARGUS_VISION.md`](docs/ARGUS_VISION.md) and
@@ -46,7 +46,7 @@ index lives at [`docs/examples/index.html`](docs/examples/index.html).
 ## Architecture
 
 Argus is currently a case-file-first system. The near-term product is not a
-black-box anomaly score; it is a readable, inspectable evidence package for one
+black-box detector output; it is a readable, inspectable evidence package for one
 astronomical object at a time.
 
 Current pipeline:
@@ -495,11 +495,20 @@ python -m scripts.build_casefile_index --casefile-dir data/casefiles --write-htm
 This writes `data/casefiles/index.json` and, with `--write-html`,
 `data/casefiles/index.html`. The index scans existing case-file JSON, extracts
 evidence headlines, data counts, comparator statuses, feature/context statuses,
-the top recommended next check, and links to available artifacts. It does not
-recompute metrics, query external services, or assign anomaly scores.
+the top recommended next check, review-priority signals, and links to available
+artifacts. It does not recompute metrics, query external services, or decide
+object identity.
 
-The index is a mini-feed for objects prepared for inspection. It is not an
-anomaly-ranking model and does not classify objects.
+Phase 2V adds a transparent `review_priority` block to each index entry. The
+score is a capped additive heuristic from existing evidence signals such as
+single-bump mismatch, repeated or irregular variability texture, computed
+features, limited template/context checks, and recorded next checks. Entries are
+sorted by review-priority score descending, then `oid` ascending for stable
+tiebreaks. This is a review aid for human inspection, not a model result or
+object-identity claim.
+
+The index is a mini-feed for objects prepared for inspection. It is not a
+detector and does not decide object identity.
 
 ## Batch Case-File Generation (Phase 2Q)
 
