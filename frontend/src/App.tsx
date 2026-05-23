@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { WorkstationFrame } from "./components/shell/WorkstationFrame";
 import { loadCasefileIndex } from "./lib/casefileIndex";
+import { loadCaseFileDetails } from "./lib/casefileLoader";
 import { useInvestigationStore } from "./stores/investigationStore";
-import type { CasefileIndex } from "./types/casefile";
+import type { CaseFileDetailMap, CasefileIndex } from "./types/casefile";
 import { CaseRoute } from "./routes/CaseRoute";
 import { QueueRoute } from "./routes/QueueRoute";
 
@@ -29,6 +30,7 @@ function navigateToCase(oid: string) {
 
 export default function App() {
   const [index, setIndex] = useState<CasefileIndex | null>(null);
+  const [caseDetails, setCaseDetails] = useState<CaseFileDetailMap>({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [route, setRoute] = useState<Route>(() => readRoute());
@@ -74,6 +76,23 @@ export default function App() {
   }, [setSelectedOid]);
 
   useEffect(() => {
+    if (!index) {
+      setCaseDetails({});
+      return;
+    }
+    let mounted = true;
+    setCaseDetails({});
+    loadCaseFileDetails(index.entries).then((details) => {
+      if (mounted) {
+        setCaseDetails(details);
+      }
+    });
+    return () => {
+      mounted = false;
+    };
+  }, [index]);
+
+  useEffect(() => {
     if (route.mode === "case" && route.oid) {
       setSelectedOid(route.oid);
     }
@@ -87,6 +106,7 @@ export default function App() {
         onBackToQueue: navigateToQueue,
         activeComparator,
         highlightedEvidenceKey,
+        caseDetails,
       });
     }
     return QueueRoute({
@@ -95,8 +115,18 @@ export default function App() {
       error,
       onOpenCase: navigateToCase,
       selectedOid,
+      caseDetails,
     });
-  }, [activeComparator, error, highlightedEvidenceKey, index, isLoading, route, selectedOid]);
+  }, [
+    activeComparator,
+    caseDetails,
+    error,
+    highlightedEvidenceKey,
+    index,
+    isLoading,
+    route,
+    selectedOid,
+  ]);
 
   return (
     <WorkstationFrame

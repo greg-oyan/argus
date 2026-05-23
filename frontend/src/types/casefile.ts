@@ -45,3 +45,46 @@ export interface CasefileIndex {
   description?: string;
   entries: CasefileIndexEntry[];
 }
+
+export interface ResidualPoint {
+  mjd: number;
+  observed_mag?: number;
+  model_mag?: number;
+  residual_mag: number;
+  magerr?: number | null;
+}
+
+export interface ModelComparison {
+  model_type: string;
+  status?: string;
+  fit_metrics?: Record<string, number | string | boolean | null | undefined>;
+  residual_points?: ResidualPoint[] | null;
+}
+
+export interface LightCurveFilterSummary {
+  filter: string;
+  n_detections?: number;
+  n_non_detections?: number;
+  delta_mag?: number;
+}
+
+export interface LightCurveSummary {
+  n_detections?: number;
+  n_non_detections?: number;
+  longest_detection_gap_days?: number;
+  time_span_days?: number;
+  per_filter?: LightCurveFilterSummary[];
+}
+
+export interface CaseFileDetail {
+  oid: string;
+  schema_version?: string;
+  detection_count?: number;
+  non_detection_count?: number;
+  filters_observed?: string[];
+  time_span_days?: number;
+  light_curve_summary?: LightCurveSummary;
+  model_comparisons?: ModelComparison[];
+}
+
+export type CaseFileDetailMap = Record<string, CaseFileDetail | null | undefined>;

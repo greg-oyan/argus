@@ -1,4 +1,4 @@
-import type { CasefileIndex } from "../types/casefile";
+import type { CaseFileDetailMap, CasefileIndex } from "../types/casefile";
 import { exampleArtifactUrl } from "../lib/paths";
 
 interface CaseRouteProps {
@@ -7,6 +7,7 @@ interface CaseRouteProps {
   onBackToQueue: () => void;
   activeComparator: string | null;
   highlightedEvidenceKey: string | null;
+  caseDetails: CaseFileDetailMap;
 }
 
 export function CaseRoute({
@@ -15,6 +16,7 @@ export function CaseRoute({
   onBackToQueue,
   activeComparator,
   highlightedEvidenceKey,
+  caseDetails,
 }: CaseRouteProps) {
   const entry = index?.entries.find((item) => item.oid === oid);
 
@@ -39,6 +41,7 @@ export function CaseRoute({
   const htmlHref = exampleArtifactUrl(entry.links?.html);
   const lightCurveHref = exampleArtifactUrl(entry.links?.light_curve_png);
   const residualHref = exampleArtifactUrl(entry.links?.residual_png);
+  const detail = caseDetails[entry.oid];
 
   return {
     primary: (
@@ -109,6 +112,9 @@ export function CaseRoute({
           <p className="text-xs leading-5 text-workstation-muted">
             This is the Case Mode shell only. It does not add new inference, recompute
             metrics, or change the existing case-file artifacts.
+          </p>
+          <p className="mt-3 font-mono text-xs text-workstation-muted">
+            case JSON: {detail ? "loaded" : detail === null ? "unavailable" : "loading"}
           </p>
         </div>
       </div>

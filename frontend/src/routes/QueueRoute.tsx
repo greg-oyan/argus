@@ -1,6 +1,6 @@
-import type { CasefileIndex, CasefileIndexEntry } from "../types/casefile";
+import type { CaseFileDetailMap, CasefileIndex, CasefileIndexEntry } from "../types/casefile";
 import { exampleArtifactUrl } from "../lib/paths";
-import { QueueScaffold } from "../components/queue/QueueScaffold";
+import { QueueField } from "../components/queue/QueueField";
 import { useInvestigationStore } from "../stores/investigationStore";
 
 interface QueueRouteProps {
@@ -9,9 +9,16 @@ interface QueueRouteProps {
   error: string | null;
   onOpenCase: (oid: string) => void;
   selectedOid: string | null;
+  caseDetails: CaseFileDetailMap;
 }
 
-function SelectedPreview({ entry }: { entry: CasefileIndexEntry | undefined }) {
+function SelectedPreview({
+  entry,
+  caseDetails,
+}: {
+  entry: CasefileIndexEntry | undefined;
+  caseDetails: CaseFileDetailMap;
+}) {
   const setActiveComparator = useInvestigationStore((state) => state.setActiveComparator);
   const setHighlightedEvidenceKey = useInvestigationStore(
     (state) => state.setHighlightedEvidenceKey,
@@ -28,6 +35,11 @@ function SelectedPreview({ entry }: { entry: CasefileIndexEntry | undefined }) {
   const htmlHref = exampleArtifactUrl(entry.links?.html);
   const jsonHref = exampleArtifactUrl(entry.links?.json);
   const priority = entry.review_priority;
+  const detail = caseDetails[entry.oid];
+  const residualCount =
+    detail?.model_comparisons?.find((item) => item.model_type === "gaussian_bump")
+      ?.residual_points?.length ?? 0;
+  const longestGap = detail?.light_curve_summary?.longest_detection_gap_days;
 
   return (
     <div className="flex h-full flex-col gap-5 overflow-auto p-5">
@@ -49,6 +61,10 @@ function SelectedPreview({ entry }: { entry: CasefileIndexEntry | undefined }) {
           <span>{priority ? `${priority.score}/10 ${priority.level}` : "n/a"}</span>
           <span className="text-workstation-muted">sort</span>
           <span>{entry.source_date ?? "n/a"}</span>
+          <span className="text-workstation-muted">residual field</span>
+          <span>{residualCount > 0 ? `${residualCount} points` : detail === null ? "unavailable" : "loading"}</span>
+          <span className="text-workstation-muted">largest gap</span>
+          <span>{longestGap ? `${longestGap.toFixed(1)} d` : "n/a"}</span>
         </div>
       </div>
 
@@ -118,6 +134,7 @@ export function QueueRoute({
   error,
   onOpenCase,
   selectedOid,
+  caseDetails,
 }: QueueRouteProps) {
   const entries = index?.entries ?? [];
   const selectedEntry = entries.find((entry) => entry.oid === selectedOid) ?? entries[0];
@@ -154,7 +171,7 @@ export function QueueRoute({
   }
 
   return {
-    primary: <QueueScaffold entries={entries} onOpenCase={onOpenCase} />,
-    secondary: <SelectedPreview entry={selectedEntry} />,
+    primary: <QueueField details={caseDetails} entries={entries} onOpenCase={onOpenCase} />,
+    secondary: <SelectedPreview caseDetails={caseDetails} entry={selectedEntry} />,
   };
 }

@@ -6,7 +6,7 @@ A small system that watches the sky for novel astronomical patterns that current
 transient pipelines miss. The current product spine is a readable, inspectable
 case-file evidence package for one object at a time — not another classifier.
 
-**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export + Phase 2K static figures + Phase 2L static HTML export + Phase 2M public example bundle + Phase 2N GitHub Pages demo page + Phase 2O Gaussian residual plots + Phase 2P static case-file index + Phase 2Q batch case-file generation + Phase 2S multi-object public demo + Phase 2T GitHub Actions CI + Phase 2U CI documentation polish + Phase 2V review-priority index heuristic + Phase 3A analyst-workstation shell complete.**
+**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export + Phase 2K static figures + Phase 2L static HTML export + Phase 2M public example bundle + Phase 2N GitHub Pages demo page + Phase 2O Gaussian residual plots + Phase 2P static case-file index + Phase 2Q batch case-file generation + Phase 2S multi-object public demo + Phase 2T GitHub Actions CI + Phase 2U CI documentation polish + Phase 2V review-priority index heuristic + Phase 3A analyst-workstation shell + Phase 3B visual queue glyph field complete.**
 
 The product vision and the strategic decision behind Phase 2B live in
 [`docs/ARGUS_VISION.md`](docs/ARGUS_VISION.md) and
@@ -54,8 +54,15 @@ The workstation reads the existing public case-file index from
 `docs/examples/index.json` in local Vite development and from
 `../examples/index.json` after it is built under `docs/workstation/`. It does
 not change the Python pipeline, recompute case-file evidence, or add new
-science logic. Phase 3A is only the dark analyst shell, Queue Mode / Case Mode
-route scaffold, shared investigation state, and static index loading.
+science logic.
+
+Phase 3A established the dark analyst shell, Queue Mode / Case Mode route
+scaffold, shared investigation state, and static index loading. Phase 3B
+replaces the list scaffold with visual Queue Mode glyph cards. The glyphs encode
+review priority, behavior texture, residual structure, observed filters,
+sparsity, and evidence status from existing case-file artifacts. This is a
+review-priority visualization for inspection, not a detector result or
+object-identity claim.
 
 ```bash
 cd frontend
