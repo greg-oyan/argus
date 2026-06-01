@@ -7,6 +7,39 @@ export interface ReviewPriority {
   caveat: string;
 }
 
+export interface EvidenceSection {
+  title: string;
+  status?: string;
+  summary?: string;
+}
+
+export interface EvidenceNarrative {
+  headline?: string;
+  short_summary?: string;
+  evidence_sections?: EvidenceSection[];
+  what_argus_can_say?: string[];
+  what_argus_cannot_say?: string[];
+  recommended_next_checks?: string[];
+  caveat?: string;
+}
+
+export interface ComparisonSummary {
+  headline?: string;
+  summary?: string;
+  caveat?: string;
+  recommended_next_check?: string;
+}
+
+export interface FeatureSummary {
+  source?: string;
+  band?: string;
+  status?: string;
+  n_points?: number;
+  features?: Record<string, number | string | boolean | null | undefined>;
+  interpretation?: string;
+  caveat?: string;
+}
+
 export interface CasefileArtifactLinks {
   json?: string;
   markdown?: string;
@@ -90,7 +123,12 @@ export interface CaseFileDetail {
   filters_observed?: string[];
   time_span_days?: number;
   light_curve_summary?: LightCurveSummary;
+  evidence_narrative?: EvidenceNarrative;
+  comparison_summary?: ComparisonSummary;
+  feature_summary?: FeatureSummary;
   model_comparisons?: ModelComparison[];
+  recommended_next_checks?: string[];
+  uncertainty_notes?: string[];
 }
 
 export type CaseFileDetailMap = Record<string, CaseFileDetail | null | undefined>;

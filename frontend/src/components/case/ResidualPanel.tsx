@@ -11,14 +11,16 @@ import {
 import {
   installClearSelectionOnBackgroundClick,
   pointIdFromChartEvent,
+  selectedTimeRangeFromDataZoomEvent,
 } from "../../lib/chartInteractions";
-import type { LinkedResidualPoint } from "../../lib/chartSeries";
+import { timeBounds, timeRangeToPercent, type LinkedResidualPoint } from "../../lib/chartSeries";
 import { useInvestigationStore } from "../../stores/investigationStore";
 
 interface ResidualPanelProps {
   oid: string;
   points: LinkedResidualPoint[];
   activePoint: LinkedResidualPoint | null;
+  isComparatorFocused?: boolean;
 }
 
 function residualColor(value: number): string {
@@ -44,14 +46,33 @@ function pointEncoding(
   };
 }
 
-export function ResidualPanel({ oid, points, activePoint }: ResidualPanelProps) {
+export function ResidualPanel({
+  oid,
+  points,
+  activePoint,
+  isComparatorFocused = false,
+}: ResidualPanelProps) {
   const hoveredPointId = useInvestigationStore((state) => state.hoveredPointId);
   const selectedPointId = useInvestigationStore((state) => state.selectedPointId);
+  const selectedTimeRange = useInvestigationStore((state) => state.selectedTimeRange);
   const setHoveredPointId = useInvestigationStore((state) => state.setHoveredPointId);
   const setSelectedPointId = useInvestigationStore((state) => state.setSelectedPointId);
+  const setSelectedTimeRange = useInvestigationStore((state) => state.setSelectedTimeRange);
+  const setFocusedPanelKey = useInvestigationStore((state) => state.setFocusedPanelKey);
   const clearSelectedPointId = useInvestigationStore((state) => state.clearSelectedPointId);
 
-  const option = useMemo<EChartsOption>(() => {
+  const option = useMemo(() => {
+    const zoom = timeRangeToPercent(points, selectedTimeRange);
+    const rangeStart = selectedTimeRange?.startMjd;
+    const rangeEnd = selectedTimeRange?.endMjd;
+    const selectedMarkArea =
+      rangeStart != null && rangeEnd != null
+        ? {
+            silent: true,
+            itemStyle: { color: "rgba(107, 183, 255, 0.08)" },
+            data: [[{ xAxis: rangeStart }, { xAxis: rangeEnd }]],
+          }
+        : undefined;
     const residualData = points.map((point) => ({
       ...pointEncoding(point, hoveredPointId, selectedPointId),
       pointId: point.pointId,
@@ -91,11 +112,34 @@ export function ResidualPanel({ oid, points, activePoint }: ResidualPanelProps) 
         axisLabel: { color: chartColors.muted },
         splitLine: chartSplitLine,
       },
+      dataZoom: [
+        {
+          type: "inside",
+          xAxisIndex: 0,
+          filterMode: "none",
+          start: zoom.start,
+          end: zoom.end,
+        },
+        {
+          type: "slider",
+          xAxisIndex: 0,
+          filterMode: "none",
+          start: zoom.start,
+          end: zoom.end,
+          height: 14,
+          bottom: 8,
+          borderColor: chartColors.grid,
+          fillerColor: "rgba(107, 183, 255, 0.13)",
+          handleStyle: { color: chartColors.accent },
+          textStyle: { color: chartColors.muted },
+        },
+      ],
       series: [
         {
           name: "Gaussian residual",
           type: "scatter",
           data: residualData,
+          markArea: selectedMarkArea,
           markLine: {
             symbol: "none",
             silent: true,
@@ -105,8 +149,8 @@ export function ResidualPanel({ oid, points, activePoint }: ResidualPanelProps) 
           },
         },
       ],
-    };
-  }, [activePoint, hoveredPointId, points, selectedPointId]);
+    } as EChartsOption;
+  }, [activePoint, hoveredPointId, points, selectedPointId, selectedTimeRange]);
 
   const onEvents = useMemo(
     () => ({
@@ -126,10 +170,19 @@ export function ResidualPanel({ oid, points, activePoint }: ResidualPanelProps) 
         const pointId = pointIdFromChartEvent(params);
         if (pointId) {
           setSelectedPointId(pointId);
+          setFocusedPanelKey("point");
         }
       },
+      datazoom: (params: unknown) => {
+        const bounds = timeBounds(points);
+        if (!bounds) {
+          return;
+        }
+        setSelectedTimeRange(selectedTimeRangeFromDataZoomEvent(params, bounds.min, bounds.max));
+        setFocusedPanelKey("selected_window");
+      },
     }),
-    [setHoveredPointId, setSelectedPointId],
+    [points, setFocusedPanelKey, setHoveredPointId, setSelectedPointId, setSelectedTimeRange],
   );
 
   if (points.length === 0) {
@@ -148,7 +201,11 @@ export function ResidualPanel({ oid, points, activePoint }: ResidualPanelProps) 
   }
 
   return (
-    <section className="flex min-h-[260px] flex-col border border-workstation-line bg-workstation-panel/70">
+    <section
+      className={`flex min-h-[260px] flex-col border bg-workstation-panel/70 ${
+        isComparatorFocused ? "border-workstation-accent/70" : "border-workstation-line"
+      }`}
+    >
       <div className="flex items-center justify-between border-b border-workstation-line px-4 py-3">
         <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-workstation-muted">
           Gaussian Residual Field

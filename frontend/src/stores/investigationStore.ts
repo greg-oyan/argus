@@ -13,14 +13,17 @@ interface InvestigationState {
   selectedTimeRange: SelectedTimeRange | null;
   activeComparator: string | null;
   highlightedEvidenceKey: string | null;
+  focusedPanelKey: string | null;
   setSelectedOid: (oid: string | null) => void;
   setHoveredOid: (oid: string | null) => void;
   setHoveredPointId: (pointId: string | null) => void;
   setSelectedPointId: (pointId: string | null) => void;
   clearSelectedPointId: () => void;
+  clearPointSelection: () => void;
   setSelectedTimeRange: (range: SelectedTimeRange | null) => void;
   setActiveComparator: (comparator: string | null) => void;
   setHighlightedEvidenceKey: (key: string | null) => void;
+  setFocusedPanelKey: (key: string | null) => void;
 }
 
 export const useInvestigationStore = create<InvestigationState>((set) => ({
@@ -31,13 +34,17 @@ export const useInvestigationStore = create<InvestigationState>((set) => ({
   selectedTimeRange: null,
   activeComparator: null,
   highlightedEvidenceKey: null,
+  focusedPanelKey: null,
   setSelectedOid: (selectedOid) =>
-    set({ selectedOid, hoveredPointId: null, selectedPointId: null }),
+    set({ selectedOid, hoveredPointId: null, selectedPointId: null, selectedTimeRange: null }),
   setHoveredOid: (hoveredOid) => set({ hoveredOid }),
   setHoveredPointId: (hoveredPointId) => set({ hoveredPointId }),
-  setSelectedPointId: (selectedPointId) => set({ selectedPointId }),
+  setSelectedPointId: (selectedPointId) =>
+    set({ selectedPointId, focusedPanelKey: selectedPointId ? "point" : null }),
   clearSelectedPointId: () => set({ selectedPointId: null }),
+  clearPointSelection: () => set({ hoveredPointId: null, selectedPointId: null }),
   setSelectedTimeRange: (selectedTimeRange) => set({ selectedTimeRange }),
   setActiveComparator: (activeComparator) => set({ activeComparator }),
   setHighlightedEvidenceKey: (highlightedEvidenceKey) => set({ highlightedEvidenceKey }),
+  setFocusedPanelKey: (focusedPanelKey) => set({ focusedPanelKey }),
 }));

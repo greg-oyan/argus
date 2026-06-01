@@ -1,5 +1,5 @@
 import { CaseCanvas } from "../components/case/CaseCanvas";
-import { CasePointReadout } from "../components/case/CasePointReadout";
+import { CaseEvidenceColumn } from "../components/case/CaseEvidenceColumn";
 import type { CaseFileDetailMap, CasefileIndex } from "../types/casefile";
 
 interface CaseRouteProps {
@@ -34,6 +34,6 @@ export function CaseRoute({ index, oid, onBackToQueue, caseDetails }: CaseRouteP
 
   return {
     primary: <CaseCanvas detail={detail} entry={entry} onBackToQueue={onBackToQueue} />,
-    secondary: <CasePointReadout detail={detail} entry={entry} />,
+    secondary: <CaseEvidenceColumn detail={detail} entry={entry} />,
   };
 }

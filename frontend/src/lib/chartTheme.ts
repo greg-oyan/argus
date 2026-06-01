@@ -22,7 +22,7 @@ export const chartGrid = {
   left: 58,
   right: 24,
   top: 36,
-  bottom: 42,
+  bottom: 58,
 };
 
 export const chartAxisLine = {

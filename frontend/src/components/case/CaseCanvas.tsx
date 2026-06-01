@@ -20,6 +20,7 @@ interface CaseCanvasProps {
 export function CaseCanvas({ entry, detail, onBackToQueue }: CaseCanvasProps) {
   const hoveredPointId = useInvestigationStore((state) => state.hoveredPointId);
   const selectedPointId = useInvestigationStore((state) => state.selectedPointId);
+  const activeComparator = useInvestigationStore((state) => state.activeComparator);
   const points = useMemo(() => linkedResidualPoints(entry.oid, detail), [detail, entry.oid]);
   const activePoint = useMemo(
     () => activeLinkedPoint(points, hoveredPointId, selectedPointId),
@@ -32,10 +33,22 @@ export function CaseCanvas({ entry, detail, onBackToQueue }: CaseCanvasProps) {
   } else if (detail === null) {
     body = <CaseErrorState />;
   } else {
+    const gaussianFocused =
+      activeComparator === "gaussian_bump" || activeComparator === "gaussian";
     body = (
       <div className="grid min-h-0 flex-1 grid-rows-[minmax(300px,1.15fr)_minmax(260px,0.85fr)] gap-4 p-4">
-        <LightCurvePanel activePoint={activePoint} oid={entry.oid} points={points} />
-        <ResidualPanel activePoint={activePoint} oid={entry.oid} points={points} />
+        <LightCurvePanel
+          activePoint={activePoint}
+          isComparatorFocused={gaussianFocused}
+          oid={entry.oid}
+          points={points}
+        />
+        <ResidualPanel
+          activePoint={activePoint}
+          isComparatorFocused={gaussianFocused}
+          oid={entry.oid}
+          points={points}
+        />
       </div>
     );
   }
