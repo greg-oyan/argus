@@ -4,6 +4,7 @@ import { EvidenceNarrativePanel } from "./EvidenceNarrativePanel";
 import { FeatureInspector } from "./FeatureInspector";
 import { NextChecksPanel } from "./NextChecksPanel";
 import { PointInspector } from "./PointInspector";
+import { SkyContextPanel } from "./SkyContextPanel";
 
 interface CaseEvidenceColumnProps {
   entry: CasefileIndexEntry;
@@ -17,6 +18,7 @@ export function CaseEvidenceColumn({ entry, detail }: CaseEvidenceColumnProps) {
       <EvidenceNarrativePanel detail={detail} />
       <ComparatorInspector detail={detail} />
       <FeatureInspector detail={detail} />
+      <SkyContextPanel detail={detail} />
       <NextChecksPanel detail={detail} entry={entry} />
     </div>
   );

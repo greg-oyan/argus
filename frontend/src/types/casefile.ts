@@ -40,6 +40,36 @@ export interface FeatureSummary {
   caveat?: string;
 }
 
+export interface Coordinates {
+  ra?: number | null;
+  dec?: number | null;
+  ra_unit?: string | null;
+  dec_unit?: string | null;
+}
+
+export interface CrossSurveyNearestMatch {
+  name?: string;
+  separation_arcsec?: number | null;
+  raw_type_label?: string | null;
+  catalog_object_type?: string | null;
+}
+
+export interface CrossSurveySource {
+  catalog?: string;
+  status?: string;
+  nearest_match?: CrossSurveyNearestMatch | null;
+  match_count?: number;
+}
+
+export interface CrossSurveyContext {
+  status?: string;
+  coordinates?: Coordinates | null;
+  search_radius_arcsec?: number | null;
+  sources?: CrossSurveySource[];
+  interpretation?: string;
+  caveat?: string;
+}
+
 export interface CasefileArtifactLinks {
   json?: string;
   markdown?: string;
@@ -122,10 +152,12 @@ export interface CaseFileDetail {
   non_detection_count?: number;
   filters_observed?: string[];
   time_span_days?: number;
+  coordinates?: Coordinates;
   light_curve_summary?: LightCurveSummary;
   evidence_narrative?: EvidenceNarrative;
   comparison_summary?: ComparisonSummary;
   feature_summary?: FeatureSummary;
+  cross_survey_context?: CrossSurveyContext;
   model_comparisons?: ModelComparison[];
   recommended_next_checks?: string[];
   uncertainty_notes?: string[];
