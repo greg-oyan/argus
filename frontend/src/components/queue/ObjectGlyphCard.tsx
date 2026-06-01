@@ -50,8 +50,10 @@ export function ObjectGlyphCard({
           ? "border-workstation-accent shadow-[0_0_0_1px_rgba(107,183,255,0.45)]"
           : "border-workstation-line hover:border-workstation-accent/60"
       } ${isHovered ? "bg-workstation-panel2" : ""}`}
-      onClick={onSelect}
-      onDoubleClick={onOpenCase}
+      onClick={() => {
+        onSelect();
+        onOpenCase();
+      }}
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
       type="button"

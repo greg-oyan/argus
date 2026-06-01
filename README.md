@@ -6,7 +6,7 @@ A small system that watches the sky for novel astronomical patterns that current
 transient pipelines miss. The current product spine is a readable, inspectable
 case-file evidence package for one object at a time — not another classifier.
 
-**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export + Phase 2K static figures + Phase 2L static HTML export + Phase 2M public example bundle + Phase 2N GitHub Pages demo page + Phase 2O Gaussian residual plots + Phase 2P static case-file index + Phase 2Q batch case-file generation + Phase 2S multi-object public demo + Phase 2T GitHub Actions CI + Phase 2U CI documentation polish + Phase 2V review-priority index heuristic + Phase 3A analyst-workstation shell + Phase 3B visual queue glyph field complete.**
+**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export + Phase 2K static figures + Phase 2L static HTML export + Phase 2M public example bundle + Phase 2N GitHub Pages demo page + Phase 2O Gaussian residual plots + Phase 2P static case-file index + Phase 2Q batch case-file generation + Phase 2S multi-object public demo + Phase 2T GitHub Actions CI + Phase 2U CI documentation polish + Phase 2V review-priority index heuristic + Phase 3A analyst-workstation shell + Phase 3B visual queue glyph field + Phase 3C linked Case Mode charts complete.**
 
 The product vision and the strategic decision behind Phase 2B live in
 [`docs/ARGUS_VISION.md`](docs/ARGUS_VISION.md) and
@@ -64,15 +64,21 @@ sparsity, and evidence status from existing case-file artifacts. This is a
 review-priority visualization for inspection, not a detector result or
 object-identity claim.
 
+Phase 3C adds linked Case Mode light-curve and residual panels with Apache
+ECharts. Hover and click state flows through the investigation store so an
+observed light-curve point and its Gaussian residual point highlight together.
+This makes model mismatch easier to inspect visually without adding science
+logic or changing the Python pipeline.
+
 ```bash
 cd frontend
 npm install
 npm run build
 ```
 
-For Phase 3A, the frontend check is the TypeScript/Vite production build. A
-separate frontend test framework is deferred until the workstation has
-interactive chart and linked-view behavior worth exercising.
+The current frontend check is the TypeScript/Vite production build. A separate
+frontend test framework is deferred while the workstation interaction model is
+still taking shape.
 
 ## Architecture
 

@@ -55,9 +55,15 @@ export interface ResidualPoint {
 }
 
 export interface ModelComparison {
+  name?: string;
   model_type: string;
+  filter_used?: string;
   status?: string;
+  parameters?: Record<string, number | string | boolean | null | undefined>;
   fit_metrics?: Record<string, number | string | boolean | null | undefined>;
+  residual_summary?: string[];
+  interpretation?: string;
+  limitations?: string[];
   residual_points?: ResidualPoint[] | null;
 }
 

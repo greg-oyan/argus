@@ -36,10 +36,6 @@ export default function App() {
   const [route, setRoute] = useState<Route>(() => readRoute());
   const selectedOid = useInvestigationStore((state) => state.selectedOid);
   const setSelectedOid = useInvestigationStore((state) => state.setSelectedOid);
-  const activeComparator = useInvestigationStore((state) => state.activeComparator);
-  const highlightedEvidenceKey = useInvestigationStore(
-    (state) => state.highlightedEvidenceKey,
-  );
 
   useEffect(() => {
     const handleHashChange = () => setRoute(readRoute());
@@ -104,8 +100,6 @@ export default function App() {
         index,
         oid: route.oid ?? selectedOid,
         onBackToQueue: navigateToQueue,
-        activeComparator,
-        highlightedEvidenceKey,
         caseDetails,
       });
     }
@@ -118,10 +112,8 @@ export default function App() {
       caseDetails,
     });
   }, [
-    activeComparator,
     caseDetails,
     error,
-    highlightedEvidenceKey,
     index,
     isLoading,
     route,
