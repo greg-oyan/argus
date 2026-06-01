@@ -12,6 +12,7 @@ function uniqueStrings(values: Array<string | undefined>): string[] {
 
 export function NextChecksPanel({ entry, detail }: NextChecksPanelProps) {
   const activeComparator = useInvestigationStore((state) => state.activeComparator);
+  const focusedPanelKey = useInvestigationStore((state) => state.focusedPanelKey);
   const setFocusedPanelKey = useInvestigationStore((state) => state.setFocusedPanelKey);
   const nextChecks = uniqueStrings([
     ...(detail?.recommended_next_checks ?? []),
@@ -30,13 +31,13 @@ export function NextChecksPanel({ entry, detail }: NextChecksPanelProps) {
 
   return (
     <section
-      className={`border bg-workstation-panel/80 ${
-        missingContext ? "border-workstation-amber/70" : "border-workstation-line"
+      className={`argus-panel ${
+        missingContext ? "argus-panel-warn" : focusedPanelKey === "next_checks" ? "argus-panel-focus" : ""
       }`}
       onMouseEnter={() => setFocusedPanelKey("next_checks")}
     >
-      <div className="border-b border-workstation-line px-3 py-2">
-        <p className="font-mono text-xs uppercase tracking-[0.18em] text-workstation-muted">
+      <div className="argus-panel-header">
+        <p className="argus-panel-title">
           Next Checks
         </p>
         <p className="mt-1 text-xs leading-5 text-workstation-muted">

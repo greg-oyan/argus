@@ -76,6 +76,7 @@ export function ComparatorInspector({ detail }: ComparatorInspectorProps) {
   const selectedPointId = useInvestigationStore((state) => state.selectedPointId);
   const selectedTimeRange = useInvestigationStore((state) => state.selectedTimeRange);
   const activeComparator = useInvestigationStore((state) => state.activeComparator);
+  const focusedPanelKey = useInvestigationStore((state) => state.focusedPanelKey);
   const setActiveComparator = useInvestigationStore((state) => state.setActiveComparator);
   const setHighlightedEvidenceKey = useInvestigationStore(
     (state) => state.setHighlightedEvidenceKey,
@@ -90,15 +91,18 @@ export function ComparatorInspector({ detail }: ComparatorInspectorProps) {
 
   return (
     <section
-      className="border border-workstation-line bg-workstation-panel/80"
+      className={`argus-panel ${focusedPanelKey === "comparator" || activeComparator ? "argus-panel-focus" : ""}`}
       onMouseEnter={() => setFocusedPanelKey("comparator")}
     >
-      <div className="border-b border-workstation-line px-3 py-2">
-        <p className="font-mono text-xs uppercase tracking-[0.18em] text-workstation-muted">
+      <div className="argus-panel-header">
+        <p className="argus-panel-title">
           Comparator Inspector
         </p>
         <p className="mt-1 text-xs leading-5 text-workstation-muted">
-          Toggle comparator focus for the linked chart and narrative emphasis.
+          Toggle comparator focus for chart emphasis, narrative focus, and selected-window readouts.
+        </p>
+        <p className="mt-2 font-mono text-[0.68rem] uppercase tracking-[0.12em] text-workstation-muted">
+          Active: <span className="text-workstation-text">{activeComparator ?? "none"}</span>
         </p>
       </div>
       <div className="max-h-[380px] overflow-auto p-3">
@@ -114,8 +118,8 @@ export function ComparatorInspector({ detail }: ComparatorInspectorProps) {
                 <div
                   className={`border p-3 ${
                     active || gaussianMismatchFocus
-                      ? "border-workstation-accent/70 bg-workstation-bg/80"
-                      : "border-workstation-line bg-workstation-bg/40"
+                      ? "border-workstation-accent/70 bg-workstation-bg/85 shadow-[inset_2px_0_0_rgba(107,183,255,0.58)]"
+                      : "border-workstation-line bg-workstation-bg/40 hover:border-workstation-line/90"
                   }`}
                   key={comparison.model_type}
                 >

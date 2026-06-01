@@ -30,10 +30,15 @@ export function QueueField({ entries, details, onOpenCase }: QueueFieldProps) {
             Queue Mode
           </p>
           <h1 className="mt-1 text-lg font-semibold text-white">Evidence glyph field</h1>
+          <p className="mt-1 font-mono text-xs text-workstation-muted">
+            {entries.length} objects prepared for linked-view inspection
+            {selectedOid ? ` / selected ${selectedOid}` : ""}
+          </p>
         </div>
         <p className="hidden max-w-md text-right text-xs leading-5 text-workstation-muted md:block">
-          Each object is encoded from existing case-file evidence: priority spine, behavior
-          trace, residual barcode, filters, sparsity texture, and evidence rail.
+          Select an object to move from the review field into its evidence canvas. The same
+          priority spine, behavior trace, residual barcode, filters, and evidence rail carry
+          into Case Mode.
         </p>
       </div>
       <div className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-4">

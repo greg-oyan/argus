@@ -21,6 +21,7 @@ export function PointInspector({ entry, detail }: PointInspectorProps) {
   const hoveredPointId = useInvestigationStore((state) => state.hoveredPointId);
   const selectedPointId = useInvestigationStore((state) => state.selectedPointId);
   const selectedTimeRange = useInvestigationStore((state) => state.selectedTimeRange);
+  const focusedPanelKey = useInvestigationStore((state) => state.focusedPanelKey);
   const clearPointSelection = useInvestigationStore((state) => state.clearPointSelection);
   const setFocusedPanelKey = useInvestigationStore((state) => state.setFocusedPanelKey);
   const points = linkedResidualPoints(entry.oid, detail);
@@ -34,16 +35,18 @@ export function PointInspector({ entry, detail }: PointInspectorProps) {
 
   return (
     <section
-      className={`border bg-workstation-panel/80 ${
-        activePoint ? "border-workstation-accent/70" : "border-workstation-line"
+      className={`argus-panel ${
+        activePoint || focusedPanelKey === "point" ? "argus-panel-focus" : ""
       }`}
       onMouseEnter={() => setFocusedPanelKey("point")}
     >
-      <div className="border-b border-workstation-line px-3 py-2">
-        <p className="font-mono text-xs uppercase tracking-[0.18em] text-workstation-muted">
+      <div className="argus-panel-header">
+        <p className="argus-panel-title">
           Point Inspector
         </p>
-        <p className="mt-1 font-mono text-xs text-workstation-text">{pointMode}</p>
+        <p className={`mt-1 font-mono text-xs ${activePoint ? "text-workstation-accent" : "text-workstation-text"}`}>
+          {pointMode}
+        </p>
       </div>
 
       <div className="max-h-[280px] overflow-auto p-3">
@@ -88,7 +91,8 @@ export function PointInspector({ entry, detail }: PointInspectorProps) {
         ) : null}
 
         <p className="mt-3 text-xs leading-5 text-workstation-muted">
-          Hover updates this panel. Click pins the selected observation until cleared.
+          Hover updates this panel. Click pins the selected observation until cleared; the same
+          point drives the linked time guide in both charts.
         </p>
         {selectedPointId || hoveredPointId ? (
           <button

@@ -40,6 +40,7 @@ function sectionIsFocused(
 export function EvidenceNarrativePanel({ detail }: EvidenceNarrativePanelProps) {
   const activeComparator = useInvestigationStore((state) => state.activeComparator);
   const highlightedEvidenceKey = useInvestigationStore((state) => state.highlightedEvidenceKey);
+  const focusedPanelKey = useInvestigationStore((state) => state.focusedPanelKey);
   const setHighlightedEvidenceKey = useInvestigationStore(
     (state) => state.setHighlightedEvidenceKey,
   );
@@ -49,11 +50,13 @@ export function EvidenceNarrativePanel({ detail }: EvidenceNarrativePanelProps) 
 
   return (
     <section
-      className="border border-workstation-line bg-workstation-panel/80"
+      className={`argus-panel ${
+        focusedPanelKey === "evidence_narrative" || highlightedEvidenceKey ? "argus-panel-focus" : ""
+      }`}
       onMouseEnter={() => setFocusedPanelKey("evidence_narrative")}
     >
-      <div className="border-b border-workstation-line px-3 py-2">
-        <p className="font-mono text-xs uppercase tracking-[0.18em] text-workstation-muted">
+      <div className="argus-panel-header">
+        <p className="argus-panel-title">
           Evidence Narrative
         </p>
         <p className="mt-1 text-xs leading-5 text-workstation-muted">
@@ -79,8 +82,8 @@ export function EvidenceNarrativePanel({ detail }: EvidenceNarrativePanelProps) 
                 <button
                   className={`w-full border p-3 text-left ${
                     focused
-                      ? "border-workstation-accent/70 bg-workstation-bg/80"
-                      : "border-workstation-line bg-workstation-bg/40"
+                      ? "border-workstation-accent/70 bg-workstation-bg/85 shadow-[inset_2px_0_0_rgba(107,183,255,0.58)]"
+                      : "border-workstation-line bg-workstation-bg/40 hover:border-workstation-line/90"
                   }`}
                   key={`${section.title}-${section.status}`}
                   onClick={() => {

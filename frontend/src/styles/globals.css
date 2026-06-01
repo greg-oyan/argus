@@ -46,3 +46,37 @@ a {
 ::-webkit-scrollbar-thumb:hover {
   background: #34485d;
 }
+
+@layer components {
+  .argus-panel {
+    @apply border border-workstation-line bg-workstation-panel/80 transition-[border-color,background-color,box-shadow] duration-200;
+  }
+
+  .argus-panel-focus {
+    @apply border-workstation-accent/70 bg-workstation-panel2/85 shadow-[inset_3px_0_0_rgba(107,183,255,0.62)];
+  }
+
+  .argus-panel-warn {
+    @apply border-workstation-amber/70 shadow-[inset_3px_0_0_rgba(216,168,76,0.55)];
+  }
+
+  .argus-panel-header {
+    @apply border-b border-workstation-line px-3 py-2;
+  }
+
+  .argus-panel-title {
+    @apply font-mono text-xs uppercase tracking-[0.18em] text-workstation-muted;
+  }
+
+  .argus-state-pill {
+    @apply border border-workstation-line bg-workstation-bg/70 px-2 py-1 font-mono text-[0.68rem] uppercase tracking-[0.12em] text-workstation-muted;
+  }
+
+  .argus-state-pill-active {
+    @apply border-workstation-accent/70 text-workstation-text shadow-[0_0_0_1px_rgba(107,183,255,0.16)];
+  }
+
+  .argus-missing-state {
+    @apply flex h-full min-h-[180px] items-center justify-center border border-dashed border-workstation-line bg-workstation-bg/45 p-6 text-center text-xs leading-5 text-workstation-muted;
+  }
+}

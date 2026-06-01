@@ -25,6 +25,7 @@ function featureLabel(key: string): string {
 export function FeatureInspector({ detail }: FeatureInspectorProps) {
   const activeComparator = useInvestigationStore((state) => state.activeComparator);
   const highlightedEvidenceKey = useInvestigationStore((state) => state.highlightedEvidenceKey);
+  const focusedPanelKey = useInvestigationStore((state) => state.focusedPanelKey);
   const setActiveComparator = useInvestigationStore((state) => state.setActiveComparator);
   const setHighlightedEvidenceKey = useInvestigationStore(
     (state) => state.setHighlightedEvidenceKey,
@@ -40,14 +41,14 @@ export function FeatureInspector({ detail }: FeatureInspectorProps) {
 
   return (
     <section
-      className={`border bg-workstation-panel/80 ${
-        focused ? "border-workstation-accent/70" : "border-workstation-line"
+      className={`argus-panel ${
+        focused || focusedPanelKey === "feature_summary" ? "argus-panel-focus" : ""
       }`}
       onMouseEnter={() => setFocusedPanelKey("feature_summary")}
     >
-      <div className="flex items-start justify-between gap-3 border-b border-workstation-line px-3 py-2">
+      <div className="argus-panel-header flex items-start justify-between gap-3">
         <div>
-          <p className="font-mono text-xs uppercase tracking-[0.18em] text-workstation-muted">
+          <p className="argus-panel-title">
             Feature Inspector
           </p>
           <p className="mt-1 text-xs leading-5 text-workstation-muted">
@@ -55,7 +56,7 @@ export function FeatureInspector({ detail }: FeatureInspectorProps) {
           </p>
         </div>
         <button
-          className="border border-workstation-line px-2 py-1 font-mono text-[0.68rem] uppercase tracking-[0.12em] hover:border-workstation-accent"
+          className={`argus-state-pill ${focused ? "argus-state-pill-active" : ""}`}
           onClick={() => {
             setActiveComparator("feature_summary");
             setHighlightedEvidenceKey("feature_summary");
@@ -69,7 +70,7 @@ export function FeatureInspector({ detail }: FeatureInspectorProps) {
 
       <div className="max-h-[300px] overflow-auto p-3">
         {!summary ? (
-          <p className="text-sm text-workstation-muted">No feature summary is present.</p>
+          <div className="argus-missing-state">No feature summary is present in this case-file artifact.</div>
         ) : (
           <>
             <dl className="grid grid-cols-[110px_minmax(0,1fr)] gap-2 font-mono text-xs">

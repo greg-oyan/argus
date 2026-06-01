@@ -187,14 +187,17 @@ export function ResidualPanel({
 
   if (points.length === 0) {
     return (
-      <section className="flex min-h-[260px] flex-col border border-workstation-line bg-workstation-panel/70">
-        <div className="border-b border-workstation-line px-4 py-3">
-          <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-workstation-muted">
+      <section className="argus-panel flex min-h-[260px] flex-col">
+        <div className="argus-panel-header">
+          <h2 className="argus-panel-title">
             Gaussian Residual Field
           </h2>
         </div>
-        <div className="flex flex-1 items-center justify-center p-8 text-center text-sm text-workstation-muted">
-          Residual points are not present for this object, so linked residual inspection is unavailable.
+        <div className="p-4">
+          <div className="argus-missing-state">
+            Residual points are not present for this object, so linked residual inspection is
+            unavailable. This is missing context for the workstation view, not a conclusion.
+          </div>
         </div>
       </section>
     );
@@ -202,15 +205,17 @@ export function ResidualPanel({
 
   return (
     <section
-      className={`flex min-h-[260px] flex-col border bg-workstation-panel/70 ${
-        isComparatorFocused ? "border-workstation-accent/70" : "border-workstation-line"
+      className={`argus-panel flex min-h-[260px] flex-col ${
+        isComparatorFocused ? "argus-panel-focus" : ""
       }`}
     >
-      <div className="flex items-center justify-between border-b border-workstation-line px-4 py-3">
-        <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-workstation-muted">
+      <div className="argus-panel-header flex items-center justify-between gap-3">
+        <h2 className="argus-panel-title">
           Gaussian Residual Field
         </h2>
-        <p className="font-mono text-xs text-workstation-muted">{oid} point residuals</p>
+        <p className="font-mono text-xs text-workstation-muted">
+          {activePoint ? `linked MJD ${activePoint.mjd.toFixed(3)}` : `${oid} point residuals`}
+        </p>
       </div>
       <div className="min-h-0 flex-1">
         <ReactECharts

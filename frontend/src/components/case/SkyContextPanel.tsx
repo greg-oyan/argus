@@ -1,5 +1,6 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { loadAladinLite } from "../../lib/aladin";
+import { useInvestigationStore } from "../../stores/investigationStore";
 import type { CaseFileDetail, Coordinates, CrossSurveySource } from "../../types/casefile";
 
 interface SkyContextPanelProps {
@@ -49,6 +50,8 @@ function formatSource(source: CrossSurveySource): string {
 }
 
 export function SkyContextPanel({ detail }: SkyContextPanelProps) {
+  const focusedPanelKey = useInvestigationStore((state) => state.focusedPanelKey);
+  const setFocusedPanelKey = useInvestigationStore((state) => state.setFocusedPanelKey);
   const aladinId = useId().replace(/[^a-zA-Z0-9_-]/g, "");
   const containerRef = useRef<HTMLDivElement | null>(null);
   const aladinRef = useRef<AladinLiteInstance | null>(null);
@@ -129,9 +132,12 @@ export function SkyContextPanel({ detail }: SkyContextPanelProps) {
   }, [detail?.oid, selector, usableCoordinates]);
 
   return (
-    <section className="border border-workstation-line bg-workstation-panel/80">
-      <div className="border-b border-workstation-line px-3 py-2">
-        <p className="font-mono text-xs uppercase tracking-[0.18em] text-workstation-muted">
+    <section
+      className={`argus-panel ${focusedPanelKey === "sky_context" ? "argus-panel-focus" : ""}`}
+      onMouseEnter={() => setFocusedPanelKey("sky_context")}
+    >
+      <div className="argus-panel-header">
+        <p className="argus-panel-title">
           Sky Context
         </p>
         <p className="mt-1 text-xs leading-5 text-workstation-muted">
@@ -146,15 +152,15 @@ export function SkyContextPanel({ detail }: SkyContextPanelProps) {
           ref={containerRef}
         >
           {!usableCoordinates ? (
-            <div className="flex h-full items-center justify-center p-5 text-center text-xs leading-5 text-workstation-muted">
+            <div className="argus-missing-state min-h-full border-0">
               Coordinate context is unavailable for this case-file artifact.
             </div>
           ) : status === "loading" ? (
-            <div className="flex h-full items-center justify-center p-5 text-center font-mono text-xs uppercase tracking-[0.16em] text-workstation-muted">
+            <div className="argus-missing-state min-h-full border-0 font-mono uppercase tracking-[0.16em]">
               Loading external sky imagery
             </div>
           ) : status === "failed" ? (
-            <div className="flex h-full items-center justify-center p-5 text-center text-xs leading-5 text-workstation-muted">
+            <div className="argus-missing-state min-h-full border-0">
               Aladin Lite did not load. Case Mode remains available without the sky panel.
             </div>
           ) : null}

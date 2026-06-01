@@ -20,6 +20,7 @@ function SelectedPreview({
   caseDetails: CaseFileDetailMap;
 }) {
   const setActiveComparator = useInvestigationStore((state) => state.setActiveComparator);
+  const activeComparator = useInvestigationStore((state) => state.activeComparator);
   const setHighlightedEvidenceKey = useInvestigationStore(
     (state) => state.setHighlightedEvidenceKey,
   );
@@ -48,6 +49,9 @@ function SelectedPreview({
           Selected Object
         </p>
         <h2 className="mt-2 font-mono text-2xl text-white">{entry.oid}</h2>
+        <p className="mt-2 font-mono text-xs uppercase tracking-[0.14em] text-workstation-accent">
+          Opens into linked evidence canvas
+        </p>
         <p className="mt-3 text-sm leading-6 text-workstation-muted">{entry.short_summary}</p>
       </div>
 
@@ -81,7 +85,11 @@ function SelectedPreview({
             ["catalog", entry.cross_survey_context_status],
           ] satisfies Array<[string, string | undefined]>).map(([key, value]) => (
             <button
-              className="flex justify-between border border-workstation-line bg-workstation-bg/60 px-3 py-2 text-left hover:border-workstation-accent/70"
+              className={`flex justify-between border bg-workstation-bg/60 px-3 py-2 text-left transition-colors hover:border-workstation-accent/70 ${
+                activeComparator === key
+                  ? "border-workstation-accent/70 text-workstation-text"
+                  : "border-workstation-line"
+              }`}
               key={key}
               onClick={() => {
                 setActiveComparator(key);

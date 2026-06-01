@@ -45,11 +45,12 @@ export function ObjectGlyphCard({
   return (
     <button
       aria-label={`Inspect ${entry.oid}`}
-      className={`relative h-[150px] w-[260px] overflow-hidden border bg-workstation-panel text-left transition ${
+      aria-pressed={isSelected}
+      className={`group relative h-[150px] w-[260px] overflow-hidden border bg-workstation-panel text-left transition-[border-color,background-color,box-shadow,transform] duration-200 ${
         isSelected
-          ? "border-workstation-accent shadow-[0_0_0_1px_rgba(107,183,255,0.45)]"
-          : "border-workstation-line hover:border-workstation-accent/60"
-      } ${isHovered ? "bg-workstation-panel2" : ""}`}
+          ? "border-workstation-accent bg-workstation-panel2 shadow-[0_0_0_1px_rgba(107,183,255,0.48),inset_0_0_0_1px_rgba(107,183,255,0.16)]"
+          : "border-workstation-line hover:border-workstation-accent/60 hover:bg-workstation-panel2/70"
+      } ${isHovered ? "translate-y-[-1px]" : ""}`}
       onClick={() => {
         onSelect();
         onOpenCase();
@@ -87,7 +88,7 @@ export function ObjectGlyphCard({
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-workstation-muted">
-              Object
+              {isSelected ? "Selected Object" : "Object"}
             </p>
             <p className="mt-1 font-mono text-sm text-white">{entry.oid}</p>
           </div>
@@ -110,11 +111,20 @@ export function ObjectGlyphCard({
           <p className="line-clamp-2 pr-6 text-xs leading-4 text-workstation-muted">
             {entry.headline}
           </p>
-          <p className="font-mono text-[0.68rem] uppercase tracking-[0.12em] text-workstation-muted">
-            {entry.review_priority
-              ? `${entry.review_priority.score}/10 ${entry.review_priority.level}`
-              : "priority n/a"}
-          </p>
+          <div className="text-right">
+            <p className="font-mono text-[0.68rem] uppercase tracking-[0.12em] text-workstation-muted">
+              {entry.review_priority
+                ? `${entry.review_priority.score}/10 ${entry.review_priority.level}`
+                : "priority n/a"}
+            </p>
+            <p
+              className={`mt-1 font-mono text-[0.62rem] uppercase tracking-[0.12em] ${
+                isSelected || isHovered ? "text-workstation-accent" : "text-workstation-muted/55"
+              }`}
+            >
+              Open case
+            </p>
+          </div>
         </div>
       </div>
     </button>
