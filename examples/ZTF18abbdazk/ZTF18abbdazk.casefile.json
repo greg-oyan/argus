@@ -1,7 +1,7 @@
 {
   "oid": "ZTF18abbdazk",
   "source_date": "2026-05-20",
-  "generated_at": "2026-05-21T23:11:17+00:00",
+  "generated_at": "2026-06-09T18:44:51+00:00",
   "coordinates": {
     "ra": 286.62936495340404,
     "dec": 1.9418299857015655,
@@ -324,6 +324,71 @@
     "interpretation": "Descriptive light-curve features were computed for r-band detections using the light-curve package. The r-band observed brightness range is moderate (0.49 mag). Standardized scatter is moderate for this detection set (0.16 mag). These features support comparison across objects.",
     "caveat": "Feature values are descriptive summaries only and do not identify the object type."
   },
+  "anomaly_assessment": {
+    "score": 9,
+    "label": "high",
+    "status": "available",
+    "drivers": [
+      "19 detections provide a usable local record.",
+      "Coverage spans 2897 days, enough to inspect long-baseline behavior.",
+      "Both g and r observations are present for cross-band review.",
+      "The largest observed per-band magnitude range is moderate (0.49 mag).",
+      "Median g/r magnitudes differ enough to merit cross-band inspection (1.52 mag).",
+      "Standard descriptive light-curve features were computed.",
+      "Gaussian bump fit leaves elevated residual structure (reduced chi-squared about 2.2).",
+      "Catalog-context status is not_requested; external context remains limited.",
+      "Tensor mask diagnostics are available (89% bins masked)."
+    ],
+    "cautions": [
+      "Template-family probe is limited: missing_required_context.",
+      "This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity."
+    ],
+    "input_summary": {
+      "observation_count": 19,
+      "non_detection_count": 201,
+      "time_span_days": 2897.036608800292,
+      "bands_present": [
+        "g",
+        "r"
+      ],
+      "data_sources": [
+        "parquet_detections",
+        "raw_lightcurve_json",
+        "tensor_manifest"
+      ],
+      "per_filter_mag_range": {
+        "g": 0.1838419999999985,
+        "r": 0.4858039999999981
+      },
+      "max_observed_mag_range": 0.4858039999999981,
+      "brightest_to_median_delta_mag": {
+        "g": 0.10847099999999799,
+        "r": 0.15868000000000038
+      },
+      "max_brightest_to_median_delta_mag": 0.15868000000000038,
+      "dual_band_median_difference_mag": 1.5233709999999974,
+      "gaussian_status": "fitted_baseline",
+      "variability_texture_status": "computed",
+      "variability_behavior_hint": "flat_or_measurement_level",
+      "feature_summary_status": "computed",
+      "sncosmo_template_probe_status": "missing_required_context",
+      "cross_survey_context_status": "not_requested",
+      "tensor_manifest_available": true,
+      "tensor_frac_bins_masked": 0.89,
+      "tensor_total_unmasked_bins": 44,
+      "tensor_observation_counts": {
+        "g": 0,
+        "r": 2,
+        "g_upper_limits": 28,
+        "r_upper_limits": 20
+      },
+      "tensor_flux_medians": {
+        "g": 0.0,
+        "r": 127.14203643798828
+      }
+    },
+    "caveat": "This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity."
+  },
   "cross_survey_context": {
     "status": "not_requested",
     "coordinates": null,
@@ -381,5 +446,5 @@
     ],
     "caveat": "This narrative summarizes evidence layers. It is not a physical classification."
   },
-  "schema_version": "1.9"
+  "schema_version": "1.10"
 }

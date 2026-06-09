@@ -147,6 +147,7 @@ footer { color: #627d98; font-size: 0.9rem; margin-top: 28px; text-align: center
 <dl class="facts">
 <dt>Object ID</dt><dd>ZTF18abbdazk</dd>
 <dt>Source date</dt><dd>2026-05-20</dd>
+<dt>Available data sources</dt><dd>parquet_detections, raw_lightcurve_json, tensor_manifest</dd>
 <dt>Coordinates</dt><dd>RA=286.629, Dec=1.94183</dd>
 <dt>Detections</dt><dd>19</dd>
 <dt>Non-detections</dt><dd>201</dd>
@@ -154,7 +155,7 @@ footer { color: #627d98; font-size: 0.9rem; margin-top: 28px; text-align: center
 <dt>First MJD</dt><dd>58283.4</dd>
 <dt>Last MJD</dt><dd>61180.4</dd>
 <dt>Time span days</dt><dd>2897.04</dd>
-<dt>Schema version</dt><dd>1.9</dd>
+<dt>Schema version</dt><dd>1.10</dd>
 </dl>
 </section>
 <section class="section">
@@ -193,6 +194,49 @@ footer { color: #627d98; font-size: 0.9rem; margin-top: 28px; text-align: center
 <dt>Interpretation</dt><dd>Descriptive light-curve features were computed for r-band detections using the light-curve package. The r-band observed brightness range is moderate (0.49 mag). Standardized scatter is moderate for this detection set (0.16 mag). These features support comparison across objects.</dd>
 <dt>Caveat</dt><dd>Feature values are descriptive summaries only and do not identify the object type.</dd>
 </dl>
+</section>
+<section class="section">
+<h2>Anomaly Assessment</h2>
+<dl class="facts">
+<dt>Status</dt><dd>available</dd>
+<dt>Score</dt><dd>9</dd>
+<dt>Label</dt><dd>high</dd>
+</dl><h3>Drivers</h3><ul>
+<li>19 detections provide a usable local record.</li>
+<li>Coverage spans 2897 days, enough to inspect long-baseline behavior.</li>
+<li>Both g and r observations are present for cross-band review.</li>
+<li>The largest observed per-band magnitude range is moderate (0.49 mag).</li>
+<li>Median g/r magnitudes differ enough to merit cross-band inspection (1.52 mag).</li>
+<li>Standard descriptive light-curve features were computed.</li>
+<li>Gaussian bump fit leaves elevated residual structure (reduced chi-squared about 2.2).</li>
+<li>Catalog-context status is not_requested; external context remains limited.</li>
+<li>Tensor mask diagnostics are available (89% bins masked).</li>
+</ul><h3>Cautions</h3><ul>
+<li>Template-family probe is limited: missing_required_context.</li>
+<li>This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity.</li>
+</ul><h3>Input Summary</h3><table class="kv"><tbody>
+<tr><th>bands_present</th><td>[&quot;g&quot;, &quot;r&quot;]</td></tr>
+<tr><th>brightest_to_median_delta_mag</th><td>{&quot;g&quot;: 0.10847099999999799, &quot;r&quot;: 0.15868000000000038}</td></tr>
+<tr><th>cross_survey_context_status</th><td>not_requested</td></tr>
+<tr><th>data_sources</th><td>[&quot;parquet_detections&quot;, &quot;raw_lightcurve_json&quot;, &quot;tensor_manifest&quot;]</td></tr>
+<tr><th>dual_band_median_difference_mag</th><td>1.52337</td></tr>
+<tr><th>feature_summary_status</th><td>computed</td></tr>
+<tr><th>gaussian_status</th><td>fitted_baseline</td></tr>
+<tr><th>max_brightest_to_median_delta_mag</th><td>0.15868</td></tr>
+<tr><th>max_observed_mag_range</th><td>0.485804</td></tr>
+<tr><th>non_detection_count</th><td>201</td></tr>
+<tr><th>observation_count</th><td>19</td></tr>
+<tr><th>per_filter_mag_range</th><td>{&quot;g&quot;: 0.1838419999999985, &quot;r&quot;: 0.4858039999999981}</td></tr>
+<tr><th>sncosmo_template_probe_status</th><td>missing_required_context</td></tr>
+<tr><th>tensor_flux_medians</th><td>{&quot;g&quot;: 0.0, &quot;r&quot;: 127.14203643798828}</td></tr>
+<tr><th>tensor_frac_bins_masked</th><td>0.89</td></tr>
+<tr><th>tensor_manifest_available</th><td>True</td></tr>
+<tr><th>tensor_observation_counts</th><td>{&quot;g&quot;: 0, &quot;g_upper_limits&quot;: 28, &quot;r&quot;: 2, &quot;r_upper_limits&quot;: 20}</td></tr>
+<tr><th>tensor_total_unmasked_bins</th><td>44</td></tr>
+<tr><th>time_span_days</th><td>2897.04</td></tr>
+<tr><th>variability_behavior_hint</th><td>flat_or_measurement_level</td></tr>
+<tr><th>variability_texture_status</th><td>computed</td></tr>
+</tbody></table><p class="caveat"><strong>Caveat:</strong> This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity.</p>
 </section>
 <section class="section">
 <h2>Comparison Summary</h2>
@@ -310,7 +354,7 @@ footer { color: #627d98; font-size: 0.9rem; margin-top: 28px; text-align: center
 <li>If the source is still active (last detection within ~60 days), request follow-up spectroscopy.</li>
 </ul>
 </section>
-<footer>Schema version 1.9 · Generated 2026-05-21T23:11:17+00:00</footer>
+<footer>Schema version 1.10 · Generated 2026-06-09T18:44:51+00:00</footer>
 </main>
 </body>
 </html>

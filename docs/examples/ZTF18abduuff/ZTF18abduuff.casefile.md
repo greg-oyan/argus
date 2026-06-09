@@ -43,6 +43,7 @@ Some evidence layers are missing, failed, or limited by the available local dete
 
 - **Object ID:** ZTF18abduuff
 - **Source date:** 2026-05-20
+- **Available data sources:** parquet_detections, raw_lightcurve_json, tensor_manifest
 - **Coordinates:** RA=258.226, Dec=-20.732
 - **Detections:** 2
 - **Non-detections:** 153
@@ -50,7 +51,7 @@ Some evidence layers are missing, failed, or limited by the available local dete
 - **First MJD:** 58634.2
 - **Last MJD:** 61180.3
 - **Time span days:** 2546.08
-- **Schema version:** 1.9
+- **Schema version:** 1.10
 
 ## Classification Metadata
 
@@ -87,6 +88,47 @@ Any external labels shown here are metadata only, not Argus conclusions.
 
 - **Interpretation:** Standardized light-curve features were not computed for r-band: only 0 usable detection(s) were available, below the minimum of 5.
 - **Caveat:** Feature values are descriptive summaries only and do not identify the object type.
+
+## Anomaly Assessment
+
+- **Status:** insufficient_data
+- **Score:** 0
+- **Label:** unknown
+
+### Drivers
+
+- Only 2 usable detection(s) are present, below the minimum for a stable review assessment.
+
+### Cautions
+
+- Load more local detections before using this assessment for triage.
+- This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity.
+
+### Input Summary
+
+- **bands_present:** ["g", "r"]
+- **brightest_to_median_delta_mag:** {"g": 0.6808939999999986}
+- **cross_survey_context_status:** not_requested
+- **data_sources:** ["parquet_detections", "raw_lightcurve_json", "tensor_manifest"]
+- **dual_band_median_difference_mag:** Not available.
+- **feature_summary_status:** insufficient_data
+- **gaussian_status:** insufficient_data
+- **max_brightest_to_median_delta_mag:** 0.680894
+- **max_observed_mag_range:** 1.36179
+- **non_detection_count:** 153
+- **observation_count:** 2
+- **per_filter_mag_range:** {"g": 1.3617880000000007}
+- **sncosmo_template_probe_status:** insufficient_data
+- **tensor_flux_medians:** {"g": 0.0, "r": 0.0}
+- **tensor_frac_bins_masked:** 0.905
+- **tensor_manifest_available:** True
+- **tensor_observation_counts:** {"g": 0, "g_upper_limits": 24, "r": 0, "r_upper_limits": 32}
+- **tensor_total_unmasked_bins:** 38
+- **time_span_days:** 2546.08
+- **variability_behavior_hint:** Not available.
+- **variability_texture_status:** insufficient_data
+
+- **Caveat:** This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity.
 
 ## Comparison Summary
 

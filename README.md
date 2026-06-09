@@ -124,10 +124,14 @@ Current pipeline:
 6. **Optional science/context probes** — lazily use optional dependencies such
    as `sncosmo` and `astroquery`/SIMBAD for template-family probing and catalog
    context. These are external evidence layers, not Argus classifications.
-7. **Evidence synthesis** — assemble comparison summaries and an evidence
+7. **Deterministic review assessment** — compute a transparent case-file
+   `anomaly_assessment` from existing counts, spans, bands, tensor-manifest
+   diagnostics, feature status, comparator outputs, and context status. This is
+   review support, not a detector verdict.
+8. **Evidence synthesis** — assemble comparison summaries and an evidence
    narrative that explains what Argus can say, what it cannot say, and what
    should be checked next.
-8. **Presentation exports** — write JSON, optional Markdown/HTML reports, and
+9. **Presentation exports** — write JSON, optional Markdown/HTML reports, and
    optional static figures so a case file can be inspected outside the codebase.
 
 Future work:
@@ -348,7 +352,18 @@ python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq --write-ma
 python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq --write-html
 python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq --write-figures
 python -m scripts.build_casefile --date 2026-05-20 --oid ZTF18abujsbq --write-markdown --write-figures --write-html
+python -m scripts.build_casefile --date 2026-05-20 --object-id ZTF18abujsbq --write-markdown --write-figures --write-html
+python -m scripts.build_casefile --date 2026-05-20 --object-id ZTF18abujsbq --out data/casefiles/ZTF18abujsbq.casefile.json --write-markdown --write-html
 ```
+
+The recommended local MVP command is:
+
+```bash
+python -m scripts.build_casefile --date 2026-05-20 --object-id ZTF18abujsbq --write-markdown --write-figures --write-html
+```
+
+That command builds the JSON case file plus readable Markdown, static HTML, and
+available PNG figures from existing local data.
 
 Default case-file builds stay offline. To opt in to the Phase 2H SIMBAD lookup,
 install the optional science extra and pass the explicit flag:
@@ -390,6 +405,7 @@ Top-level fields:
 | `recommended_next_checks` | concrete actions that would tighten the case |
 | `comparison_summary` | Phase 2E synthesis of comparator outputs: headline, summary, caveat, and recommended next check |
 | `feature_summary` | Phase 2F standardized descriptive features from the external `light-curve` package |
+| `anomaly_assessment` | deterministic review-support assessment from observation counts, span, bands, tensor diagnostics, feature status, comparator outputs, and context status |
 | `cross_survey_context` | Phase 2H optional SIMBAD catalog metadata; default status is `not_requested` |
 | `evidence_narrative` | Phase 2I readable synthesis of comparator, feature, template-family, optional catalog-context, uncertainty, and next-check signals |
 
@@ -462,6 +478,20 @@ object type or assert a final finding. If the dependency is unavailable,
 `feature_summary.status` is `dependency_unavailable` and the case-file build
 continues.
 
+## Deterministic Assessment (MVP)
+
+Case files include a top-level `anomaly_assessment` block. It is a transparent
+review-support heuristic built from existing local evidence: detection count,
+time span, observed bands, magnitude ranges, tensor-manifest mask diagnostics
+when present, standardized feature status, comparator outputs, template-probe
+status, and cross-survey context status.
+
+The assessment records `score`, `label`, `status`, `drivers`, `cautions`,
+`input_summary`, and a caveat. Sparse or malformed inputs produce
+`status: insufficient_data` instead of an exception. This block is designed to
+help a reviewer decide what to inspect first; it is not a detector verdict,
+object identity, or physical interpretation.
+
 ## Cross-Survey Context (Phase 2H)
 
 Case files include `cross_survey_context`, an optional external catalog-context
@@ -501,8 +531,8 @@ Case files can also be exported as presentation-ready Markdown with
 `--write-markdown`. The Markdown report is written next to the JSON file as
 `data/casefiles/{oid}.casefile.md` and renders the evidence narrative near the
 top, followed by object metadata, light-curve summary, feature summary,
-comparison summary, model comparisons, cross-survey context, uncertainty notes,
-and recommended next checks.
+anomaly assessment, comparison summary, model comparisons, cross-survey context,
+uncertainty notes, and recommended next checks.
 
 Markdown export does not recompute metrics, query external services, or change
 the JSON case file. It is a readable rendering of the existing case-file
@@ -535,8 +565,9 @@ web server, or network access.
 
 The HTML report renders the same evidence layers as the JSON and Markdown
 artifacts: evidence narrative, optional visual summary, object metadata,
-light-curve summary, feature summary, comparison summary, model comparisons,
-cross-survey context, uncertainty notes, and recommended next checks. When
+light-curve summary, feature summary, anomaly assessment, comparison summary,
+model comparisons, cross-survey context, uncertainty notes, and recommended next
+checks. When
 `--write-figures` is used in the same run, the HTML links only to generated PNG
 files, so skipped residual plots do not create broken image links.
 

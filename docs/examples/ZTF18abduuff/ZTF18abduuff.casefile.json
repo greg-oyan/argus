@@ -1,7 +1,7 @@
 {
   "oid": "ZTF18abduuff",
   "source_date": "2026-05-20",
-  "generated_at": "2026-05-21T23:11:17+00:00",
+  "generated_at": "2026-06-09T18:44:52+00:00",
   "coordinates": {
     "ra": 258.22590895299084,
     "dec": -20.73201149493282,
@@ -192,6 +192,61 @@
     "interpretation": "Standardized light-curve features were not computed for r-band: only 0 usable detection(s) were available, below the minimum of 5.",
     "caveat": "Feature values are descriptive summaries only and do not identify the object type."
   },
+  "anomaly_assessment": {
+    "score": 0,
+    "label": "unknown",
+    "status": "insufficient_data",
+    "drivers": [
+      "Only 2 usable detection(s) are present, below the minimum for a stable review assessment."
+    ],
+    "cautions": [
+      "Load more local detections before using this assessment for triage.",
+      "This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity."
+    ],
+    "input_summary": {
+      "observation_count": 2,
+      "non_detection_count": 153,
+      "time_span_days": 2546.081412000116,
+      "bands_present": [
+        "g",
+        "r"
+      ],
+      "data_sources": [
+        "parquet_detections",
+        "raw_lightcurve_json",
+        "tensor_manifest"
+      ],
+      "per_filter_mag_range": {
+        "g": 1.3617880000000007
+      },
+      "max_observed_mag_range": 1.3617880000000007,
+      "brightest_to_median_delta_mag": {
+        "g": 0.6808939999999986
+      },
+      "max_brightest_to_median_delta_mag": 0.6808939999999986,
+      "dual_band_median_difference_mag": null,
+      "gaussian_status": "insufficient_data",
+      "variability_texture_status": "insufficient_data",
+      "variability_behavior_hint": null,
+      "feature_summary_status": "insufficient_data",
+      "sncosmo_template_probe_status": "insufficient_data",
+      "cross_survey_context_status": "not_requested",
+      "tensor_manifest_available": true,
+      "tensor_frac_bins_masked": 0.905,
+      "tensor_total_unmasked_bins": 38,
+      "tensor_observation_counts": {
+        "g": 0,
+        "r": 0,
+        "g_upper_limits": 24,
+        "r_upper_limits": 32
+      },
+      "tensor_flux_medians": {
+        "g": 0.0,
+        "r": 0.0
+      }
+    },
+    "caveat": "This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity."
+  },
   "cross_survey_context": {
     "status": "not_requested",
     "coordinates": null,
@@ -247,5 +302,5 @@
     ],
     "caveat": "This narrative summarizes evidence layers. It is not a physical classification."
   },
-  "schema_version": "1.9"
+  "schema_version": "1.10"
 }

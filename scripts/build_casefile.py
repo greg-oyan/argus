@@ -9,8 +9,10 @@ Usage:
 """
 from __future__ import annotations
 import argparse
+import json
 import logging
 import sys
+from pathlib import Path
 
 from argus.casefile.build import build_casefile, write_casefile
 from argus.casefile.figures import write_casefile_figures
@@ -24,7 +26,21 @@ log = logging.getLogger("argus.casefile")
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description="Assemble a case file from local Argus data.")
     p.add_argument("--date", required=True, help="ALeRCE pull date (YYYY-MM-DD).")
-    p.add_argument("--oid", required=True, help="ZTF object ID.")
+    p.add_argument("--oid", "--object-id", dest="oid", required=True, help="ZTF object ID.")
+    p.add_argument(
+        "--casefile-dir",
+        "--output-dir",
+        dest="casefile_dir",
+        type=Path,
+        default=None,
+        help="Directory for generated case-file artifacts. Default: data/casefiles.",
+    )
+    p.add_argument(
+        "--out",
+        type=Path,
+        default=None,
+        help="Exact JSON output path. If supplied, --casefile-dir is ignored for JSON.",
+    )
     p.add_argument(
         "--include-cross-survey-context",
         action="store_true",
@@ -59,13 +75,23 @@ def main(argv: list[str] | None = None) -> int:
         format="%(asctime)s %(levelname)s %(message)s",
     )
 
+    if args.out is not None and args.casefile_dir is not None:
+        p.error("--out and --casefile-dir/--output-dir cannot be used together.")
+
     case = build_casefile(
         args.oid,
         args.date,
         include_cross_survey_context=args.include_cross_survey_context,
         cross_survey_radius_arcsec=args.cross_survey_radius_arcsec,
     )
-    path = write_casefile(case)
+    if args.out is not None:
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        args.out.write_text(json.dumps(case.to_dict(), indent=2, default=str), encoding="utf-8")
+        path = args.out
+    elif args.casefile_dir is not None:
+        path = write_casefile(case, output_dir=args.casefile_dir)
+    else:
+        path = write_casefile(case)
     figure_outputs = (
         write_casefile_figures(case, date=args.date, json_path=path)
         if args.write_figures else None

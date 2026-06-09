@@ -172,6 +172,7 @@ def _render_object_summary(case: CaseFile) -> str:
     return _section("Object Summary", _definition_list([
         ("Object ID", case.oid),
         ("Source date", case.source_date),
+        ("Available data sources", ", ".join(case.available_data_sources) if case.available_data_sources else None),
         ("Coordinates", coord_text),
         ("Detections", case.detection_count),
         ("Non-detections", case.non_detection_count),
@@ -247,6 +248,24 @@ def _render_feature_summary(feature_summary: Any) -> str:
         ("Caveat", _field(feature_summary, "caveat")),
     ])
     return _section("Feature Summary", body)
+
+
+def _render_anomaly_assessment(assessment: Any) -> str:
+    if assessment is None:
+        return _section(
+            "Anomaly Assessment",
+            '<p class="muted">Anomaly assessment is not present in this case file.</p>',
+        )
+    body = _definition_list([
+        ("Status", _field(assessment, "status")),
+        ("Score", _field(assessment, "score")),
+        ("Label", _field(assessment, "label")),
+    ])
+    body += "<h3>Drivers</h3>" + _bullet_list(_as_list(_field(assessment, "drivers")))
+    body += "<h3>Cautions</h3>" + _bullet_list(_as_list(_field(assessment, "cautions")))
+    body += "<h3>Input Summary</h3>" + _dict_table(_field(assessment, "input_summary") or {})
+    body += f'<p class="caveat"><strong>Caveat:</strong> {_h(_field(assessment, "caveat"))}</p>'
+    return _section("Anomaly Assessment", body)
 
 
 def _render_comparison_summary(summary: Any) -> str:
@@ -426,6 +445,7 @@ def render_casefile_html(
         _render_classification_metadata(case.classification_metadata),
         _render_light_curve_summary(case.light_curve_summary),
         _render_feature_summary(case.feature_summary),
+        _render_anomaly_assessment(case.anomaly_assessment),
         _render_comparison_summary(case.comparison_summary),
         _render_model_comparisons(case.model_comparisons),
         _render_cross_survey_context(case.cross_survey_context),

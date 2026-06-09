@@ -9,6 +9,7 @@ from argus.casefile.markdown import (
     write_casefile_markdown,
 )
 from argus.casefile.schema import (
+    AnomalyAssessment,
     CaseFile,
     ComparisonSummary,
     CrossSurveyContext,
@@ -92,6 +93,15 @@ def _full_case() -> CaseFile:
             interpretation="Descriptive light-curve features were computed.",
             caveat="Feature values are descriptive summaries only.",
         ),
+        anomaly_assessment=AnomalyAssessment(
+            score=7,
+            label="high",
+            status="available",
+            drivers=["Gaussian residual structure supports early review."],
+            cautions=["This is deterministic review support only."],
+            input_summary={"observation_count": 12, "bands_present": ["g", "r"]},
+            caveat="This deterministic assessment supports review triage only.",
+        ),
         cross_survey_context=CrossSurveyContext(
             status="queried",
             coordinates={"ra": 123.45, "dec": -12.34},
@@ -137,6 +147,8 @@ def test_markdown_renderer_with_full_casefile():
     assert "Complex light-curve behavior" in text
     assert "## Feature Summary" in text
     assert "amplitude" in text
+    assert "## Anomaly Assessment" in text
+    assert "Gaussian residual structure supports early review" in text
     assert "## Comparison Summary" in text
     assert "## Model Comparisons" in text
     assert "Gaussian bump (r-band)" in text
@@ -149,6 +161,7 @@ def test_markdown_renderer_handles_missing_optional_fields():
     case = _full_case()
     case.evidence_narrative = None
     case.feature_summary = None
+    case.anomaly_assessment = None
     case.comparison_summary = None
     case.cross_survey_context = None
     case.model_comparisons = []
@@ -158,6 +171,7 @@ def test_markdown_renderer_handles_missing_optional_fields():
 
     assert "Evidence narrative is not present" in text
     assert "Feature summary is not present" in text
+    assert "Anomaly assessment is not present" in text
     assert "Comparison summary is not present" in text
     assert "No model comparisons are present" in text
     assert "Cross-survey context is not present" in text

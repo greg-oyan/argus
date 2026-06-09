@@ -8,7 +8,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field, asdict
 from typing import Any, Optional
 
-SCHEMA_VERSION = "1.9"  # 1.9: added ModelComparison.residual_points (Phase 2O)
+SCHEMA_VERSION = "1.10"  # 1.10: added top-level deterministic anomaly_assessment
 
 
 @dataclass
@@ -125,6 +125,22 @@ class CrossSurveyContext:
 
 
 @dataclass
+class AnomalyAssessment:
+    """Deterministic review-support assessment built from existing evidence.
+
+    This is not a learned detector, object type, or physical interpretation. It
+    exists so a reviewer can see why a case may deserve earlier inspection.
+    """
+    score: int
+    label: str
+    status: str
+    drivers: list[str]
+    cautions: list[str]
+    input_summary: dict[str, Any]
+    caveat: str
+
+
+@dataclass
 class EvidenceSection:
     title: str
     status: str
@@ -165,6 +181,7 @@ class CaseFile:
     model_comparisons: list[ModelComparison] = field(default_factory=list)
     comparison_summary: Optional[ComparisonSummary] = None
     feature_summary: Optional[FeatureSummary] = None
+    anomaly_assessment: Optional[AnomalyAssessment] = None
     cross_survey_context: Optional[CrossSurveyContext] = None
     evidence_narrative: Optional[EvidenceNarrative] = None
     schema_version: str = SCHEMA_VERSION

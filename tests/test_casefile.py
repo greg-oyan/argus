@@ -14,6 +14,7 @@ from argus.casefile.summarize import (
 )
 from argus.ingest.storage import flatten_to_dataframe
 from argus.compare import sncosmo_templates as snc_mod
+from scripts import build_casefile as cli_mod
 
 
 def _pick_fixture_oid(fixture_lightcurves: dict) -> str:
@@ -102,8 +103,8 @@ def test_required_fields_present(fixture_layout, fixture_lightcurves):
         "classification_metadata", "light_curve_summary",
         "evidence_notes", "candidate_explanations",
         "uncertainty_notes", "recommended_next_checks",
-        "comparison_summary", "feature_summary", "cross_survey_context",
-        "evidence_narrative",
+        "comparison_summary", "feature_summary", "anomaly_assessment",
+        "cross_survey_context", "evidence_narrative",
     }
     assert required.issubset(d.keys()), f"missing: {required - set(d.keys())}"
     assert d["comparison_summary"]["headline"]
@@ -114,6 +115,11 @@ def test_required_fields_present(fixture_layout, fixture_lightcurves):
     assert d["feature_summary"]["band"] == "r"
     assert d["feature_summary"]["status"]
     assert isinstance(d["feature_summary"]["features"], dict)
+    assert d["anomaly_assessment"]["status"]
+    assert d["anomaly_assessment"]["label"] in {"low", "medium", "high", "unknown"}
+    assert isinstance(d["anomaly_assessment"]["score"], int)
+    assert d["anomaly_assessment"]["drivers"]
+    assert d["anomaly_assessment"]["caveat"]
     assert d["cross_survey_context"]["status"] == "not_requested"
     assert "not requested" in d["cross_survey_context"]["interpretation"]
     assert d["evidence_narrative"]["headline"]
@@ -144,6 +150,50 @@ def test_write_casefile_writes_json(tmp_path, fixture_layout, fixture_lightcurve
     assert path.exists() and path.suffix == ".json"
     parsed = json.loads(path.read_text())
     assert parsed["oid"] == oid
+
+
+def test_cli_accepts_object_id_alias_and_exact_output_path(tmp_path, monkeypatch):
+    case = CaseFile(
+        oid="ZTFalias",
+        source_date="2026-01-01",
+        generated_at="2026-01-01T00:00:00+00:00",
+        coordinates=None,
+        available_data_sources=["parquet_detections"],
+        detection_count=0,
+        non_detection_count=0,
+        filters_observed=[],
+        first_mjd=None,
+        last_mjd=None,
+        time_span_days=None,
+        classification_metadata=None,
+        light_curve_summary=None,
+        evidence_notes=[],
+        candidate_explanations=[],
+        uncertainty_notes=[],
+        recommended_next_checks=[],
+    )
+
+    def fake_build_casefile(oid, date, **kwargs):
+        assert oid == "ZTFalias"
+        assert date == "2026-01-01"
+        return case
+
+    monkeypatch.setattr(cli_mod, "build_casefile", fake_build_casefile)
+
+    out_path = tmp_path / "reports" / "ZTFalias.casefile.json"
+    status = cli_mod.main([
+        "--date", "2026-01-01",
+        "--object-id", "ZTFalias",
+        "--out", str(out_path),
+        "--write-markdown",
+        "--write-html",
+    ])
+
+    assert status == 0
+    assert out_path.exists()
+    assert (tmp_path / "reports" / "ZTFalias.casefile.md").exists()
+    assert (tmp_path / "reports" / "ZTFalias.casefile.html").exists()
+    assert json.loads(out_path.read_text(encoding="utf-8"))["oid"] == "ZTFalias"
 
 
 def test_missing_raw_lightcurve_handled_gracefully(tmp_path):
@@ -254,11 +304,13 @@ def test_phase_2b_emits_no_fitted_statuses(fixture_layout, fixture_lightcurves):
 
 def test_no_network_imports_in_casefile_module():
     """Catch accidental introduction of network-dependent imports in the casefile package."""
+    import argus.casefile.assessment as assess_mod
     import argus.casefile.build as build_mod
     import argus.casefile.summarize as sum_mod
     import argus.casefile.schema as schema_mod
     src = (
-        open(build_mod.__file__, encoding="utf-8").read()
+        open(assess_mod.__file__, encoding="utf-8").read()
+        + open(build_mod.__file__, encoding="utf-8").read()
         + open(sum_mod.__file__, encoding="utf-8").read()
         + open(schema_mod.__file__, encoding="utf-8").read()
     )

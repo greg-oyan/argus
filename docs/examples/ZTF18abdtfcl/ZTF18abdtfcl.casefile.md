@@ -43,6 +43,7 @@ Some evidence layers are missing, failed, or limited by the available local dete
 
 - **Object ID:** ZTF18abdtfcl
 - **Source date:** 2026-05-20
+- **Available data sources:** parquet_detections, raw_lightcurve_json, tensor_manifest
 - **Coordinates:** RA=254.678, Dec=-23.7459
 - **Detections:** 17
 - **Non-detections:** 174
@@ -50,7 +51,7 @@ Some evidence layers are missing, failed, or limited by the available local dete
 - **First MJD:** 58673.3
 - **Last MJD:** 61176.4
 - **Time span days:** 2503.07
-- **Schema version:** 1.9
+- **Schema version:** 1.10
 
 ## Classification Metadata
 
@@ -87,6 +88,57 @@ Any external labels shown here are metadata only, not Argus conclusions.
 
 - **Interpretation:** Standardized light-curve features were not computed for r-band: only 1 usable detection(s) were available, below the minimum of 5.
 - **Caveat:** Feature values are descriptive summaries only and do not identify the object type.
+
+## Anomaly Assessment
+
+- **Status:** available
+- **Score:** 8
+- **Label:** high
+
+### Drivers
+
+- 17 detections provide a usable local record.
+- Coverage spans 2503 days, enough to inspect long-baseline behavior.
+- Both g and r observations are present for cross-band review.
+- The largest observed per-band magnitude range is moderate (0.89 mag).
+- Median g/r magnitudes differ enough to merit cross-band inspection (1.57 mag).
+- Brightest-to-median magnitude delta is substantial (0.52 mag).
+- Catalog-context status is not_requested; external context remains limited.
+
+### Cautions
+
+- Feature summary status is insufficient_data.
+- Gaussian bump comparator status is insufficient_data.
+- Variability texture status is insufficient_data.
+- Template-family probe is limited: missing_required_context.
+- Tensor coverage is sparse: 96% of band/time bins are masked.
+- This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity.
+
+### Input Summary
+
+- **bands_present:** ["g", "r"]
+- **brightest_to_median_delta_mag:** {"g": 0.5227449999999969, "r": 0.0}
+- **cross_survey_context_status:** not_requested
+- **data_sources:** ["parquet_detections", "raw_lightcurve_json", "tensor_manifest"]
+- **dual_band_median_difference_mag:** 1.57137
+- **feature_summary_status:** insufficient_data
+- **gaussian_status:** insufficient_data
+- **max_brightest_to_median_delta_mag:** 0.522745
+- **max_observed_mag_range:** 0.886255
+- **non_detection_count:** 174
+- **observation_count:** 17
+- **per_filter_mag_range:** {"g": 0.8862549999999985, "r": 0.0}
+- **sncosmo_template_probe_status:** missing_required_context
+- **tensor_flux_medians:** {"g": 0.0, "r": 0.0}
+- **tensor_frac_bins_masked:** 0.9575
+- **tensor_manifest_available:** True
+- **tensor_observation_counts:** {"g": 0, "g_upper_limits": 7, "r": 0, "r_upper_limits": 10}
+- **tensor_total_unmasked_bins:** 17
+- **time_span_days:** 2503.07
+- **variability_behavior_hint:** Not available.
+- **variability_texture_status:** insufficient_data
+
+- **Caveat:** This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity.
 
 ## Comparison Summary
 

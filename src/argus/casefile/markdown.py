@@ -143,6 +143,7 @@ def _render_object_summary(case: CaseFile) -> list[str]:
     return _section("Object Summary", [
         _line_item("Object ID", case.oid),
         _line_item("Source date", case.source_date),
+        _line_item("Available data sources", ", ".join(case.available_data_sources) if case.available_data_sources else None),
         _line_item("Coordinates", coord_text),
         _line_item("Detections", case.detection_count),
         _line_item("Non-detections", case.non_detection_count),
@@ -219,6 +220,29 @@ def _render_feature_summary(feature_summary: Any) -> list[str]:
         _line_item("Caveat", _field(feature_summary, "caveat")),
     ])
     return _section("Feature Summary", lines)
+
+
+def _render_anomaly_assessment(assessment: Any) -> list[str]:
+    if assessment is None:
+        return _section("Anomaly Assessment", [
+            "Anomaly assessment is not present in this case file.",
+        ])
+
+    lines = [
+        _line_item("Status", _field(assessment, "status")),
+        _line_item("Score", _field(assessment, "score")),
+        _line_item("Label", _field(assessment, "label")),
+        "",
+        "### Drivers",
+        "",
+    ]
+    lines.extend(_bullet_lines(_as_list(_field(assessment, "drivers"))))
+    lines.extend(["", "### Cautions", ""])
+    lines.extend(_bullet_lines(_as_list(_field(assessment, "cautions"))))
+    lines.extend(["", "### Input Summary", ""])
+    lines.extend(_dict_lines(_field(assessment, "input_summary") or {}))
+    lines.extend(["", _line_item("Caveat", _field(assessment, "caveat"))])
+    return _section("Anomaly Assessment", lines)
 
 
 def _render_comparison_summary(summary: Any) -> list[str]:
@@ -318,6 +342,7 @@ def render_casefile_markdown(
     lines.extend(_render_classification_metadata(case.classification_metadata))
     lines.extend(_render_light_curve_summary(case.light_curve_summary))
     lines.extend(_render_feature_summary(case.feature_summary))
+    lines.extend(_render_anomaly_assessment(case.anomaly_assessment))
     lines.extend(_render_comparison_summary(case.comparison_summary))
     lines.extend(_render_model_comparisons(case.model_comparisons))
     lines.extend(_render_cross_survey_context(case.cross_survey_context))

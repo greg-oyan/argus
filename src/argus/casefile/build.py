@@ -12,6 +12,7 @@ from typing import Optional
 
 import pandas as pd
 
+from argus.casefile.assessment import build_anomaly_assessment
 from argus.casefile.schema import CaseFile, ModelComparison
 from argus.casefile.summarize import (
     build_comparison_summary, build_evidence_narrative, candidate_explanations,
@@ -370,12 +371,15 @@ def build_casefile(
     else:
         non_det = pd.DataFrame()
 
+    tensor_manifest: dict | None = None
     manifest_path = ts_dir / f"{date}.csv"
     if manifest_path.exists():
         try:
             manifest = pd.read_csv(manifest_path)
-            if (manifest["oid"] == oid).any():
+            matching_manifest = manifest[manifest["oid"] == oid]
+            if not matching_manifest.empty:
                 available.append("tensor_manifest")
+                tensor_manifest = matching_manifest.iloc[0].to_dict()
         except Exception:
             pass
 
@@ -409,6 +413,14 @@ def build_casefile(
     candidates = candidate_explanations(summary, classification)
     uncertainties = uncertainty_notes(summary, classification, available)
     next_checks = recommended_next_checks(summary, classification, coordinates)
+    anomaly_assessment = build_anomaly_assessment(
+        light_curve_summary=summary,
+        model_comparisons=model_comps,
+        feature_summary=feature_summary,
+        cross_survey_context=cross_survey_context,
+        available_data_sources=available,
+        tensor_manifest=tensor_manifest,
+    )
     evidence_narrative = build_evidence_narrative(
         model_comparisons=model_comps,
         comparison_summary=comp_summary,
@@ -439,6 +451,7 @@ def build_casefile(
         model_comparisons=model_comps,
         comparison_summary=comp_summary,
         feature_summary=feature_summary,
+        anomaly_assessment=anomaly_assessment,
         cross_survey_context=cross_survey_context,
         evidence_narrative=evidence_narrative,
     )

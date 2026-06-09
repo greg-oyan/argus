@@ -51,6 +51,7 @@ The object is not well explained by a single smooth bump. Its r-band detections 
 
 - **Object ID:** ZTF18abujsbq
 - **Source date:** 2026-05-20
+- **Available data sources:** parquet_detections, raw_lightcurve_json, tensor_manifest
 - **Coordinates:** RA=286.673, Dec=9.63316
 - **Detections:** 147
 - **Non-detections:** 674
@@ -58,7 +59,7 @@ The object is not well explained by a single smooth bump. Its r-band detections 
 - **First MJD:** 58340.3
 - **Last MJD:** 61180.4
 - **Time span days:** 2840.14
-- **Schema version:** 1.9
+- **Schema version:** 1.10
 
 ## Classification Metadata
 
@@ -100,6 +101,60 @@ Any external labels shown here are metadata only, not Argus conclusions.
 
 - **Interpretation:** Descriptive light-curve features were computed for r-band detections using the light-curve package. The r-band observed brightness range is wide (1.10 mag). Standardized scatter is high for this detection set (0.26 mag). These features support comparison across objects.
 - **Caveat:** Feature values are descriptive summaries only and do not identify the object type.
+
+## Anomaly Assessment
+
+- **Status:** available
+- **Score:** 10
+- **Label:** high
+
+### Drivers
+
+- 147 detections provide a relatively dense local record.
+- Coverage spans 2840 days, enough to inspect long-baseline behavior.
+- Both g and r observations are present for cross-band review.
+- The largest observed per-band magnitude range is wide (1.10 mag).
+- Median g/r magnitudes differ enough to merit cross-band inspection (1.55 mag).
+- Standard descriptive light-curve features were computed.
+- Feature amplitude implies a wide observed range (1.10 mag).
+- Feature scatter is high for this detection set (0.26 mag).
+- Gaussian bump fit leaves elevated residual structure (reduced chi-squared about 2.4).
+- Largest Gaussian residual is 0.81 mag.
+- Variability texture shows repeated or irregular directional changes.
+- Variability texture scatter is materially larger than typical reported errors.
+- Catalog-context status is not_requested; external context remains limited.
+- Tensor mask diagnostics are available (92% bins masked).
+
+### Cautions
+
+- Template-family probe is limited: missing_required_context.
+- This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity.
+
+### Input Summary
+
+- **bands_present:** ["g", "r"]
+- **brightest_to_median_delta_mag:** {"g": 0.0, "r": 0.22502650000000202}
+- **cross_survey_context_status:** not_requested
+- **data_sources:** ["parquet_detections", "raw_lightcurve_json", "tensor_manifest"]
+- **dual_band_median_difference_mag:** 1.54587
+- **feature_summary_status:** computed
+- **gaussian_status:** fitted_baseline
+- **max_brightest_to_median_delta_mag:** 0.225027
+- **max_observed_mag_range:** 1.0973
+- **non_detection_count:** 674
+- **observation_count:** 147
+- **per_filter_mag_range:** {"g": 0.0, "r": 1.0973000000000006}
+- **sncosmo_template_probe_status:** missing_required_context
+- **tensor_flux_medians:** {"g": 13.858620643615724, "r": 33.20390701293945}
+- **tensor_frac_bins_masked:** 0.9175
+- **tensor_manifest_available:** True
+- **tensor_observation_counts:** {"g": 1, "g_upper_limits": 19, "r": 1, "r_upper_limits": 19}
+- **tensor_total_unmasked_bins:** 33
+- **time_span_days:** 2840.14
+- **variability_behavior_hint:** repeated_or_irregular
+- **variability_texture_status:** computed
+
+- **Caveat:** This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity.
 
 ## Comparison Summary
 

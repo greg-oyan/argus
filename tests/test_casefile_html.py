@@ -10,6 +10,7 @@ from argus.casefile.html import (
     write_casefile_html,
 )
 from argus.casefile.schema import (
+    AnomalyAssessment,
     CaseFile,
     ComparisonSummary,
     CrossSurveyContext,
@@ -93,6 +94,15 @@ def _full_case(*, oid: str = "ZTFhtml") -> CaseFile:
             interpretation="Descriptive light-curve features were computed.",
             caveat="Feature values are descriptive summaries only.",
         ),
+        anomaly_assessment=AnomalyAssessment(
+            score=6,
+            label="high",
+            status="available",
+            drivers=["Gaussian residual structure supports early review."],
+            cautions=["This is deterministic review support only."],
+            input_summary={"observation_count": 8, "bands_present": ["g", "r"]},
+            caveat="This deterministic assessment supports review triage only.",
+        ),
         cross_survey_context=CrossSurveyContext(
             status="not_requested",
             interpretation="Cross-survey catalog context was not requested for this run.",
@@ -126,6 +136,8 @@ def test_html_renderer_with_full_case_file():
     assert "Classification Metadata" in html
     assert "Light-Curve Summary" in html
     assert "Feature Summary" in html
+    assert "Anomaly Assessment" in html
+    assert "Gaussian residual structure supports early review" in html
     assert "Comparison Summary" in html
     assert "Model Comparisons" in html
     assert "Cross-Survey Context" in html
@@ -138,6 +150,7 @@ def test_html_renderer_handles_missing_optional_fields():
     case = _full_case()
     case.evidence_narrative = None
     case.feature_summary = None
+    case.anomaly_assessment = None
     case.comparison_summary = None
     case.cross_survey_context = None
     case.model_comparisons = []
@@ -147,6 +160,7 @@ def test_html_renderer_handles_missing_optional_fields():
 
     assert "Evidence narrative is not present" in html
     assert "Feature summary is not present" in html
+    assert "Anomaly assessment is not present" in html
     assert "Comparison summary is not present" in html
     assert "No model comparisons are present" in html
     assert "Cross-survey context is not present" in html
