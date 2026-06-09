@@ -1,7 +1,10 @@
 import { useMemo } from "react";
 import {
   activeLinkedPoint,
+  linkedLightCurvePoints,
   linkedResidualPoints,
+  type LinkedLightCurvePoint,
+  type LinkedResidualPoint,
 } from "../../lib/chartSeries";
 import { useInvestigationStore } from "../../stores/investigationStore";
 import type { CaseFileDetail, CasefileIndexEntry } from "../../types/casefile";
@@ -21,10 +24,15 @@ export function CaseCanvas({ entry, detail, onBackToQueue }: CaseCanvasProps) {
   const hoveredPointId = useInvestigationStore((state) => state.hoveredPointId);
   const selectedPointId = useInvestigationStore((state) => state.selectedPointId);
   const activeComparator = useInvestigationStore((state) => state.activeComparator);
-  const points = useMemo(() => linkedResidualPoints(entry.oid, detail), [detail, entry.oid]);
-  const activePoint = useMemo(
-    () => activeLinkedPoint(points, hoveredPointId, selectedPointId),
-    [hoveredPointId, points, selectedPointId],
+  const residualPoints = useMemo(() => linkedResidualPoints(entry.oid, detail), [detail, entry.oid]);
+  const lightCurvePoints = useMemo(() => linkedLightCurvePoints(entry.oid, detail), [detail, entry.oid]);
+  const activeResidualPoint = useMemo(
+    () => activeLinkedPoint(residualPoints, hoveredPointId, selectedPointId) as LinkedResidualPoint | null,
+    [hoveredPointId, residualPoints, selectedPointId],
+  );
+  const activeLightCurvePoint = useMemo(
+    () => activeLinkedPoint(lightCurvePoints, hoveredPointId, selectedPointId) as LinkedLightCurvePoint | null,
+    [hoveredPointId, lightCurvePoints, selectedPointId],
   );
 
   let body;
@@ -38,16 +46,17 @@ export function CaseCanvas({ entry, detail, onBackToQueue }: CaseCanvasProps) {
     body = (
       <div className="grid min-h-0 flex-1 grid-rows-[minmax(300px,1.15fr)_minmax(260px,0.85fr)] gap-4 p-4">
         <LightCurvePanel
-          activePoint={activePoint}
+          activePoint={activeLightCurvePoint}
+          hasResidualField={residualPoints.length > 0}
           isComparatorFocused={gaussianFocused}
           oid={entry.oid}
-          points={points}
+          points={lightCurvePoints}
         />
         <ResidualPanel
-          activePoint={activePoint}
+          activePoint={activeResidualPoint}
           isComparatorFocused={gaussianFocused}
           oid={entry.oid}
-          points={points}
+          points={residualPoints}
         />
       </div>
     );

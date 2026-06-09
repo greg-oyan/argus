@@ -40,6 +40,16 @@ export interface FeatureSummary {
   caveat?: string;
 }
 
+export interface AnomalyAssessment {
+  score?: number | null;
+  label?: string;
+  status?: string;
+  drivers?: string[];
+  cautions?: string[];
+  input_summary?: Record<string, unknown>;
+  caveat?: string;
+}
+
 export interface Coordinates {
   ra?: number | null;
   dec?: number | null;
@@ -95,6 +105,7 @@ export interface CasefileIndexEntry {
   feature_summary_status?: string;
   sncosmo_template_probe_status?: string;
   cross_survey_context_status?: string;
+  anomaly_assessment?: AnomalyAssessment;
   review_priority?: ReviewPriority;
   top_recommended_next_check?: string;
   links?: CasefileArtifactLinks;
@@ -114,6 +125,13 @@ export interface ResidualPoint {
   observed_mag?: number;
   model_mag?: number;
   residual_mag: number;
+  magerr?: number | null;
+}
+
+export interface LightCurvePoint {
+  mjd: number;
+  band?: string;
+  mag?: number;
   magerr?: number | null;
 }
 
@@ -154,9 +172,11 @@ export interface CaseFileDetail {
   time_span_days?: number;
   coordinates?: Coordinates;
   light_curve_summary?: LightCurveSummary;
+  light_curve_points?: LightCurvePoint[];
   evidence_narrative?: EvidenceNarrative;
   comparison_summary?: ComparisonSummary;
   feature_summary?: FeatureSummary;
+  anomaly_assessment?: AnomalyAssessment;
   cross_survey_context?: CrossSurveyContext;
   model_comparisons?: ModelComparison[];
   recommended_next_checks?: string[];

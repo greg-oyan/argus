@@ -59,7 +59,7 @@ The object is not well explained by a single smooth bump. Its r-band detections 
 - **First MJD:** 58340.3
 - **Last MJD:** 61180.4
 - **Time span days:** 2840.14
-- **Schema version:** 1.10
+- **Schema version:** 1.11
 
 ## Classification Metadata
 
@@ -290,7 +290,7 @@ The Gaussian bump comparator fit, but reduced chi-squared is 2.4, so the single 
 
 ### Uncertainty Notes
 
-- No SIMBAD/NED/Gaia cross-match has been performed in Phase 2B.
+- Cross-survey catalog context is tracked in the cross_survey_context field; default offline runs record not_requested unless the optional lookup is explicitly enabled.
 - No spectroscopic information is on file.
 - No forced-photometry follow-up has been requested.
 - Candidate explanations above are placeholders, not fits, so mismatch magnitudes and goodness-of-fit values are not yet available.

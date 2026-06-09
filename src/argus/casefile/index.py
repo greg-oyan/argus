@@ -15,7 +15,7 @@ from typing import Any
 
 from argus.config import CASEFILES_DIR
 
-INDEX_VERSION = "1.1"
+INDEX_VERSION = "1.2"
 REVIEW_PRIORITY_CAVEAT = (
     "This is a review-priority heuristic for inspection only, not a model result "
     "or object-identity claim."
@@ -136,7 +136,11 @@ def _artifact_base(json_path: Path, oid: str) -> str:
 
 
 def _relative_link(target: Path, base_dir: Path) -> str:
-    return os.path.relpath(target.resolve(), start=base_dir.resolve()).replace(os.sep, "/")
+    return _posix_path(os.path.relpath(target.resolve(), start=base_dir.resolve()))
+
+
+def _posix_path(path: Path | str) -> str:
+    return str(path).replace("\\", "/")
 
 
 def _artifact_links(json_path: Path, oid: str, base_dir: Path) -> dict[str, str]:
@@ -288,6 +292,27 @@ def compute_review_priority(case_data: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _indexable_anomaly_assessment(case_data: dict[str, Any]) -> dict[str, Any]:
+    assessment = _as_dict(case_data.get("anomaly_assessment"))
+    if not assessment:
+        return {
+            "status": "missing",
+            "score": None,
+            "label": "unknown",
+            "drivers": [],
+            "cautions": ["No anomaly_assessment block is present in this case file."],
+            "caveat": "Assessment is unavailable for this index entry.",
+        }
+    return {
+        "status": str(assessment.get("status") or "missing"),
+        "score": assessment.get("score"),
+        "label": str(assessment.get("label") or "unknown"),
+        "drivers": _as_list(assessment.get("drivers"))[:4],
+        "cautions": _as_list(assessment.get("cautions"))[:3],
+        "caveat": assessment.get("caveat"),
+    }
+
+
 def extract_index_entry(
     case_data: dict[str, Any],
     json_path: Path,
@@ -323,6 +348,7 @@ def extract_index_entry(
             case_data, "sncosmo_template_probe"
         ),
         "cross_survey_context_status": str(cross_survey_context.get("status") or "missing"),
+        "anomaly_assessment": _indexable_anomaly_assessment(case_data),
         "review_priority": compute_review_priority(case_data),
         "top_recommended_next_check": (
             str(recommended[0]) if recommended else "No next check recorded."
@@ -358,7 +384,7 @@ def build_casefile_index(
     return {
         "index_version": INDEX_VERSION,
         "generated_at": generated_at or _utc_now(),
-        "casefile_dir": str(root),
+        "casefile_dir": _posix_path(root),
         "case_count": len(entries),
         "sort_order": "review_priority_desc_then_oid",
         "description": (
@@ -389,6 +415,24 @@ def _status_list(entry: dict[str, Any]) -> str:
         f'<span class="status"><strong>{_h(label)}:</strong> {_h(status)}</span>'
         for label, status in statuses
     )
+
+
+def _assessment_block(entry: dict[str, Any]) -> str:
+    assessment = _as_dict(entry.get("anomaly_assessment"))
+    score = assessment.get("score")
+    score_text = "n/a" if score is None else f"{_plain(score)}/10"
+    drivers = _as_list(assessment.get("drivers"))
+    driver_items = "\n".join(f"<li>{_h(driver)}</li>" for driver in drivers[:3])
+    return "\n".join([
+        '<div class="assessment">',
+        "<p><strong>Anomaly assessment:</strong> "
+        f'<span class="assessment-label">{_h(assessment.get("label") or "unknown")}</span> '
+        f'<span class="assessment-score">{_h(score_text)}</span> '
+        f'<span class="muted">({_h(assessment.get("status") or "missing")})</span></p>',
+        f"<ul>{driver_items}</ul>" if drivers else '<p class="muted">No assessment drivers recorded.</p>',
+        f'<p class="priority-caveat">{_h(assessment.get("caveat") or "Assessment supports review only.")}</p>',
+        "</div>",
+    ])
 
 
 def _artifact_link_list(entry: dict[str, Any]) -> str:
@@ -449,6 +493,7 @@ def render_index_html(index: dict[str, Any]) -> str:
             f'<p class="headline">{_h(entry.get("headline"))}</p>'
             f'<p>{_h(entry.get("short_summary"))}</p>'
             f'<p class="muted">{_h(data_summary)}</p>'
+            f'{_assessment_block(entry)}'
             f'{_priority_block(entry)}'
             '<div class="statuses">'
             f'{_status_list(entry)}'
@@ -500,6 +545,17 @@ a { color: #174ea6; text-underline-offset: 0.18em; }
   margin: 14px 0;
   padding: 12px;
 }
+.assessment {
+  background: #fbfcff;
+  border: 1px solid #d8dee8;
+  border-radius: 8px;
+  margin: 14px 0;
+  padding: 12px;
+}
+.assessment ul { margin: 8px 0; padding-left: 20px; }
+.assessment li { margin: 4px 0; }
+.assessment-label { color: #24476f; font-weight: 700; margin-left: 4px; }
+.assessment-score { color: #24476f; font-weight: 700; margin-left: 6px; }
 .priority ul { margin: 8px 0; padding-left: 20px; }
 .priority li { margin: 4px 0; }
 .priority-level {

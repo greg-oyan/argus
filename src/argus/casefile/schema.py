@@ -8,7 +8,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field, asdict
 from typing import Any, Optional
 
-SCHEMA_VERSION = "1.10"  # 1.10: added top-level deterministic anomaly_assessment
+SCHEMA_VERSION = "1.11"  # 1.11: added observed light_curve_points for public workstation fallback
 
 
 @dataclass
@@ -35,6 +35,14 @@ class LightCurveSummary:
     most_recent_detection_mjd: Optional[float]
     longest_detection_gap_days: Optional[float]
     per_filter: list[FilterStats]
+
+
+@dataclass
+class LightCurvePoint:
+    mjd: float
+    band: str
+    mag: float
+    magerr: Optional[float] = None
 
 
 @dataclass
@@ -178,6 +186,7 @@ class CaseFile:
     candidate_explanations: list[CandidateExplanation]
     uncertainty_notes: list[str]
     recommended_next_checks: list[str]
+    light_curve_points: list[LightCurvePoint] = field(default_factory=list)
     model_comparisons: list[ModelComparison] = field(default_factory=list)
     comparison_summary: Optional[ComparisonSummary] = None
     feature_summary: Optional[FeatureSummary] = None

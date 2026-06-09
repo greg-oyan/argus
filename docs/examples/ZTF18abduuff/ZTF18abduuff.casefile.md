@@ -51,7 +51,7 @@ Some evidence layers are missing, failed, or limited by the available local dete
 - **First MJD:** 58634.2
 - **Last MJD:** 61180.3
 - **Time span days:** 2546.08
-- **Schema version:** 1.10
+- **Schema version:** 1.11
 
 ## Classification Metadata
 
@@ -236,7 +236,7 @@ The Gaussian bump comparator had insufficient r-band data (0 detection(s)), so i
 
 ### Uncertainty Notes
 
-- No SIMBAD/NED/Gaia cross-match has been performed in Phase 2B.
+- Cross-survey catalog context is tracked in the cross_survey_context field; default offline runs record not_requested unless the optional lookup is explicitly enabled.
 - No spectroscopic information is on file.
 - No forced-photometry follow-up has been requested.
 - Candidate explanations above are placeholders, not fits, so mismatch magnitudes and goodness-of-fit values are not yet available.

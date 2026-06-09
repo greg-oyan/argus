@@ -23,6 +23,7 @@ export function CaseHeader({ entry, detail, onBackToQueue }: CaseHeaderProps) {
   const nonDetections = entry.non_detection_count ?? detail?.non_detection_count ?? "n/a";
   const filters = entry.filters_observed ?? detail?.filters_observed;
   const priority = entry.review_priority;
+  const assessment = detail?.anomaly_assessment ?? entry.anomaly_assessment;
   const priorityVisual = priorityEncoding(entry);
   const behavior = behaviorKind(entry, detail);
   const railItems = evidenceRailItems(entry);
@@ -53,6 +54,11 @@ export function CaseHeader({ entry, detail, onBackToQueue }: CaseHeaderProps) {
             {priority ? (
               <span className="argus-state-pill argus-state-pill-active">
                 review priority {priority.score}/10 {priority.level}
+              </span>
+            ) : null}
+            {assessment ? (
+              <span className="argus-state-pill">
+                assessment {assessment.score ?? "n/a"}/10 {assessment.label ?? "unknown"}
               </span>
             ) : null}
             <span className="argus-state-pill">{behaviorLabel(behavior)}</span>

@@ -1,7 +1,7 @@
 {
   "oid": "ZTF18abduuff",
   "source_date": "2026-05-20",
-  "generated_at": "2026-06-09T18:44:52+00:00",
+  "generated_at": "2026-06-09T19:30:35+00:00",
   "coordinates": {
     "ra": 258.22590895299084,
     "dec": -20.73201149493282,
@@ -94,7 +94,7 @@
     }
   ],
   "uncertainty_notes": [
-    "No SIMBAD/NED/Gaia cross-match has been performed in Phase 2B.",
+    "Cross-survey catalog context is tracked in the cross_survey_context field; default offline runs record not_requested unless the optional lookup is explicitly enabled.",
     "No spectroscopic information is on file.",
     "No forced-photometry follow-up has been requested.",
     "Candidate explanations above are placeholders, not fits, so mismatch magnitudes and goodness-of-fit values are not yet available.",
@@ -105,6 +105,20 @@
     "Search PanSTARRS at this position for a candidate host galaxy and record offset from any nearby extended source.",
     "Pull ZTF forced photometry in a \u00b190-day window around the most recent detection (MJD 60136.34).",
     "Replace the Phase 2C Gaussian-bump baseline with physical templates (Type Ia SN light curve, AGN damped random walk, stellar-flare profile) and add their residuals to model_comparisons."
+  ],
+  "light_curve_points": [
+    {
+      "mjd": 58940.46534720017,
+      "band": "g",
+      "mag": 16.038774,
+      "magerr": 0.15410735
+    },
+    {
+      "mjd": 60136.336909700185,
+      "band": "g",
+      "mag": 17.400562,
+      "magerr": 0.118241355
+    }
   ],
   "model_comparisons": [
     {
@@ -302,5 +316,5 @@
     ],
     "caveat": "This narrative summarizes evidence layers. It is not a physical classification."
   },
-  "schema_version": "1.10"
+  "schema_version": "1.11"
 }

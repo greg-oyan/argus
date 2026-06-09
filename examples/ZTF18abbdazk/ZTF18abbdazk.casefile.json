@@ -1,7 +1,7 @@
 {
   "oid": "ZTF18abbdazk",
   "source_date": "2026-05-20",
-  "generated_at": "2026-06-09T18:44:51+00:00",
+  "generated_at": "2026-06-09T19:30:35+00:00",
   "coordinates": {
     "ra": 286.62936495340404,
     "dec": 1.9418299857015655,
@@ -94,7 +94,7 @@
     }
   ],
   "uncertainty_notes": [
-    "No SIMBAD/NED/Gaia cross-match has been performed in Phase 2B.",
+    "Cross-survey catalog context is tracked in the cross_survey_context field; default offline runs record not_requested unless the optional lookup is explicitly enabled.",
     "No spectroscopic information is on file.",
     "No forced-photometry follow-up has been requested.",
     "Candidate explanations above are placeholders, not fits, so mismatch magnitudes and goodness-of-fit values are not yet available.",
@@ -106,6 +106,116 @@
     "Pull ZTF forced photometry in a \u00b190-day window around the most recent detection (MJD 61180.44).",
     "Replace the Phase 2C Gaussian-bump baseline with physical templates (Type Ia SN light curve, AGN damped random walk, stellar-flare profile) and add their residuals to model_comparisons.",
     "If the source is still active (last detection within ~60 days), request follow-up spectroscopy."
+  ],
+  "light_curve_points": [
+    {
+      "mjd": 58284.394895799924,
+      "band": "g",
+      "mag": 20.12583,
+      "magerr": 0.1731459
+    },
+    {
+      "mjd": 58433.07282410003,
+      "band": "r",
+      "mag": 18.847727,
+      "magerr": 0.19451317
+    },
+    {
+      "mjd": 58648.474976900034,
+      "band": "r",
+      "mag": 18.745369,
+      "magerr": 0.12522048
+    },
+    {
+      "mjd": 59249.57295140019,
+      "band": "r",
+      "mag": 18.39862,
+      "magerr": 0.18773663
+    },
+    {
+      "mjd": 59310.49168979982,
+      "band": "r",
+      "mag": 18.662115,
+      "magerr": 0.097919844
+    },
+    {
+      "mjd": 59470.22711810004,
+      "band": "g",
+      "mag": 19.9722,
+      "magerr": 0.21749
+    },
+    {
+      "mjd": 59498.12853009999,
+      "band": "g",
+      "mag": 20.02972,
+      "magerr": 0.20492312
+    },
+    {
+      "mjd": 59630.53994210018,
+      "band": "r",
+      "mag": 18.4235,
+      "magerr": 0.092076
+    },
+    {
+      "mjd": 59630.54245370021,
+      "band": "r",
+      "mag": 18.518042,
+      "magerr": 0.13206577
+    },
+    {
+      "mjd": 59630.54496529978,
+      "band": "r",
+      "mag": 18.5037,
+      "magerr": 0.115829
+    },
+    {
+      "mjd": 59630.54748839978,
+      "band": "r",
+      "mag": 18.52044,
+      "magerr": 0.12195292
+    },
+    {
+      "mjd": 59630.5500115999,
+      "band": "r",
+      "mag": 18.57344,
+      "magerr": 0.10629108
+    },
+    {
+      "mjd": 59840.183576399926,
+      "band": "g",
+      "mag": 20.080671,
+      "magerr": 0.190595
+    },
+    {
+      "mjd": 60193.23394680023,
+      "band": "g",
+      "mag": 20.156042,
+      "magerr": 0.15681529
+    },
+    {
+      "mjd": 60193.29868059978,
+      "band": "r",
+      "mag": 18.884424,
+      "magerr": 0.10281778
+    },
+    {
+      "mjd": 60535.26701389998,
+      "band": "r",
+      "mag": 18.5573,
+      "magerr": 0.12561291
+    },
+    {
+      "mjd": 61158.4073379999,
+      "band": "r",
+      "mag": 18.822275,
+      "magerr": 0.14425811
+    },
+    {
+      "mjd": 61180.43630790012,
+      "band": "r",
+      "mag": 18.48272,
+      "magerr": 0.087310866
+    }
   ],
   "model_comparisons": [
     {
@@ -446,5 +556,5 @@
     ],
     "caveat": "This narrative summarizes evidence layers. It is not a physical classification."
   },
-  "schema_version": "1.10"
+  "schema_version": "1.11"
 }

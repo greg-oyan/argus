@@ -89,6 +89,12 @@ evidence focus, and calm missing states now use a shared visual language. This
 is an information-design pass only; it does not add model logic, data
 generation, or new inference.
 
+The public-demo workstation now also surfaces the deterministic
+`anomaly_assessment` block from case-file JSON/index entries. Case Mode plots
+stored observed light-curve points even when a Gaussian residual field is not
+available; residual inspection remains limited to objects with stored residual
+points.
+
 ```bash
 cd frontend
 npm install
@@ -279,10 +285,22 @@ python -m pytest -q
 
 GitHub Actions runs the same offline test suite on pushes to `main` and pull
 requests targeting `main` using Python 3.11 and `pip install -e ".[dev]"`.
-The CI path does not install optional `science` extras, so `sncosmo` and
-`astroquery` are not required for the default reliability check. Networked
-integrations are either mocked in tests or require explicit opt-in outside the
-base CI path.
+CI also runs the frontend production build from `frontend/` with Node 20 and
+`npm ci && npm run build`. The CI path does not install optional `science`
+extras, so `sncosmo` and `astroquery` are not required for the default
+reliability check. Networked integrations are either mocked in tests or require
+explicit opt-in outside the base CI path.
+
+A fresh clone can regenerate one local demo case without live network calls
+from committed fixtures:
+
+```bash
+python -m scripts.build_sample_casefile
+```
+
+By default this writes a normal JSON/Markdown/HTML/PNG bundle under
+`data/sample_casefiles/` and materializes temporary fixture-shaped inputs under
+`data/sample_fixture_input/`. Both locations remain ignored local outputs.
 
 ## AI Coding Agent Instructions
 
@@ -325,7 +343,8 @@ src/argus/
 scripts/
 ├── ingest_daily.py              # ingestion CLI
 ├── preprocess_tensors.py        # preprocessing CLI
-└── build_casefile.py            # case-file CLI
+├── build_casefile.py            # case-file CLI
+└── build_sample_casefile.py     # one-case fixture workflow, no network
 notebooks/
 └── 02_explore_lightcurve.ipynb  # one-object Parquet-vs-raw comparison + Phase 2 schema decisions
 tests/
@@ -582,9 +601,11 @@ python -m scripts.build_casefile_index --casefile-dir data/casefiles --write-htm
 This writes `data/casefiles/index.json` and, with `--write-html`,
 `data/casefiles/index.html`. The index scans existing case-file JSON, extracts
 evidence headlines, data counts, comparator statuses, feature/context statuses,
-the top recommended next check, review-priority signals, and links to available
-artifacts. It does not recompute metrics, query external services, or decide
-object identity.
+the deterministic `anomaly_assessment` summary, the top recommended next check,
+review-priority signals, and links to available artifacts. Paths in index JSON
+use POSIX-style relative links so the public artifacts are stable across local
+Windows and Linux/CI generation. The index does not recompute metrics, query
+external services, or decide object identity.
 
 Phase 2V adds a transparent `review_priority` block to each index entry. The
 score is a capped additive heuristic from existing evidence signals such as

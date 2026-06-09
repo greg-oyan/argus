@@ -55,7 +55,7 @@ The Gaussian bump comparator fit the r-band detections cleanly within the report
 - **First MJD:** 58263.4
 - **Last MJD:** 61180.5
 - **Time span days:** 2917.05
-- **Schema version:** 1.10
+- **Schema version:** 1.11
 
 ## Classification Metadata
 
@@ -280,7 +280,7 @@ The Gaussian bump comparator fit the r-band detections cleanly within the report
 
 ### Uncertainty Notes
 
-- No SIMBAD/NED/Gaia cross-match has been performed in Phase 2B.
+- Cross-survey catalog context is tracked in the cross_survey_context field; default offline runs record not_requested unless the optional lookup is explicitly enabled.
 - No spectroscopic information is on file.
 - No forced-photometry follow-up has been requested.
 - Candidate explanations above are placeholders, not fits, so mismatch magnitudes and goodness-of-fit values are not yet available.

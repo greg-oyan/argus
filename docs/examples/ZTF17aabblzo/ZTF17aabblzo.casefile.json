@@ -1,7 +1,7 @@
 {
   "oid": "ZTF17aabblzo",
   "source_date": "2026-05-20",
-  "generated_at": "2026-06-09T18:44:50+00:00",
+  "generated_at": "2026-06-09T19:30:34+00:00",
   "coordinates": {
     "ra": 12.50754776985519,
     "dec": 42.65243962893071,
@@ -94,7 +94,7 @@
     }
   ],
   "uncertainty_notes": [
-    "No SIMBAD/NED/Gaia cross-match has been performed in Phase 2B.",
+    "Cross-survey catalog context is tracked in the cross_survey_context field; default offline runs record not_requested unless the optional lookup is explicitly enabled.",
     "No spectroscopic information is on file.",
     "No forced-photometry follow-up has been requested.",
     "Candidate explanations above are placeholders, not fits, so mismatch magnitudes and goodness-of-fit values are not yet available.",
@@ -105,6 +105,26 @@
     "Search PanSTARRS at this position for a candidate host galaxy and record offset from any nearby extended source.",
     "Pull ZTF forced photometry in a \u00b190-day window around the most recent detection (MJD 59202.20).",
     "Replace the Phase 2C Gaussian-bump baseline with physical templates (Type Ia SN light curve, AGN damped random walk, stellar-flare profile) and add their residuals to model_comparisons."
+  ],
+  "light_curve_points": [
+    {
+      "mjd": 58854.13482639985,
+      "band": "r",
+      "mag": 16.78608,
+      "magerr": 0.0888058
+    },
+    {
+      "mjd": 59188.181330999825,
+      "band": "g",
+      "mag": 17.1118,
+      "magerr": 0.076399
+    },
+    {
+      "mjd": 59202.1988309999,
+      "band": "g",
+      "mag": 16.957237,
+      "magerr": 0.0916183
+    }
   ],
   "model_comparisons": [
     {
@@ -312,5 +332,5 @@
     ],
     "caveat": "This narrative summarizes evidence layers. It is not a physical classification."
   },
-  "schema_version": "1.10"
+  "schema_version": "1.11"
 }

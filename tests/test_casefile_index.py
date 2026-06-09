@@ -21,7 +21,7 @@ def _case_data(*, oid: str = "ZTFindex") -> dict:
         "oid": oid,
         "source_date": "2026-05-20",
         "generated_at": "2026-05-21T00:00:00+00:00",
-        "schema_version": "1.9",
+        "schema_version": "1.11",
         "detection_count": 12,
         "non_detection_count": 3,
         "filters_observed": ["g", "r"],
@@ -41,6 +41,19 @@ def _case_data(*, oid: str = "ZTFindex") -> dict:
         "recommended_next_checks": ["Inspect residual structure visually."],
         "feature_summary": {"status": "computed"},
         "cross_survey_context": {"status": "not_requested"},
+        "anomaly_assessment": {
+            "status": "available",
+            "score": 8,
+            "label": "high",
+            "drivers": [
+                "Coverage spans enough days to inspect long-baseline behavior.",
+                "Gaussian bump residual scale is high.",
+            ],
+            "cautions": [
+                "Template-family probe is limited by missing required context.",
+            ],
+            "caveat": "This deterministic assessment supports review triage only.",
+        },
         "model_comparisons": [
             {
                 "model_type": "gaussian_bump",
@@ -94,7 +107,7 @@ def _write_low_priority_case(root: Path, *, oid: str = "ZTFlow") -> Path:
         json.dumps({
             "oid": oid,
             "source_date": "2026-05-20",
-            "schema_version": "1.9",
+            "schema_version": "1.11",
         }),
         encoding="utf-8",
     )
@@ -134,6 +147,10 @@ def test_index_entry_extraction_from_full_case_file(tmp_path):
     assert entry["sncosmo_template_probe_status"] == "missing_required_context"
     assert entry["cross_survey_context_status"] == "not_requested"
     assert entry["classification_metadata"]["kind"] == "external_metadata"
+    assert entry["anomaly_assessment"]["status"] == "available"
+    assert entry["anomaly_assessment"]["score"] == 8
+    assert entry["anomaly_assessment"]["label"] == "high"
+    assert entry["anomaly_assessment"]["drivers"]
     assert entry["review_priority"]["score"] == 9
     assert entry["review_priority"]["level"] == "high"
     assert entry["top_recommended_next_check"] == "Inspect residual structure visually."
@@ -152,6 +169,7 @@ def test_index_entry_links_available_artifacts_with_relative_paths(tmp_path):
         "light_curve_png": "ZTFlinks/ZTFlinks.lightcurve.png",
         "residual_png": "ZTFlinks/ZTFlinks.residuals.png",
     }
+    assert all("\\" not in value for value in entry["links"].values())
 
 
 def test_index_handles_missing_optional_fields(tmp_path):
@@ -175,6 +193,7 @@ def test_index_handles_missing_optional_fields(tmp_path):
     assert entry["gaussian_comparator_status"] == "missing"
     assert entry["feature_summary_status"] == "missing"
     assert entry["cross_survey_context_status"] == "missing"
+    assert entry["anomaly_assessment"]["status"] == "missing"
     assert entry["review_priority"]["score"] == 0
     assert entry["review_priority"]["level"] == "low"
     assert entry["top_recommended_next_check"] == "No next check recorded."
@@ -215,7 +234,10 @@ def test_index_json_and_html_writers(tmp_path):
     parsed = json.loads(json_path.read_text(encoding="utf-8"))
     html = html_path.read_text(encoding="utf-8")
     assert parsed["case_count"] == 1
+    assert "\\" not in parsed["casefile_dir"]
+    assert "\\" not in json.dumps(parsed["entries"], sort_keys=True)
     assert "Argus Case-File Index" in html
+    assert "Anomaly assessment" in html
     assert "Review priority" in html
     assert "review-priority heuristic" in html
     assert "ZTFindex/ZTFindex.casefile.html" in html

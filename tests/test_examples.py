@@ -63,6 +63,9 @@ def test_public_demo_queue_contains_multiple_oid_bundles():
 
             assert root.exists()
             assert expected.issubset({path.name for path in root.iterdir()})
+            case_data = json.loads((root / f"{oid}.casefile.json").read_text(encoding="utf-8"))
+            assert "anomaly_assessment" in case_data
+            assert "light_curve_points" in case_data
             _assert_no_raw_data_files(root)
 
 
@@ -78,9 +81,12 @@ def test_public_example_index_links_case_bundle():
     assert index["case_count"] >= len(PUBLIC_DEMO_OIDS)
     assert PUBLIC_DEMO_OIDS.issubset(indexed_oids)
     assert all("review_priority" in entry for entry in index["entries"])
+    assert all("anomaly_assessment" in entry for entry in index["entries"])
+    assert "\\" not in json.dumps(index, sort_keys=True)
 
     text = index_html.read_text(encoding="utf-8")
     assert "6 case files available." in text
+    assert "Anomaly assessment" in text
     assert "Review priority" in text
     for oid in PUBLIC_DEMO_OIDS:
         assert f"{oid}/{oid}.casefile.html" in text

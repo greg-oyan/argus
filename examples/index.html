@@ -37,6 +37,17 @@ a { color: #174ea6; text-underline-offset: 0.18em; }
   margin: 14px 0;
   padding: 12px;
 }
+.assessment {
+  background: #fbfcff;
+  border: 1px solid #d8dee8;
+  border-radius: 8px;
+  margin: 14px 0;
+  padding: 12px;
+}
+.assessment ul { margin: 8px 0; padding-left: 20px; }
+.assessment li { margin: 4px 0; }
+.assessment-label { color: #24476f; font-weight: 700; margin-left: 4px; }
+.assessment-score { color: #24476f; font-weight: 700; margin-left: 6px; }
 .priority ul { margin: 8px 0; padding-left: 20px; }
 .priority li { margin: 4px 0; }
 .priority-level {
@@ -68,7 +79,13 @@ footer { color: #5e6a78; font-size: 0.9rem; margin-top: 28px; }
 <span class="count">6 case files available.</span>
 </header>
 <section class="case-grid">
-<article class="case-card"><h2>ZTF18abujsbq</h2><p class="headline">Complex light-curve behavior with limited physical interpretation</p><p>The object is not well explained by a single smooth bump. Its r-band detections show repeated or irregular variability texture, while template and catalog-context checks remain limited by available context.</p><p class="muted">147 detections, 674 non-detections in g, r; span 2840.14 days</p><div class="priority">
+<article class="case-card"><h2>ZTF18abujsbq</h2><p class="headline">Complex light-curve behavior with limited physical interpretation</p><p>The object is not well explained by a single smooth bump. Its r-band detections show repeated or irregular variability texture, while template and catalog-context checks remain limited by available context.</p><p class="muted">147 detections, 674 non-detections in g, r; span 2840.14 days</p><div class="assessment">
+<p><strong>Anomaly assessment:</strong> <span class="assessment-label">high</span> <span class="assessment-score">10/10</span> <span class="muted">(available)</span></p>
+<ul><li>147 detections provide a relatively dense local record.</li>
+<li>Coverage spans 2840 days, enough to inspect long-baseline behavior.</li>
+<li>Both g and r observations are present for cross-band review.</li></ul>
+<p class="priority-caveat">This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity.</p>
+</div><div class="priority">
 <p><strong>Review priority:</strong> <span class="priority-level level-high">high</span> <span class="priority-score">9/10</span></p>
 <ul><li>Gaussian bump comparator indicates the single smooth bump is not a clean fit.</li>
 <li>Variability texture suggests repeated or irregular behavior.</li>
@@ -82,7 +99,13 @@ footer { color: #5e6a78; font-size: 0.9rem; margin-top: 28px; }
 <span class="status"><strong>Features:</strong> computed</span>
 <span class="status"><strong>sncosmo:</strong> missing_required_context</span>
 <span class="status"><strong>Catalog context:</strong> not_requested</span></div><p><strong>Top next check:</strong> Cross-match position (RA=286.67280, Dec=9.63316) against SIMBAD and NED for any known counterpart.</p><p class="links"><a href="ZTF18abujsbq/ZTF18abujsbq.casefile.html">HTML</a> <a href="ZTF18abujsbq/ZTF18abujsbq.casefile.md">Markdown</a> <a href="ZTF18abujsbq/ZTF18abujsbq.casefile.json">JSON</a> <a href="ZTF18abujsbq/ZTF18abujsbq.lightcurve.png">Light curve</a> <a href="ZTF18abujsbq/ZTF18abujsbq.residuals.png">Residuals</a></p></article>
-<article class="case-card"><h2>ZTF18abbdazk</h2><p class="headline">Mixed evidence with cautious interpretation</p><p>The Gaussian bump comparator fit, but reduced chi-squared is 2.2, so the single smooth bump captures only part of the point-to-point behavior. The variability texture comparator found changes that are comparable to the reported photometric errors. Together, these suggest the r-band detections are not fully captured by one smooth bump.</p><p class="muted">19 detections, 201 non-detections in g, r; span 2897.04 days</p><div class="priority">
+<article class="case-card"><h2>ZTF18abbdazk</h2><p class="headline">Mixed evidence with cautious interpretation</p><p>The Gaussian bump comparator fit, but reduced chi-squared is 2.2, so the single smooth bump captures only part of the point-to-point behavior. The variability texture comparator found changes that are comparable to the reported photometric errors. Together, these suggest the r-band detections are not fully captured by one smooth bump.</p><p class="muted">19 detections, 201 non-detections in g, r; span 2897.04 days</p><div class="assessment">
+<p><strong>Anomaly assessment:</strong> <span class="assessment-label">high</span> <span class="assessment-score">9/10</span> <span class="muted">(available)</span></p>
+<ul><li>19 detections provide a usable local record.</li>
+<li>Coverage spans 2897 days, enough to inspect long-baseline behavior.</li>
+<li>Both g and r observations are present for cross-band review.</li></ul>
+<p class="priority-caveat">This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity.</p>
+</div><div class="priority">
 <p><strong>Review priority:</strong> <span class="priority-level level-high">high</span> <span class="priority-score">7/10</span></p>
 <ul><li>Gaussian bump comparator indicates the single smooth bump is not a clean fit.</li>
 <li>Standard descriptive features were computed.</li>
@@ -95,7 +118,13 @@ footer { color: #5e6a78; font-size: 0.9rem; margin-top: 28px; }
 <span class="status"><strong>Features:</strong> computed</span>
 <span class="status"><strong>sncosmo:</strong> missing_required_context</span>
 <span class="status"><strong>Catalog context:</strong> not_requested</span></div><p><strong>Top next check:</strong> Cross-match position (RA=286.62936, Dec=1.94183) against SIMBAD and NED for any known counterpart.</p><p class="links"><a href="ZTF18abbdazk/ZTF18abbdazk.casefile.html">HTML</a> <a href="ZTF18abbdazk/ZTF18abbdazk.casefile.md">Markdown</a> <a href="ZTF18abbdazk/ZTF18abbdazk.casefile.json">JSON</a> <a href="ZTF18abbdazk/ZTF18abbdazk.lightcurve.png">Light curve</a> <a href="ZTF18abbdazk/ZTF18abbdazk.residuals.png">Residuals</a></p></article>
-<article class="case-card"><h2>ZTF18aaxddtg</h2><p class="headline">Mixed evidence with cautious interpretation</p><p>The Gaussian bump comparator fit the r-band detections cleanly within the reported errors. The variability texture comparator found changes that are comparable to the reported photometric errors. Together, these favor a simple one-bump description over repeated or irregular texture in the current r-band detections. Coverage appears sparse or uneven, so cadence may affect the comparison.</p><p class="muted">10 detections, 212 non-detections in g, r; span 2917.05 days</p><div class="priority">
+<article class="case-card"><h2>ZTF18aaxddtg</h2><p class="headline">Mixed evidence with cautious interpretation</p><p>The Gaussian bump comparator fit the r-band detections cleanly within the reported errors. The variability texture comparator found changes that are comparable to the reported photometric errors. Together, these favor a simple one-bump description over repeated or irregular texture in the current r-band detections. Coverage appears sparse or uneven, so cadence may affect the comparison.</p><p class="muted">10 detections, 212 non-detections in g, r; span 2917.05 days</p><div class="assessment">
+<p><strong>Anomaly assessment:</strong> <span class="assessment-label">high</span> <span class="assessment-score">6/10</span> <span class="muted">(available)</span></p>
+<ul><li>10 detections provide a usable local record.</li>
+<li>Coverage spans 2917 days, enough to inspect long-baseline behavior.</li>
+<li>Both g and r observations are present for cross-band review.</li></ul>
+<p class="priority-caveat">This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity.</p>
+</div><div class="priority">
 <p><strong>Review priority:</strong> <span class="priority-level level-medium">medium</span> <span class="priority-score">4/10</span></p>
 <ul><li>Standard descriptive features were computed.</li>
 <li>Template-family probe is limited by missing required context.</li>
@@ -107,7 +136,13 @@ footer { color: #5e6a78; font-size: 0.9rem; margin-top: 28px; }
 <span class="status"><strong>Features:</strong> computed</span>
 <span class="status"><strong>sncosmo:</strong> missing_required_context</span>
 <span class="status"><strong>Catalog context:</strong> not_requested</span></div><p><strong>Top next check:</strong> Cross-match position (RA=284.45227, Dec=9.60622) against SIMBAD and NED for any known counterpart.</p><p class="links"><a href="ZTF18aaxddtg/ZTF18aaxddtg.casefile.html">HTML</a> <a href="ZTF18aaxddtg/ZTF18aaxddtg.casefile.md">Markdown</a> <a href="ZTF18aaxddtg/ZTF18aaxddtg.casefile.json">JSON</a> <a href="ZTF18aaxddtg/ZTF18aaxddtg.lightcurve.png">Light curve</a> <a href="ZTF18aaxddtg/ZTF18aaxddtg.residuals.png">Residuals</a></p></article>
-<article class="case-card"><h2>ZTF17aabblzo</h2><p class="headline">Evidence is limited by available comparator context</p><p>Some evidence layers are missing, failed, or limited by the available local detections. The case file supports cautious review rather than a firm conclusion.</p><p class="muted">3 detections, 246 non-detections in g, r; span 2865.02 days</p><div class="priority">
+<article class="case-card"><h2>ZTF17aabblzo</h2><p class="headline">Evidence is limited by available comparator context</p><p>Some evidence layers are missing, failed, or limited by the available local detections. The case file supports cautious review rather than a firm conclusion.</p><p class="muted">3 detections, 246 non-detections in g, r; span 2865.02 days</p><div class="assessment">
+<p><strong>Anomaly assessment:</strong> <span class="assessment-label">medium</span> <span class="assessment-score">4/10</span> <span class="muted">(available)</span></p>
+<ul><li>Coverage spans 2865 days, enough to inspect long-baseline behavior.</li>
+<li>Both g and r observations are present for cross-band review.</li>
+<li>Catalog-context status is not_requested; external context remains limited.</li></ul>
+<p class="priority-caveat">This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity.</p>
+</div><div class="priority">
 <p><strong>Review priority:</strong> <span class="priority-level level-medium">medium</span> <span class="priority-score">3/10</span></p>
 <ul><li>Template-family probe is limited by insufficient usable data.</li>
 <li>Cross-survey context was not requested.</li>
@@ -118,7 +153,13 @@ footer { color: #5e6a78; font-size: 0.9rem; margin-top: 28px; }
 <span class="status"><strong>Features:</strong> insufficient_data</span>
 <span class="status"><strong>sncosmo:</strong> insufficient_data</span>
 <span class="status"><strong>Catalog context:</strong> not_requested</span></div><p><strong>Top next check:</strong> Cross-match position (RA=12.50755, Dec=42.65244) against SIMBAD and NED for any known counterpart.</p><p class="links"><a href="ZTF17aabblzo/ZTF17aabblzo.casefile.html">HTML</a> <a href="ZTF17aabblzo/ZTF17aabblzo.casefile.md">Markdown</a> <a href="ZTF17aabblzo/ZTF17aabblzo.casefile.json">JSON</a> <a href="ZTF17aabblzo/ZTF17aabblzo.lightcurve.png">Light curve</a></p></article>
-<article class="case-card"><h2>ZTF18abdtfcl</h2><p class="headline">Evidence is limited by available comparator context</p><p>Some evidence layers are missing, failed, or limited by the available local detections. The case file supports cautious review rather than a firm conclusion.</p><p class="muted">17 detections, 174 non-detections in g, r; span 2503.07 days</p><div class="priority">
+<article class="case-card"><h2>ZTF18abdtfcl</h2><p class="headline">Evidence is limited by available comparator context</p><p>Some evidence layers are missing, failed, or limited by the available local detections. The case file supports cautious review rather than a firm conclusion.</p><p class="muted">17 detections, 174 non-detections in g, r; span 2503.07 days</p><div class="assessment">
+<p><strong>Anomaly assessment:</strong> <span class="assessment-label">high</span> <span class="assessment-score">8/10</span> <span class="muted">(available)</span></p>
+<ul><li>17 detections provide a usable local record.</li>
+<li>Coverage spans 2503 days, enough to inspect long-baseline behavior.</li>
+<li>Both g and r observations are present for cross-band review.</li></ul>
+<p class="priority-caveat">This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity.</p>
+</div><div class="priority">
 <p><strong>Review priority:</strong> <span class="priority-level level-medium">medium</span> <span class="priority-score">3/10</span></p>
 <ul><li>Template-family probe is limited by missing required context.</li>
 <li>Cross-survey context was not requested.</li>
@@ -129,7 +170,11 @@ footer { color: #5e6a78; font-size: 0.9rem; margin-top: 28px; }
 <span class="status"><strong>Features:</strong> insufficient_data</span>
 <span class="status"><strong>sncosmo:</strong> missing_required_context</span>
 <span class="status"><strong>Catalog context:</strong> not_requested</span></div><p><strong>Top next check:</strong> Cross-match position (RA=254.67831, Dec=-23.74590) against SIMBAD and NED for any known counterpart.</p><p class="links"><a href="ZTF18abdtfcl/ZTF18abdtfcl.casefile.html">HTML</a> <a href="ZTF18abdtfcl/ZTF18abdtfcl.casefile.md">Markdown</a> <a href="ZTF18abdtfcl/ZTF18abdtfcl.casefile.json">JSON</a> <a href="ZTF18abdtfcl/ZTF18abdtfcl.lightcurve.png">Light curve</a></p></article>
-<article class="case-card"><h2>ZTF18abduuff</h2><p class="headline">Evidence is limited by available comparator context</p><p>Some evidence layers are missing, failed, or limited by the available local detections. The case file supports cautious review rather than a firm conclusion.</p><p class="muted">2 detections, 153 non-detections in g, r; span 2546.08 days</p><div class="priority">
+<article class="case-card"><h2>ZTF18abduuff</h2><p class="headline">Evidence is limited by available comparator context</p><p>Some evidence layers are missing, failed, or limited by the available local detections. The case file supports cautious review rather than a firm conclusion.</p><p class="muted">2 detections, 153 non-detections in g, r; span 2546.08 days</p><div class="assessment">
+<p><strong>Anomaly assessment:</strong> <span class="assessment-label">unknown</span> <span class="assessment-score">0/10</span> <span class="muted">(insufficient_data)</span></p>
+<ul><li>Only 2 usable detection(s) are present, below the minimum for a stable review assessment.</li></ul>
+<p class="priority-caveat">This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity.</p>
+</div><div class="priority">
 <p><strong>Review priority:</strong> <span class="priority-level level-medium">medium</span> <span class="priority-score">3/10</span></p>
 <ul><li>Template-family probe is limited by insufficient usable data.</li>
 <li>Cross-survey context was not requested.</li>
@@ -143,7 +188,7 @@ footer { color: #5e6a78; font-size: 0.9rem; margin-top: 28px; }
 </section>
 <footer>
 Built from existing case-file JSON. Review priority supports inspection only; it does not decide object identity or assert a final finding.
- Generated 2026-06-09T18:44:53+00:00.
+ Generated 2026-06-09T19:31:05+00:00.
 </footer>
 </main>
 </body>

@@ -1,7 +1,7 @@
 import { comparison } from "./glyphEncoding";
 import { residualPointId } from "./pointIdentity";
 import type { SelectedTimeRange } from "../stores/investigationStore";
-import type { CaseFileDetail, ModelComparison, ResidualPoint } from "../types/casefile";
+import type { CaseFileDetail, LightCurvePoint, ModelComparison, ResidualPoint } from "../types/casefile";
 
 export interface LinkedResidualPoint {
   pointId: string;
@@ -12,6 +12,19 @@ export interface LinkedResidualPoint {
   residualMag: number;
   magerr: number | null;
 }
+
+export interface LinkedLightCurvePoint {
+  pointId: string;
+  sourceIndex: number;
+  mjd: number;
+  observedMag: number | null;
+  modelMag: number | null;
+  residualMag: number | null;
+  magerr: number | null;
+  band: string | null;
+}
+
+export type LinkedChartPoint = LinkedResidualPoint | LinkedLightCurvePoint;
 
 function finiteNumber(value: unknown): number | null {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
@@ -49,11 +62,59 @@ export function linkedResidualPoints(
     .sort((a, b) => a.mjd - b.mjd || a.sourceIndex - b.sourceIndex);
 }
 
-export function activeLinkedPoint(
-  points: LinkedResidualPoint[],
+function lightCurvePointId(oid: string, index: number, point: LightCurvePoint): string {
+  return `${oid}:lightcurve:${index}:${point.mjd}`;
+}
+
+function residualPointToLightCurvePoint(point: LinkedResidualPoint): LinkedLightCurvePoint {
+  return {
+    pointId: point.pointId,
+    sourceIndex: point.sourceIndex,
+    mjd: point.mjd,
+    observedMag: point.observedMag,
+    modelMag: point.modelMag,
+    residualMag: point.residualMag,
+    magerr: point.magerr,
+    band: "r",
+  };
+}
+
+export function linkedLightCurvePoints(
+  oid: string,
+  detail: CaseFileDetail | null | undefined,
+): LinkedLightCurvePoint[] {
+  const residualLinked = linkedResidualPoints(oid, detail);
+  if (residualLinked.length > 0) {
+    return residualLinked.map(residualPointToLightCurvePoint);
+  }
+
+  const observedPoints: LightCurvePoint[] = detail?.light_curve_points ?? [];
+  const linked: LinkedLightCurvePoint[] = [];
+  observedPoints.forEach((point, index) => {
+    const mjd = finiteNumber(point.mjd);
+    const observedMag = finiteNumber(point.mag);
+    if (mjd === null || observedMag === null) {
+      return;
+    }
+    linked.push({
+      pointId: lightCurvePointId(oid, index, point),
+      sourceIndex: index,
+      mjd,
+      observedMag,
+      modelMag: null,
+      residualMag: null,
+      magerr: finiteNumber(point.magerr),
+      band: point.band ?? null,
+    });
+  });
+  return linked.sort((a, b) => a.mjd - b.mjd || a.sourceIndex - b.sourceIndex);
+}
+
+export function activeLinkedPoint<T extends { pointId: string }>(
+  points: T[],
   hoveredPointId: string | null,
   selectedPointId: string | null,
-): LinkedResidualPoint | null {
+): T | null {
   const activeId = selectedPointId ?? hoveredPointId;
   return points.find((point) => point.pointId === activeId) ?? null;
 }
@@ -92,7 +153,7 @@ export interface TimeBounds {
   max: number;
 }
 
-export function timeBounds(points: LinkedResidualPoint[]): TimeBounds | null {
+export function timeBounds(points: Array<{ mjd: number }>): TimeBounds | null {
   if (points.length === 0) {
     return null;
   }
@@ -101,7 +162,7 @@ export function timeBounds(points: LinkedResidualPoint[]): TimeBounds | null {
 }
 
 export function timeRangeToPercent(
-  points: LinkedResidualPoint[],
+  points: Array<{ mjd: number }>,
   range: SelectedTimeRange | null,
 ): { start: number; end: number } {
   const bounds = timeBounds(points);

@@ -13,7 +13,7 @@ from typing import Optional
 import pandas as pd
 
 from argus.casefile.assessment import build_anomaly_assessment
-from argus.casefile.schema import CaseFile, ModelComparison
+from argus.casefile.schema import CaseFile, LightCurvePoint, ModelComparison
 from argus.casefile.summarize import (
     build_comparison_summary, build_evidence_narrative, candidate_explanations,
     evidence_notes, recommended_next_checks, summarize_light_curve,
@@ -55,6 +55,8 @@ _PHASE_2D_LIMITATIONS = (
     "Turning-point counts use simple rolling-median smoothing, so cadence, "
     "gaps, and noisy measurements can affect the result.",
 )
+
+_FID_TO_BAND = {1: "g", 2: "r"}
 
 
 def _scalar_or_none(x):
@@ -327,6 +329,37 @@ def _extract_redshift_context(obj_rows: pd.DataFrame) -> tuple[Optional[float], 
     return None, None
 
 
+def _build_light_curve_points(detections: pd.DataFrame) -> list[LightCurvePoint]:
+    """Store observed point-level photometry for static demo plotting.
+
+    This is a direct projection of local detections, not a new metric or model.
+    """
+    required = {"mjd", "fid", "magpsf"}
+    if detections is None or detections.empty or not required.issubset(detections.columns):
+        return []
+
+    points: list[LightCurvePoint] = []
+    for row in detections.sort_values(["mjd", "fid"]).itertuples(index=False):
+        mjd = _scalar_or_none(getattr(row, "mjd", None))
+        fid = _scalar_or_none(getattr(row, "fid", None))
+        mag = _scalar_or_none(getattr(row, "magpsf", None))
+        if mjd is None or fid is None or mag is None:
+            continue
+        band = _FID_TO_BAND.get(int(fid))
+        if band is None:
+            continue
+        magerr = _scalar_or_none(getattr(row, "sigmapsf", None))
+        points.append(
+            LightCurvePoint(
+                mjd=float(mjd),
+                band=band,
+                mag=float(mag),
+                magerr=float(magerr) if magerr is not None else None,
+            )
+        )
+    return points
+
+
 def build_casefile(
     oid: str,
     date: str,
@@ -390,6 +423,7 @@ def build_casefile(
         )
 
     summary = summarize_light_curve(detections, non_det)
+    light_curve_points = _build_light_curve_points(detections)
     classification = _extract_classification(obj_rows)
     coordinates = _extract_coordinates(obj_rows)
     redshift, redshift_source = _extract_redshift_context(obj_rows)
@@ -444,6 +478,7 @@ def build_casefile(
         time_span_days=summary.time_span_days,
         classification_metadata=classification,
         light_curve_summary=summary,
+        light_curve_points=light_curve_points,
         evidence_notes=evidence,
         candidate_explanations=candidates,
         uncertainty_notes=uncertainties,

@@ -201,7 +201,11 @@ def uncertainty_notes(
     available_sources: list[str],
 ) -> list[str]:
     notes: list[str] = []
-    notes.append("No SIMBAD/NED/Gaia cross-match has been performed in Phase 2B.")
+    notes.append(
+        "Cross-survey catalog context is tracked in the cross_survey_context "
+        "field; default offline runs record not_requested unless the optional "
+        "lookup is explicitly enabled."
+    )
     notes.append("No spectroscopic information is on file.")
     notes.append("No forced-photometry follow-up has been requested.")
     notes.append(

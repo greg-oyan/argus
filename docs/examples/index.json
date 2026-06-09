@@ -1,7 +1,7 @@
 {
-  "index_version": "1.1",
-  "generated_at": "2026-06-09T18:44:53+00:00",
-  "casefile_dir": "docs\\examples",
+  "index_version": "1.2",
+  "generated_at": "2026-06-09T19:31:05+00:00",
+  "casefile_dir": "docs/examples",
   "case_count": 6,
   "sort_order": "review_priority_desc_then_oid",
   "description": "Static case-file review index built from existing Argus case-file JSON. Entries are sorted by a transparent review-priority heuristic for inspection.",
@@ -9,8 +9,8 @@
     {
       "oid": "ZTF18abujsbq",
       "source_date": "2026-05-20",
-      "generated_at": "2026-06-09T18:44:52+00:00",
-      "schema_version": "1.10",
+      "generated_at": "2026-06-09T19:30:36+00:00",
+      "schema_version": "1.11",
       "headline": "Complex light-curve behavior with limited physical interpretation",
       "short_summary": "The object is not well explained by a single smooth bump. Its r-band detections show repeated or irregular variability texture, while template and catalog-context checks remain limited by available context.",
       "detection_count": 147,
@@ -29,6 +29,22 @@
       "feature_summary_status": "computed",
       "sncosmo_template_probe_status": "missing_required_context",
       "cross_survey_context_status": "not_requested",
+      "anomaly_assessment": {
+        "status": "available",
+        "score": 10,
+        "label": "high",
+        "drivers": [
+          "147 detections provide a relatively dense local record.",
+          "Coverage spans 2840 days, enough to inspect long-baseline behavior.",
+          "Both g and r observations are present for cross-band review.",
+          "The largest observed per-band magnitude range is wide (1.10 mag)."
+        ],
+        "cautions": [
+          "Template-family probe is limited: missing_required_context.",
+          "This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity."
+        ],
+        "caveat": "This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity."
+      },
       "review_priority": {
         "score": 9,
         "level": "high",
@@ -54,8 +70,8 @@
     {
       "oid": "ZTF18abbdazk",
       "source_date": "2026-05-20",
-      "generated_at": "2026-06-09T18:44:51+00:00",
-      "schema_version": "1.10",
+      "generated_at": "2026-06-09T19:30:35+00:00",
+      "schema_version": "1.11",
       "headline": "Mixed evidence with cautious interpretation",
       "short_summary": "The Gaussian bump comparator fit, but reduced chi-squared is 2.2, so the single smooth bump captures only part of the point-to-point behavior. The variability texture comparator found changes that are comparable to the reported photometric errors. Together, these suggest the r-band detections are not fully captured by one smooth bump.",
       "detection_count": 19,
@@ -74,6 +90,22 @@
       "feature_summary_status": "computed",
       "sncosmo_template_probe_status": "missing_required_context",
       "cross_survey_context_status": "not_requested",
+      "anomaly_assessment": {
+        "status": "available",
+        "score": 9,
+        "label": "high",
+        "drivers": [
+          "19 detections provide a usable local record.",
+          "Coverage spans 2897 days, enough to inspect long-baseline behavior.",
+          "Both g and r observations are present for cross-band review.",
+          "The largest observed per-band magnitude range is moderate (0.49 mag)."
+        ],
+        "cautions": [
+          "Template-family probe is limited: missing_required_context.",
+          "This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity."
+        ],
+        "caveat": "This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity."
+      },
       "review_priority": {
         "score": 7,
         "level": "high",
@@ -98,8 +130,8 @@
     {
       "oid": "ZTF18aaxddtg",
       "source_date": "2026-05-20",
-      "generated_at": "2026-06-09T18:44:51+00:00",
-      "schema_version": "1.10",
+      "generated_at": "2026-06-09T19:30:35+00:00",
+      "schema_version": "1.11",
       "headline": "Mixed evidence with cautious interpretation",
       "short_summary": "The Gaussian bump comparator fit the r-band detections cleanly within the reported errors. The variability texture comparator found changes that are comparable to the reported photometric errors. Together, these favor a simple one-bump description over repeated or irregular texture in the current r-band detections. Coverage appears sparse or uneven, so cadence may affect the comparison.",
       "detection_count": 10,
@@ -118,6 +150,22 @@
       "feature_summary_status": "computed",
       "sncosmo_template_probe_status": "missing_required_context",
       "cross_survey_context_status": "not_requested",
+      "anomaly_assessment": {
+        "status": "available",
+        "score": 6,
+        "label": "high",
+        "drivers": [
+          "10 detections provide a usable local record.",
+          "Coverage spans 2917 days, enough to inspect long-baseline behavior.",
+          "Both g and r observations are present for cross-band review.",
+          "Standard descriptive light-curve features were computed."
+        ],
+        "cautions": [
+          "Template-family probe is limited: missing_required_context.",
+          "This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity."
+        ],
+        "caveat": "This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity."
+      },
       "review_priority": {
         "score": 4,
         "level": "medium",
@@ -141,8 +189,8 @@
     {
       "oid": "ZTF17aabblzo",
       "source_date": "2026-05-20",
-      "generated_at": "2026-06-09T18:44:50+00:00",
-      "schema_version": "1.10",
+      "generated_at": "2026-06-09T19:30:34+00:00",
+      "schema_version": "1.11",
       "headline": "Evidence is limited by available comparator context",
       "short_summary": "Some evidence layers are missing, failed, or limited by the available local detections. The case file supports cautious review rather than a firm conclusion.",
       "detection_count": 3,
@@ -161,6 +209,22 @@
       "feature_summary_status": "insufficient_data",
       "sncosmo_template_probe_status": "insufficient_data",
       "cross_survey_context_status": "not_requested",
+      "anomaly_assessment": {
+        "status": "available",
+        "score": 4,
+        "label": "medium",
+        "drivers": [
+          "Coverage spans 2865 days, enough to inspect long-baseline behavior.",
+          "Both g and r observations are present for cross-band review.",
+          "Catalog-context status is not_requested; external context remains limited."
+        ],
+        "cautions": [
+          "Only 3 detections are available, so sparse sampling limits confidence.",
+          "Feature summary status is insufficient_data.",
+          "Gaussian bump comparator status is insufficient_data."
+        ],
+        "caveat": "This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity."
+      },
       "review_priority": {
         "score": 3,
         "level": "medium",
@@ -182,8 +246,8 @@
     {
       "oid": "ZTF18abdtfcl",
       "source_date": "2026-05-20",
-      "generated_at": "2026-06-09T18:44:51+00:00",
-      "schema_version": "1.10",
+      "generated_at": "2026-06-09T19:30:35+00:00",
+      "schema_version": "1.11",
       "headline": "Evidence is limited by available comparator context",
       "short_summary": "Some evidence layers are missing, failed, or limited by the available local detections. The case file supports cautious review rather than a firm conclusion.",
       "detection_count": 17,
@@ -202,6 +266,23 @@
       "feature_summary_status": "insufficient_data",
       "sncosmo_template_probe_status": "missing_required_context",
       "cross_survey_context_status": "not_requested",
+      "anomaly_assessment": {
+        "status": "available",
+        "score": 8,
+        "label": "high",
+        "drivers": [
+          "17 detections provide a usable local record.",
+          "Coverage spans 2503 days, enough to inspect long-baseline behavior.",
+          "Both g and r observations are present for cross-band review.",
+          "The largest observed per-band magnitude range is moderate (0.89 mag)."
+        ],
+        "cautions": [
+          "Feature summary status is insufficient_data.",
+          "Gaussian bump comparator status is insufficient_data.",
+          "Variability texture status is insufficient_data."
+        ],
+        "caveat": "This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity."
+      },
       "review_priority": {
         "score": 3,
         "level": "medium",
@@ -223,8 +304,8 @@
     {
       "oid": "ZTF18abduuff",
       "source_date": "2026-05-20",
-      "generated_at": "2026-06-09T18:44:52+00:00",
-      "schema_version": "1.10",
+      "generated_at": "2026-06-09T19:30:35+00:00",
+      "schema_version": "1.11",
       "headline": "Evidence is limited by available comparator context",
       "short_summary": "Some evidence layers are missing, failed, or limited by the available local detections. The case file supports cautious review rather than a firm conclusion.",
       "detection_count": 2,
@@ -243,6 +324,19 @@
       "feature_summary_status": "insufficient_data",
       "sncosmo_template_probe_status": "insufficient_data",
       "cross_survey_context_status": "not_requested",
+      "anomaly_assessment": {
+        "status": "insufficient_data",
+        "score": 0,
+        "label": "unknown",
+        "drivers": [
+          "Only 2 usable detection(s) are present, below the minimum for a stable review assessment."
+        ],
+        "cautions": [
+          "Load more local detections before using this assessment for triage.",
+          "This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity."
+        ],
+        "caveat": "This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity."
+      },
       "review_priority": {
         "score": 3,
         "level": "medium",

@@ -13,18 +13,19 @@ import {
   pointIdFromChartEvent,
   selectedTimeRangeFromDataZoomEvent,
 } from "../../lib/chartInteractions";
-import { timeBounds, timeRangeToPercent, type LinkedResidualPoint } from "../../lib/chartSeries";
+import { timeBounds, timeRangeToPercent, type LinkedLightCurvePoint } from "../../lib/chartSeries";
 import { useInvestigationStore } from "../../stores/investigationStore";
 
 interface LightCurvePanelProps {
   oid: string;
-  points: LinkedResidualPoint[];
-  activePoint: LinkedResidualPoint | null;
+  points: LinkedLightCurvePoint[];
+  activePoint: LinkedLightCurvePoint | null;
   isComparatorFocused?: boolean;
+  hasResidualField?: boolean;
 }
 
 function pointEncoding(
-  point: LinkedResidualPoint,
+  point: LinkedLightCurvePoint,
   hoveredPointId: string | null,
   selectedPointId: string | null,
 ) {
@@ -46,6 +47,7 @@ export function LightCurvePanel({
   points,
   activePoint,
   isComparatorFocused = false,
+  hasResidualField = false,
 }: LightCurvePanelProps) {
   const hoveredPointId = useInvestigationStore((state) => state.hoveredPointId);
   const selectedPointId = useInvestigationStore((state) => state.selectedPointId);
@@ -136,7 +138,7 @@ export function LightCurvePanel({
       ],
       series: [
         {
-          name: "observed r-band",
+          name: hasResidualField ? "observed r-band" : "observed detections",
           type: "scatter",
           data: observedData,
           markArea: selectedMarkArea,
@@ -164,7 +166,7 @@ export function LightCurvePanel({
         },
       ],
     } as EChartsOption;
-  }, [activePoint, hoveredPointId, isComparatorFocused, points, selectedPointId, selectedTimeRange]);
+  }, [activePoint, hasResidualField, hoveredPointId, isComparatorFocused, points, selectedPointId, selectedTimeRange]);
 
   const onEvents = useMemo(
     () => ({
@@ -209,8 +211,8 @@ export function LightCurvePanel({
         </div>
         <div className="p-4">
           <div className="argus-missing-state">
-            No Gaussian residual field is available for linked light-curve plotting. The rest
-            of the case-file evidence remains available for inspection.
+            No point-level light-curve data is available for linked plotting. The rest of the
+            case-file evidence remains available for inspection.
           </div>
         </div>
       </section>
@@ -228,7 +230,11 @@ export function LightCurvePanel({
           Observed Light Curve
         </h2>
         <p className="font-mono text-xs text-workstation-muted">
-          {activePoint ? `linked MJD ${activePoint.mjd.toFixed(3)}` : `${oid} r-band residual source`}
+          {activePoint
+            ? `linked MJD ${activePoint.mjd.toFixed(3)}`
+            : hasResidualField
+              ? `${oid} r-band residual source`
+              : `${oid} observed detections`}
         </p>
       </div>
       <div className="min-h-0 flex-1">

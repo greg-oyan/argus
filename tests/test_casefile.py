@@ -103,10 +103,14 @@ def test_required_fields_present(fixture_layout, fixture_lightcurves):
         "classification_metadata", "light_curve_summary",
         "evidence_notes", "candidate_explanations",
         "uncertainty_notes", "recommended_next_checks",
-        "comparison_summary", "feature_summary", "anomaly_assessment",
-        "cross_survey_context", "evidence_narrative",
+        "light_curve_points", "comparison_summary", "feature_summary",
+        "anomaly_assessment", "cross_survey_context", "evidence_narrative",
     }
     assert required.issubset(d.keys()), f"missing: {required - set(d.keys())}"
+    assert isinstance(d["light_curve_points"], list)
+    assert len(d["light_curve_points"]) == d["detection_count"]
+    if d["light_curve_points"]:
+        assert {"mjd", "band", "mag", "magerr"}.issubset(d["light_curve_points"][0].keys())
     assert d["comparison_summary"]["headline"]
     assert d["comparison_summary"]["summary"]
     assert d["comparison_summary"]["caveat"]
@@ -134,6 +138,21 @@ def test_required_fields_present(fixture_layout, fixture_lightcurves):
         if section["title"] == "Cross-survey context"
     )
     assert cross_section["status"] == "not_requested"
+
+
+def test_uncertainty_notes_use_current_cross_survey_context_wording(fixture_layout, fixture_lightcurves):
+    layout, date = fixture_layout
+    oid = _pick_fixture_oid(fixture_lightcurves)
+    case = build_casefile(
+        oid, date,
+        lightcurves_dir=layout / "lightcurves",
+        raw_dir=layout / "raw",
+        tensors_dir=layout / "tensors_x",
+    )
+    text = " ".join(case.uncertainty_notes)
+    assert "cross_survey_context" in text
+    assert "Phase 2B" not in text
+    assert "SIMBAD/NED/Gaia cross-match" not in text
 
 
 def test_write_casefile_writes_json(tmp_path, fixture_layout, fixture_lightcurves):
