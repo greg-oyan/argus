@@ -1,7 +1,7 @@
 {
   "oid": "ZTF18aaxddtg",
   "source_date": "2026-05-20",
-  "generated_at": "2026-06-09T19:30:35+00:00",
+  "generated_at": "2026-06-09T20:09:04+00:00",
   "coordinates": {
     "ra": 284.45226865371967,
     "dec": 9.606218241100423,
@@ -72,24 +72,24 @@
   ],
   "candidate_explanations": [
     {
-      "name": "Type Ia supernova",
+      "name": "Single smooth event-shaped baseline",
       "status": "placeholder_unfitted",
-      "rationale": "Rise + decline over ~30\u201360 days with characteristic g\u2013r color evolution. Worth fitting once a template comparator is wired in.",
-      "mismatch_notes": "No fit has been performed in Phase 2B. This is a placeholder for the comparator that will replace it.",
+      "rationale": "A compact rise-and-fall shape is worth checking because it provides a simple reference model for residual inspection.",
+      "mismatch_notes": "No fit has been performed for this placeholder. It is retained only as a review prompt for existing comparators and next checks.",
       "source": "default placeholder set"
     },
     {
-      "name": "AGN variability",
+      "name": "Repeated or irregular variability texture",
       "status": "placeholder_unfitted",
-      "rationale": "Stochastic variability on month-to-year timescales, often coincident with a galactic nucleus. Worth checking host galaxy proximity.",
-      "mismatch_notes": "No fit has been performed in Phase 2B. This is a placeholder for the comparator that will replace it.",
+      "rationale": "Repeated directional changes are worth checking because they can make a single smooth baseline incomplete.",
+      "mismatch_notes": "No fit has been performed for this placeholder. It is retained only as a review prompt for existing comparators and next checks.",
       "source": "default placeholder set"
     },
     {
-      "name": "Stellar flare / CV outburst",
+      "name": "Sparse or context-limited light curve",
       "status": "placeholder_unfitted",
-      "rationale": "Short, blue-leaning brightening. Worth checking the timescale of any detection cluster and presence of a nearby stellar host.",
-      "mismatch_notes": "No fit has been performed in Phase 2B. This is a placeholder for the comparator that will replace it.",
+      "rationale": "Coverage gaps, missing catalog context, or missing follow-up data can limit how strongly the current evidence can be interpreted.",
+      "mismatch_notes": "No fit has been performed for this placeholder. It is retained only as a review prompt for existing comparators and next checks.",
       "source": "default placeholder set"
     }
   ],
@@ -101,10 +101,10 @@
     "No external classification label is present in local data."
   ],
   "recommended_next_checks": [
-    "Cross-match position (RA=284.45227, Dec=9.60622) against SIMBAD and NED for any known counterpart.",
-    "Search PanSTARRS at this position for a candidate host galaxy and record offset from any nearby extended source.",
-    "Pull ZTF forced photometry in a \u00b190-day window around the most recent detection (MJD 61180.47).",
-    "Replace the Phase 2C Gaussian-bump baseline with physical templates (Type Ia SN light curve, AGN damped random walk, stellar-flare profile) and add their residuals to model_comparisons.",
+    "Run the optional cross-survey context check at RA=284.45227, Dec=9.60622 if network access and optional dependencies are available.",
+    "Inspect archival image cutouts at this position and record any nearby source context as external metadata.",
+    "Pull ZTF forced photometry in a plus/minus 90-day window around the most recent detection (MJD 61180.47).",
+    "Add richer comparator families only when the required context is available, and record their residuals without treating them as object identity.",
     "If the source is still active (last detection within ~60 days), request follow-up spectroscopy."
   ],
   "light_curve_points": [
@@ -187,7 +187,7 @@
       ],
       "interpretation": "A single Gaussian bump was fit to the r-band detections. RMSE = 0.11 mag, reduced \u03c7\u00b2 \u2248 0.4 \u2014 the bump shape is consistent with the data within the reported errors. See residual_summary for where the fit fails.",
       "limitations": [
-        "Phenomenological template \u2014 not a physical model. A good fit does not imply a supernova or any specific source class.",
+        "Phenomenological template \u2014 not a physical model. A good fit does not imply a specific source class, physical cause, or object identity.",
         "Fit performed in magnitude space directly, not flux. Magnitude errors are treated as Gaussian; this is approximate for low-SNR detections.",
         "Only detections that passed the rb\u22650.55 quality cut are used. Non-detections and forced photometry are not consumed by this comparator."
       ],
@@ -338,23 +338,39 @@
       "inter_percentile_range_25": 0.1255430000000004,
       "maximum_slope": 32.700515640470684
     },
-    "interpretation": "Descriptive light-curve features were computed for r-band detections using the light-curve package. The r-band observed brightness range is moderate (0.37 mag). Standardized scatter is moderate for this detection set (0.11 mag). These features support comparison across objects.",
-    "caveat": "Feature values are descriptive summaries only and do not identify the object type."
+    "interpretation": "Descriptive light-curve features were computed for r-band detections using the light-curve package. The r-band observed brightness range is moderate (0.37 mag). Standardized scatter is moderate for this detection set (0.11 mag). These features support comparison across objects. The maximum_slope value is cadence-sensitive for this object and should be read with the feature quality notes.",
+    "caveat": "Feature values are descriptive summaries only and do not identify the object type.",
+    "feature_diagnostics": {
+      "minimum_delta_time_days": 0.0025347000919282436,
+      "minimum_delta_time_minutes": 3.649968132376671,
+      "maximum_slope_pair_delta_time_days": 0.0025347000919282436,
+      "maximum_slope_pair_delta_time_minutes": 3.649968132376671,
+      "maximum_slope_pair_delta_mag": 0.08288600000000201,
+      "maximum_slope_pair_value_mag_per_day": 32.700515640470684,
+      "cadence_sensitive_slope_threshold_days": 0.05,
+      "cadence_sensitive_maximum_slope": true
+    },
+    "feature_quality_notes": [
+      "maximum_slope is cadence-sensitive: the steepest adjacent pair is separated by 3.6 minute(s). Treat this as a sampling diagnostic, not a robust physical rate.",
+      "Minimum adjacent detection spacing is 3.6 minute(s)."
+    ]
   },
   "anomaly_assessment": {
-    "score": 6,
-    "label": "high",
+    "score": 5,
+    "label": "medium",
     "status": "available",
     "drivers": [
       "10 detections provide a usable local record.",
       "Coverage spans 2917 days, enough to inspect long-baseline behavior.",
       "Both g and r observations are present for cross-band review.",
       "Standard descriptive light-curve features were computed.",
-      "Catalog-context status is not_requested; external context remains limited.",
       "Tensor mask diagnostics are available (87% bins masked)."
     ],
     "cautions": [
+      "maximum_slope is cadence-sensitive: the steepest adjacent pair is separated by 3.6 minute(s). Treat this as a sampling diagnostic, not a robust physical rate.",
+      "Minimum adjacent detection spacing is 3.6 minute(s).",
       "Template-family probe is limited: missing_required_context.",
+      "Catalog-context status is not_requested; external context remains limited.",
       "This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity."
     ],
     "input_summary": {
@@ -456,5 +472,5 @@
     ],
     "caveat": "This narrative summarizes evidence layers. It is not a physical classification."
   },
-  "schema_version": "1.11"
+  "schema_version": "1.12"
 }

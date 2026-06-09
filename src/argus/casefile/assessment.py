@@ -267,6 +267,8 @@ def build_anomaly_assessment(
         if std is not None and std >= 0.20:
             score += 1
             drivers.append(f"Feature scatter is high for this detection set ({std:.2f} mag).")
+        for note in _as_list(_field(feature_summary, "feature_quality_notes")):
+            cautions.append(str(note))
     elif feature_status in {"insufficient_data", "dependency_unavailable", "failed"}:
         cautions.append(f"Feature summary status is {feature_status}.")
 
@@ -311,10 +313,9 @@ def build_anomaly_assessment(
 
     cross_status = _field(cross_survey_context, "status", "missing")
     if cross_status in {"not_requested", "dependency_unavailable", "invalid_coordinates", "query_failed", "timeout"}:
-        score += 1
-        drivers.append(f"Catalog-context status is {cross_status}; external context remains limited.")
+        cautions.append(f"Catalog-context status is {cross_status}; external context remains limited.")
     elif cross_status in {"queried", "no_match"}:
-        drivers.append(f"Catalog-context status is {cross_status}; treat it as external metadata only.")
+        cautions.append(f"Catalog-context status is {cross_status}; treat it as external metadata only.")
 
     mask_fraction = _as_float(input_summary.get("tensor_frac_bins_masked"))
     if mask_fraction is None:

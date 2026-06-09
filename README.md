@@ -98,12 +98,14 @@ points.
 ```bash
 cd frontend
 npm install
+npm run test:run
 npm run build
 ```
 
-The current frontend check is the TypeScript/Vite production build. A separate
-frontend test framework is deferred while the workstation interaction model is
-still taking shape.
+The frontend checks are lightweight Vitest helper tests plus the TypeScript/Vite
+production build. These tests cover data/assessment display helpers and chart
+series fallbacks without requiring a browser, live network access, or optional
+science packages.
 
 ## Architecture
 
@@ -147,8 +149,8 @@ Future work:
 - Add batch comparison across objects.
 - Add an autoencoder or other anomaly-ranking model only after the case-file
   layer has clarified what signal is worth ranking.
-- Add a lightweight viewer/frontend once the JSON/Markdown/figure artifacts are
-  stable.
+- Continue refining the static analyst workstation once the case-file artifact
+  contracts are stable.
 
 ## Why ALeRCE for ingestion
 
@@ -285,11 +287,12 @@ python -m pytest -q
 
 GitHub Actions runs the same offline test suite on pushes to `main` and pull
 requests targeting `main` using Python 3.11 and `pip install -e ".[dev]"`.
-CI also runs the frontend production build from `frontend/` with Node 20 and
-`npm ci && npm run build`. The CI path does not install optional `science`
-extras, so `sncosmo` and `astroquery` are not required for the default
-reliability check. Networked integrations are either mocked in tests or require
-explicit opt-in outside the base CI path.
+CI also builds one fixture-backed sample case file without live network access,
+then runs the frontend helper tests and production build from `frontend/` with
+Node 20: `npm ci`, `npm run test:run`, and `npm run build`. The CI path does
+not install optional `science` extras, so `sncosmo` and `astroquery` are not
+required for the default reliability check. Networked integrations are either
+mocked in tests or require explicit opt-in outside the base CI path.
 
 A fresh clone can regenerate one local demo case without live network calls
 from committed fixtures:
@@ -420,7 +423,7 @@ Top-level fields:
 | `light_curve_summary` | per-filter detection/non-detection counts, magnitude range, longest detection gap, most recent detection |
 | `evidence_notes` | plain-English facts read off the data |
 | `candidate_explanations` | external labels and placeholder hypotheses, each with `mismatch_notes` saying "no fit performed" |
-| `uncertainty_notes` | what hasn't been checked (SIMBAD/NED, spectroscopy, forced photometry, fitting…) |
+| `uncertainty_notes` | what has not been checked, such as optional catalog context, spectroscopy, forced photometry, or richer fitting |
 | `recommended_next_checks` | concrete actions that would tighten the case |
 | `comparison_summary` | Phase 2E synthesis of comparator outputs: headline, summary, caveat, and recommended next check |
 | `feature_summary` | Phase 2F standardized descriptive features from the external `light-curve` package |
@@ -497,13 +500,19 @@ object type or assert a final finding. If the dependency is unavailable,
 `feature_summary.status` is `dependency_unavailable` and the case-file build
 continues.
 
+The feature block also records cadence diagnostics and quality notes. In
+particular, `maximum_slope` can be dominated by very closely spaced adjacent
+detections, so Argus flags cadence-sensitive slope values as sampling
+diagnostics rather than robust physical rates.
+
 ## Deterministic Assessment (MVP)
 
 Case files include a top-level `anomaly_assessment` block. It is a transparent
 review-support heuristic built from existing local evidence: detection count,
 time span, observed bands, magnitude ranges, tensor-manifest mask diagnostics
 when present, standardized feature status, comparator outputs, template-probe
-status, and cross-survey context status.
+status, and cross-survey context status. Missing or unrequested catalog context
+is treated as a limitation/caution, not as a positive evidence driver.
 
 The assessment records `score`, `label`, `status`, `drivers`, `cautions`,
 `input_summary`, and a caveat. Sparse or malformed inputs produce
@@ -610,10 +619,12 @@ external services, or decide object identity.
 Phase 2V adds a transparent `review_priority` block to each index entry. The
 score is a capped additive heuristic from existing evidence signals such as
 single-bump mismatch, repeated or irregular variability texture, computed
-features, limited template/context checks, and recorded next checks. Entries are
-sorted by review-priority score descending, then `oid` ascending for stable
-tiebreaks. This is a review aid for human inspection, not a model result or
-object-identity claim.
+features, limited template checks, and recorded next checks. It lives in the
+index layer and controls queue ordering; it is separate from the case-file
+`anomaly_assessment`, which summarizes evidence inside each generated case.
+Entries are sorted by review-priority score descending, then `oid` ascending for
+stable tiebreaks. This is a review aid for human inspection, not a model result
+or object-identity claim.
 
 The index is a mini-feed for objects prepared for inspection. It is not a
 detector and does not decide object identity.
@@ -655,4 +666,7 @@ plain-language limitations and residual summaries. Add more optional
 catalog-context adapters only when they can preserve the same opt-in,
 metadata-only behavior. Each step is evaluated against the governing standard in
 [`docs/ARGUS_VISION.md`](docs/ARGUS_VISION.md): does it help Argus build a
-better scientific case from anomalous public data?
+better scientific case from unusual public data?
+
+Reference projects and future integration cautions are tracked in
+[`docs/ARGUS_NEXT_INTEGRATIONS.md`](docs/ARGUS_NEXT_INTEGRATIONS.md).

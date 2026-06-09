@@ -15,6 +15,7 @@ from argus.casefile.schema import FeatureSummary
 
 SOURCE = "light-curve"
 MIN_POINTS_FOR_FEATURES = 5
+CADENCE_SENSITIVE_SLOPE_DAYS = 0.05
 _CAVEAT = (
     "Feature values are descriptive summaries only and do not identify the "
     "object type."
@@ -91,6 +92,65 @@ def _plain_feature_value(value):
     return value if np.isfinite(value) else None
 
 
+def _cadence_diagnostics(t: np.ndarray, y: np.ndarray) -> dict[str, float | bool | None]:
+    diagnostics: dict[str, float | bool | None] = {
+        "minimum_delta_time_days": None,
+        "minimum_delta_time_minutes": None,
+        "maximum_slope_pair_delta_time_days": None,
+        "maximum_slope_pair_delta_time_minutes": None,
+        "maximum_slope_pair_delta_mag": None,
+        "maximum_slope_pair_value_mag_per_day": None,
+        "cadence_sensitive_slope_threshold_days": CADENCE_SENSITIVE_SLOPE_DAYS,
+        "cadence_sensitive_maximum_slope": False,
+    }
+    if len(t) < 2:
+        return diagnostics
+
+    dt = np.diff(t)
+    dy = np.abs(np.diff(y))
+    good = np.isfinite(dt) & np.isfinite(dy) & (dt > 0)
+    if not good.any():
+        return diagnostics
+
+    dt = dt[good]
+    dy = dy[good]
+    slope = dy / dt
+    min_dt = float(np.min(dt))
+    max_index = int(np.argmax(slope))
+    max_dt = float(dt[max_index])
+    max_dy = float(dy[max_index])
+    max_slope = float(slope[max_index])
+    diagnostics.update({
+        "minimum_delta_time_days": min_dt,
+        "minimum_delta_time_minutes": min_dt * 24.0 * 60.0,
+        "maximum_slope_pair_delta_time_days": max_dt,
+        "maximum_slope_pair_delta_time_minutes": max_dt * 24.0 * 60.0,
+        "maximum_slope_pair_delta_mag": max_dy,
+        "maximum_slope_pair_value_mag_per_day": max_slope,
+        "cadence_sensitive_maximum_slope": max_dt < CADENCE_SENSITIVE_SLOPE_DAYS,
+    })
+    return diagnostics
+
+
+def _feature_quality_notes(
+    features: dict[str, float | None],
+    diagnostics: dict[str, float | bool | None],
+) -> list[str]:
+    notes: list[str] = []
+    if features.get("maximum_slope") is not None and diagnostics.get("cadence_sensitive_maximum_slope"):
+        minutes = diagnostics.get("maximum_slope_pair_delta_time_minutes")
+        minute_text = f"{float(minutes):.1f} minute(s)" if isinstance(minutes, (int, float)) else "a short interval"
+        notes.append(
+            "maximum_slope is cadence-sensitive: the steepest adjacent pair is "
+            f"separated by {minute_text}. Treat this as a sampling diagnostic, "
+            "not a robust physical rate."
+        )
+    min_minutes = diagnostics.get("minimum_delta_time_minutes")
+    if isinstance(min_minutes, (int, float)) and np.isfinite(min_minutes):
+        notes.append(f"Minimum adjacent detection spacing is {min_minutes:.1f} minute(s).")
+    return notes
+
+
 def _interpret_computed_features(features: dict[str, float | None], band: str) -> str:
     amplitude = features.get("amplitude")
     std = features.get("standard_deviation")
@@ -135,6 +195,7 @@ def extract_light_curve_features(
     """
     t, y, e = _clean_arrays(mjd, mag, magerr)
     n = int(len(y))
+    diagnostics = _cadence_diagnostics(t, y)
     if n < MIN_POINTS_FOR_FEATURES:
         return FeatureSummary(
             source=SOURCE,
@@ -148,6 +209,8 @@ def extract_light_curve_features(
                 f"{MIN_POINTS_FOR_FEATURES}."
             ),
             caveat=_CAVEAT,
+            feature_diagnostics=diagnostics,
+            feature_quality_notes=_feature_quality_notes({}, diagnostics),
         )
 
     try:
@@ -165,6 +228,8 @@ def extract_light_curve_features(
                 "usable without this optional evidence layer."
             ),
             caveat=_CAVEAT,
+            feature_diagnostics=diagnostics,
+            feature_quality_notes=_feature_quality_notes({}, diagnostics),
         )
 
     try:
@@ -188,6 +253,16 @@ def extract_light_curve_features(
                 f"failed with {type(exc).__name__}: {exc}."
             ),
             caveat=_CAVEAT,
+            feature_diagnostics=diagnostics,
+            feature_quality_notes=_feature_quality_notes({}, diagnostics),
+        )
+
+    quality_notes = _feature_quality_notes(features, diagnostics)
+    interpretation = _interpret_computed_features(features, band)
+    if diagnostics.get("cadence_sensitive_maximum_slope"):
+        interpretation += (
+            " The maximum_slope value is cadence-sensitive for this object and "
+            "should be read with the feature quality notes."
         )
 
     return FeatureSummary(
@@ -196,8 +271,10 @@ def extract_light_curve_features(
         status="computed",
         n_points=n,
         features=features,
-        interpretation=_interpret_computed_features(features, band),
+        interpretation=interpretation,
         caveat=_CAVEAT,
+        feature_diagnostics=diagnostics,
+        feature_quality_notes=quality_notes,
     )
 
 

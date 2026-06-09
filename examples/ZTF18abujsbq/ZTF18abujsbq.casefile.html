@@ -157,7 +157,7 @@ footer { color: #627d98; font-size: 0.9rem; margin-top: 28px; text-align: center
 <dt>First MJD</dt><dd>58340.3</dd>
 <dt>Last MJD</dt><dd>61180.4</dd>
 <dt>Time span days</dt><dd>2840.14</dd>
-<dt>Schema version</dt><dd>1.11</dd>
+<dt>Schema version</dt><dd>1.12</dd>
 </dl>
 </section>
 <section class="section">
@@ -192,8 +192,20 @@ footer { color: #627d98; font-size: 0.9rem; margin-top: 28px; text-align: center
 <tr><th>median</th><td>19.4947</td></tr>
 <tr><th>median_absolute_deviation</th><td>0.124377</td></tr>
 <tr><th>standard_deviation</th><td>0.255895</td></tr>
+</tbody></table><h3>Feature Quality Notes</h3><ul>
+<li>maximum_slope is cadence-sensitive: the steepest adjacent pair is separated by 0.7 minute(s). Treat this as a sampling diagnostic, not a robust physical rate.</li>
+<li>Minimum adjacent detection spacing is 0.7 minute(s).</li>
+</ul><h3>Feature Diagnostics</h3><table class="kv"><tbody>
+<tr><th>cadence_sensitive_maximum_slope</th><td>True</td></tr>
+<tr><th>cadence_sensitive_slope_threshold_days</th><td>0.05</td></tr>
+<tr><th>maximum_slope_pair_delta_mag</th><td>0.232862</td></tr>
+<tr><th>maximum_slope_pair_delta_time_days</th><td>0.000463</td></tr>
+<tr><th>maximum_slope_pair_delta_time_minutes</th><td>0.66672</td></tr>
+<tr><th>maximum_slope_pair_value_mag_per_day</th><td>502.942</td></tr>
+<tr><th>minimum_delta_time_days</th><td>0.0004629</td></tr>
+<tr><th>minimum_delta_time_minutes</th><td>0.666576</td></tr>
 </tbody></table><dl class="facts">
-<dt>Interpretation</dt><dd>Descriptive light-curve features were computed for r-band detections using the light-curve package. The r-band observed brightness range is wide (1.10 mag). Standardized scatter is high for this detection set (0.26 mag). These features support comparison across objects.</dd>
+<dt>Interpretation</dt><dd>Descriptive light-curve features were computed for r-band detections using the light-curve package. The r-band observed brightness range is wide (1.10 mag). Standardized scatter is high for this detection set (0.26 mag). These features support comparison across objects. The maximum_slope value is cadence-sensitive for this object and should be read with the feature quality notes.</dd>
 <dt>Caveat</dt><dd>Feature values are descriptive summaries only and do not identify the object type.</dd>
 </dl>
 </section>
@@ -216,10 +228,12 @@ footer { color: #627d98; font-size: 0.9rem; margin-top: 28px; text-align: center
 <li>Largest Gaussian residual is 0.81 mag.</li>
 <li>Variability texture shows repeated or irregular directional changes.</li>
 <li>Variability texture scatter is materially larger than typical reported errors.</li>
-<li>Catalog-context status is not_requested; external context remains limited.</li>
 <li>Tensor mask diagnostics are available (92% bins masked).</li>
 </ul><h3>Cautions</h3><ul>
+<li>maximum_slope is cadence-sensitive: the steepest adjacent pair is separated by 0.7 minute(s). Treat this as a sampling diagnostic, not a robust physical rate.</li>
+<li>Minimum adjacent detection spacing is 0.7 minute(s).</li>
 <li>Template-family probe is limited: missing_required_context.</li>
+<li>Catalog-context status is not_requested; external context remains limited.</li>
 <li>This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity.</li>
 </ul><h3>Input Summary</h3><table class="kv"><tbody>
 <tr><th>bands_present</th><td>[&quot;g&quot;, &quot;r&quot;]</td></tr>
@@ -355,14 +369,14 @@ footer { color: #627d98; font-size: 0.9rem; margin-top: 28px; text-align: center
 <li>Candidate explanations above are placeholders, not fits, so mismatch magnitudes and goodness-of-fit values are not yet available.</li>
 <li>No external classification label is present in local data.</li>
 </ul><h3>Recommended Next Checks</h3><ul>
-<li>Cross-match position (RA=286.67280, Dec=9.63316) against SIMBAD and NED for any known counterpart.</li>
-<li>Search PanSTARRS at this position for a candidate host galaxy and record offset from any nearby extended source.</li>
-<li>Pull ZTF forced photometry in a ±90-day window around the most recent detection (MJD 61180.44).</li>
-<li>Replace the Phase 2C Gaussian-bump baseline with physical templates (Type Ia SN light curve, AGN damped random walk, stellar-flare profile) and add their residuals to model_comparisons.</li>
+<li>Run the optional cross-survey context check at RA=286.67280, Dec=9.63316 if network access and optional dependencies are available.</li>
+<li>Inspect archival image cutouts at this position and record any nearby source context as external metadata.</li>
+<li>Pull ZTF forced photometry in a plus/minus 90-day window around the most recent detection (MJD 61180.44).</li>
+<li>Add richer comparator families only when the required context is available, and record their residuals without treating them as object identity.</li>
 <li>If the source is still active (last detection within ~60 days), request follow-up spectroscopy.</li>
 </ul>
 </section>
-<footer>Schema version 1.11 · Generated 2026-06-09T19:30:36+00:00</footer>
+<footer>Schema version 1.12 · Generated 2026-06-09T20:09:05+00:00</footer>
 </main>
 </body>
 </html>

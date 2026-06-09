@@ -1,4 +1,11 @@
 import type { CaseFileDetailMap, CasefileIndex, CasefileIndexEntry } from "../types/casefile";
+import {
+  assessmentCaveat,
+  assessmentDrivers,
+  assessmentFromSources,
+  assessmentLabel,
+  formatAssessmentScore,
+} from "../lib/assessmentDisplay";
 import { exampleArtifactUrl } from "../lib/paths";
 import { QueueField } from "../components/queue/QueueField";
 import { useInvestigationStore } from "../stores/investigationStore";
@@ -37,7 +44,7 @@ function SelectedPreview({
   const jsonHref = exampleArtifactUrl(entry.links?.json);
   const priority = entry.review_priority;
   const detail = caseDetails[entry.oid];
-  const assessment = detail?.anomaly_assessment ?? entry.anomaly_assessment;
+  const assessment = assessmentFromSources(entry, detail);
   const residualCount =
     detail?.model_comparisons?.find((item) => item.model_type === "gaussian_bump")
       ?.residual_points?.length ?? 0;
@@ -65,7 +72,9 @@ function SelectedPreview({
           <span className="text-workstation-muted">priority</span>
           <span>{priority ? `${priority.score}/10 ${priority.level}` : "n/a"}</span>
           <span className="text-workstation-muted">assessment</span>
-          <span>{assessment ? `${assessment.score ?? "n/a"}/10 ${assessment.label ?? "unknown"}` : "n/a"}</span>
+          <span>
+            {assessment ? `${formatAssessmentScore(assessment)} ${assessmentLabel(assessment)}` : "n/a"}
+          </span>
           <span className="text-workstation-muted">sort</span>
           <span>{entry.source_date ?? "n/a"}</span>
           <span className="text-workstation-muted">residual field</span>
@@ -129,14 +138,14 @@ function SelectedPreview({
             Assessment Drivers
           </p>
           <ul className="space-y-2 text-sm leading-5 text-workstation-text">
-            {(assessment.drivers ?? []).slice(0, 3).map((driver) => (
+            {assessmentDrivers(assessment, 3).map((driver) => (
               <li className="border-l border-workstation-line pl-3" key={driver}>
                 {driver}
               </li>
             ))}
           </ul>
           <p className="mt-3 text-xs leading-5 text-workstation-muted">
-            {assessment.caveat ?? "This assessment supports review only; it does not identify the object."}
+            {assessmentCaveat(assessment)}
           </p>
         </div>
       ) : null}

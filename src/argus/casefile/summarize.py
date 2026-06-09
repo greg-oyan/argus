@@ -144,15 +144,15 @@ def evidence_notes(
 
 
 _PLACEHOLDER_CANDIDATES: tuple[tuple[str, str], ...] = (
-    ("Type Ia supernova",
-     "Rise + decline over ~30–60 days with characteristic g–r color evolution. "
-     "Worth fitting once a template comparator is wired in."),
-    ("AGN variability",
-     "Stochastic variability on month-to-year timescales, often coincident with "
-     "a galactic nucleus. Worth checking host galaxy proximity."),
-    ("Stellar flare / CV outburst",
-     "Short, blue-leaning brightening. Worth checking the timescale of any "
-     "detection cluster and presence of a nearby stellar host."),
+    ("Single smooth event-shaped baseline",
+     "A compact rise-and-fall shape is worth checking because it provides a "
+     "simple reference model for residual inspection."),
+    ("Repeated or irregular variability texture",
+     "Repeated directional changes are worth checking because they can make a "
+     "single smooth baseline incomplete."),
+    ("Sparse or context-limited light curve",
+     "Coverage gaps, missing catalog context, or missing follow-up data can "
+     "limit how strongly the current evidence can be interpreted."),
 )
 
 
@@ -187,8 +187,8 @@ def candidate_explanations(
             status="placeholder_unfitted",
             rationale=rationale,
             mismatch_notes=(
-                "No fit has been performed in Phase 2B. This is a placeholder for "
-                "the comparator that will replace it."
+                "No fit has been performed for this placeholder. It is retained "
+                "only as a review prompt for existing comparators and next checks."
             ),
             source="default placeholder set",
         ))
@@ -236,25 +236,25 @@ def recommended_next_checks(
     checks: list[str] = []
     if coordinates and "ra" in coordinates and "dec" in coordinates:
         checks.append(
-            f"Cross-match position (RA={coordinates['ra']:.5f}, "
-            f"Dec={coordinates['dec']:.5f}) against SIMBAD and NED for any "
-            "known counterpart."
+            f"Run the optional cross-survey context check at RA={coordinates['ra']:.5f}, "
+            f"Dec={coordinates['dec']:.5f} if network access and optional "
+            "dependencies are available."
         )
         checks.append(
-            "Search PanSTARRS at this position for a candidate host galaxy "
-            "and record offset from any nearby extended source."
+            "Inspect archival image cutouts at this position and record any "
+            "nearby source context as external metadata."
         )
     else:
-        checks.append("Recover sky coordinates and cross-match against SIMBAD and NED.")
+        checks.append("Recover sky coordinates before running optional catalog-context checks.")
     if summary.most_recent_detection_mjd is not None:
         checks.append(
-            f"Pull ZTF forced photometry in a ±90-day window around the most "
+            f"Pull ZTF forced photometry in a plus/minus 90-day window around the most "
             f"recent detection (MJD {summary.most_recent_detection_mjd:.2f})."
         )
     checks.append(
-        "Replace the Phase 2C Gaussian-bump baseline with physical templates "
-        "(Type Ia SN light curve, AGN damped random walk, stellar-flare profile) "
-        "and add their residuals to model_comparisons."
+        "Add richer comparator families only when the required context is "
+        "available, and record their residuals without treating them as object "
+        "identity."
     )
     if (summary.most_recent_detection_mjd is not None
             and summary.last_mjd is not None

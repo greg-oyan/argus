@@ -13,7 +13,14 @@ import {
   pointIdFromChartEvent,
   selectedTimeRangeFromDataZoomEvent,
 } from "../../lib/chartInteractions";
-import { timeBounds, timeRangeToPercent, type LinkedResidualPoint } from "../../lib/chartSeries";
+import {
+  formatMagnitude,
+  largestResidualPoint,
+  residualAbsoluteValue,
+  timeBounds,
+  timeRangeToPercent,
+  type LinkedResidualPoint,
+} from "../../lib/chartSeries";
 import { useInvestigationStore } from "../../stores/investigationStore";
 
 interface ResidualPanelProps {
@@ -60,6 +67,7 @@ export function ResidualPanel({
   const setSelectedTimeRange = useInvestigationStore((state) => state.setSelectedTimeRange);
   const setFocusedPanelKey = useInvestigationStore((state) => state.setFocusedPanelKey);
   const clearSelectedPointId = useInvestigationStore((state) => state.clearSelectedPointId);
+  const largest = useMemo(() => largestResidualPoint(points), [points]);
 
   const option = useMemo(() => {
     const zoom = timeRangeToPercent(points, selectedTimeRange);
@@ -214,7 +222,11 @@ export function ResidualPanel({
           Gaussian Residual Field
         </h2>
         <p className="font-mono text-xs text-workstation-muted">
-          {activePoint ? `linked MJD ${activePoint.mjd.toFixed(3)}` : `${oid} point residuals`}
+          {activePoint
+            ? `linked MJD ${activePoint.mjd.toFixed(3)}`
+            : largest
+              ? `${oid} largest ${formatMagnitude(residualAbsoluteValue(largest))} mag`
+              : `${oid} point residuals`}
         </p>
       </div>
       <div className="min-h-0 flex-1">

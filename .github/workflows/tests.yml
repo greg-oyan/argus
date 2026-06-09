@@ -29,6 +29,12 @@ jobs:
       - name: Run offline test suite
         run: python -m pytest -q
 
+      - name: Build sample case file from fixtures
+        run: |
+          python -m scripts.build_sample_casefile \
+            --casefile-dir "$RUNNER_TEMP/sample_casefiles" \
+            --workspace-dir "$RUNNER_TEMP/sample_fixture_input"
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
@@ -39,6 +45,10 @@ jobs:
       - name: Install frontend dependencies
         working-directory: frontend
         run: npm ci
+
+      - name: Run frontend helper tests
+        working-directory: frontend
+        run: npm run test:run
 
       - name: Build workstation frontend
         working-directory: frontend

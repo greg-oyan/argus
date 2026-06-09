@@ -51,7 +51,7 @@ Some evidence layers are missing, failed, or limited by the available local dete
 - **First MJD:** 58634.2
 - **Last MJD:** 61180.3
 - **Time span days:** 2546.08
-- **Schema version:** 1.11
+- **Schema version:** 1.12
 
 ## Classification Metadata
 
@@ -85,6 +85,17 @@ Any external labels shown here are metadata only, not Argus conclusions.
 ### Feature Values
 
 - None recorded.
+
+### Feature Diagnostics
+
+- **cadence_sensitive_maximum_slope:** False
+- **cadence_sensitive_slope_threshold_days:** 0.05
+- **maximum_slope_pair_delta_mag:** Not available.
+- **maximum_slope_pair_delta_time_days:** Not available.
+- **maximum_slope_pair_delta_time_minutes:** Not available.
+- **maximum_slope_pair_value_mag_per_day:** Not available.
+- **minimum_delta_time_days:** Not available.
+- **minimum_delta_time_minutes:** Not available.
 
 - **Interpretation:** Standardized light-curve features were not computed for r-band: only 0 usable detection(s) were available, below the minimum of 5.
 - **Caveat:** Feature values are descriptive summaries only and do not identify the object type.
@@ -244,7 +255,7 @@ The Gaussian bump comparator had insufficient r-band data (0 detection(s)), so i
 
 ### Recommended Next Checks
 
-- Cross-match position (RA=258.22591, Dec=-20.73201) against SIMBAD and NED for any known counterpart.
-- Search PanSTARRS at this position for a candidate host galaxy and record offset from any nearby extended source.
-- Pull ZTF forced photometry in a ±90-day window around the most recent detection (MJD 60136.34).
-- Replace the Phase 2C Gaussian-bump baseline with physical templates (Type Ia SN light curve, AGN damped random walk, stellar-flare profile) and add their residuals to model_comparisons.
+- Run the optional cross-survey context check at RA=258.22591, Dec=-20.73201 if network access and optional dependencies are available.
+- Inspect archival image cutouts at this position and record any nearby source context as external metadata.
+- Pull ZTF forced photometry in a plus/minus 90-day window around the most recent detection (MJD 60136.34).
+- Add richer comparator families only when the required context is available, and record their residuals without treating them as object identity.

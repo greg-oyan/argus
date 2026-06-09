@@ -70,6 +70,8 @@ def _feature_summary(status: str = "computed") -> FeatureSummary:
         if status == "computed" else {},
         interpretation="Descriptive features were computed.",
         caveat="Descriptive summaries only.",
+        feature_quality_notes=["maximum_slope is cadence-sensitive in this fixture."]
+        if status == "computed" else [],
     )
 
 
@@ -120,6 +122,9 @@ def test_anomaly_assessment_scores_and_records_drivers():
     assert assessment.label == "high"
     assert any("Gaussian bump" in reason for reason in assessment.drivers)
     assert any("Variability texture" in reason for reason in assessment.drivers)
+    assert not any("Catalog-context status is not_requested" in reason for reason in assessment.drivers)
+    assert any("Catalog-context status is not_requested" in caution for caution in assessment.cautions)
+    assert any("cadence-sensitive" in caution for caution in assessment.cautions)
     assert assessment.input_summary["observation_count"] == 24
     assert assessment.input_summary["tensor_manifest_available"] is True
     assert assessment.input_summary["tensor_frac_bins_masked"] == 0.45

@@ -152,7 +152,7 @@ footer { color: #627d98; font-size: 0.9rem; margin-top: 28px; text-align: center
 <dt>First MJD</dt><dd>58673.3</dd>
 <dt>Last MJD</dt><dd>61176.4</dd>
 <dt>Time span days</dt><dd>2503.07</dd>
-<dt>Schema version</dt><dd>1.11</dd>
+<dt>Schema version</dt><dd>1.12</dd>
 </dl>
 </section>
 <section class="section">
@@ -180,7 +180,16 @@ footer { color: #627d98; font-size: 0.9rem; margin-top: 28px; text-align: center
 <dt>Band</dt><dd>r</dd>
 <dt>Status</dt><dd>insufficient_data</dd>
 <dt>Usable points</dt><dd>1</dd>
-</dl><h3>Feature Values</h3><p class="muted">None recorded.</p><dl class="facts">
+</dl><h3>Feature Values</h3><p class="muted">None recorded.</p><h3>Feature Diagnostics</h3><table class="kv"><tbody>
+<tr><th>cadence_sensitive_maximum_slope</th><td>False</td></tr>
+<tr><th>cadence_sensitive_slope_threshold_days</th><td>0.05</td></tr>
+<tr><th>maximum_slope_pair_delta_mag</th><td>Not available.</td></tr>
+<tr><th>maximum_slope_pair_delta_time_days</th><td>Not available.</td></tr>
+<tr><th>maximum_slope_pair_delta_time_minutes</th><td>Not available.</td></tr>
+<tr><th>maximum_slope_pair_value_mag_per_day</th><td>Not available.</td></tr>
+<tr><th>minimum_delta_time_days</th><td>Not available.</td></tr>
+<tr><th>minimum_delta_time_minutes</th><td>Not available.</td></tr>
+</tbody></table><dl class="facts">
 <dt>Interpretation</dt><dd>Standardized light-curve features were not computed for r-band: only 1 usable detection(s) were available, below the minimum of 5.</dd>
 <dt>Caveat</dt><dd>Feature values are descriptive summaries only and do not identify the object type.</dd>
 </dl>
@@ -189,7 +198,7 @@ footer { color: #627d98; font-size: 0.9rem; margin-top: 28px; text-align: center
 <h2>Anomaly Assessment</h2>
 <dl class="facts">
 <dt>Status</dt><dd>available</dd>
-<dt>Score</dt><dd>8</dd>
+<dt>Score</dt><dd>7</dd>
 <dt>Label</dt><dd>high</dd>
 </dl><h3>Drivers</h3><ul>
 <li>17 detections provide a usable local record.</li>
@@ -198,12 +207,12 @@ footer { color: #627d98; font-size: 0.9rem; margin-top: 28px; text-align: center
 <li>The largest observed per-band magnitude range is moderate (0.89 mag).</li>
 <li>Median g/r magnitudes differ enough to merit cross-band inspection (1.57 mag).</li>
 <li>Brightest-to-median magnitude delta is substantial (0.52 mag).</li>
-<li>Catalog-context status is not_requested; external context remains limited.</li>
 </ul><h3>Cautions</h3><ul>
 <li>Feature summary status is insufficient_data.</li>
 <li>Gaussian bump comparator status is insufficient_data.</li>
 <li>Variability texture status is insufficient_data.</li>
 <li>Template-family probe is limited: missing_required_context.</li>
+<li>Catalog-context status is not_requested; external context remains limited.</li>
 <li>Tensor coverage is sparse: 96% of band/time bins are masked.</li>
 <li>This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity.</li>
 </ul><h3>Input Summary</h3><table class="kv"><tbody>
@@ -311,13 +320,13 @@ footer { color: #627d98; font-size: 0.9rem; margin-top: 28px; text-align: center
 <li>Candidate explanations above are placeholders, not fits, so mismatch magnitudes and goodness-of-fit values are not yet available.</li>
 <li>No external classification label is present in local data.</li>
 </ul><h3>Recommended Next Checks</h3><ul>
-<li>Cross-match position (RA=254.67831, Dec=-23.74590) against SIMBAD and NED for any known counterpart.</li>
-<li>Search PanSTARRS at this position for a candidate host galaxy and record offset from any nearby extended source.</li>
-<li>Pull ZTF forced photometry in a ±90-day window around the most recent detection (MJD 60871.19).</li>
-<li>Replace the Phase 2C Gaussian-bump baseline with physical templates (Type Ia SN light curve, AGN damped random walk, stellar-flare profile) and add their residuals to model_comparisons.</li>
+<li>Run the optional cross-survey context check at RA=254.67831, Dec=-23.74590 if network access and optional dependencies are available.</li>
+<li>Inspect archival image cutouts at this position and record any nearby source context as external metadata.</li>
+<li>Pull ZTF forced photometry in a plus/minus 90-day window around the most recent detection (MJD 60871.19).</li>
+<li>Add richer comparator families only when the required context is available, and record their residuals without treating them as object identity.</li>
 </ul>
 </section>
-<footer>Schema version 1.11 · Generated 2026-06-09T19:30:35+00:00</footer>
+<footer>Schema version 1.12 · Generated 2026-06-09T20:09:05+00:00</footer>
 </main>
 </body>
 </html>

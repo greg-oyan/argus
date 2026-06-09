@@ -1,7 +1,7 @@
 {
   "oid": "ZTF18abdtfcl",
   "source_date": "2026-05-20",
-  "generated_at": "2026-06-09T19:30:35+00:00",
+  "generated_at": "2026-06-09T20:09:05+00:00",
   "coordinates": {
     "ra": 254.67830882249618,
     "dec": -23.745902090790324,
@@ -72,24 +72,24 @@
   ],
   "candidate_explanations": [
     {
-      "name": "Type Ia supernova",
+      "name": "Single smooth event-shaped baseline",
       "status": "placeholder_unfitted",
-      "rationale": "Rise + decline over ~30\u201360 days with characteristic g\u2013r color evolution. Worth fitting once a template comparator is wired in.",
-      "mismatch_notes": "No fit has been performed in Phase 2B. This is a placeholder for the comparator that will replace it.",
+      "rationale": "A compact rise-and-fall shape is worth checking because it provides a simple reference model for residual inspection.",
+      "mismatch_notes": "No fit has been performed for this placeholder. It is retained only as a review prompt for existing comparators and next checks.",
       "source": "default placeholder set"
     },
     {
-      "name": "AGN variability",
+      "name": "Repeated or irregular variability texture",
       "status": "placeholder_unfitted",
-      "rationale": "Stochastic variability on month-to-year timescales, often coincident with a galactic nucleus. Worth checking host galaxy proximity.",
-      "mismatch_notes": "No fit has been performed in Phase 2B. This is a placeholder for the comparator that will replace it.",
+      "rationale": "Repeated directional changes are worth checking because they can make a single smooth baseline incomplete.",
+      "mismatch_notes": "No fit has been performed for this placeholder. It is retained only as a review prompt for existing comparators and next checks.",
       "source": "default placeholder set"
     },
     {
-      "name": "Stellar flare / CV outburst",
+      "name": "Sparse or context-limited light curve",
       "status": "placeholder_unfitted",
-      "rationale": "Short, blue-leaning brightening. Worth checking the timescale of any detection cluster and presence of a nearby stellar host.",
-      "mismatch_notes": "No fit has been performed in Phase 2B. This is a placeholder for the comparator that will replace it.",
+      "rationale": "Coverage gaps, missing catalog context, or missing follow-up data can limit how strongly the current evidence can be interpreted.",
+      "mismatch_notes": "No fit has been performed for this placeholder. It is retained only as a review prompt for existing comparators and next checks.",
       "source": "default placeholder set"
     }
   ],
@@ -101,10 +101,10 @@
     "No external classification label is present in local data."
   ],
   "recommended_next_checks": [
-    "Cross-match position (RA=254.67831, Dec=-23.74590) against SIMBAD and NED for any known counterpart.",
-    "Search PanSTARRS at this position for a candidate host galaxy and record offset from any nearby extended source.",
-    "Pull ZTF forced photometry in a \u00b190-day window around the most recent detection (MJD 60871.19).",
-    "Replace the Phase 2C Gaussian-bump baseline with physical templates (Type Ia SN light curve, AGN damped random walk, stellar-flare profile) and add their residuals to model_comparisons."
+    "Run the optional cross-survey context check at RA=254.67831, Dec=-23.74590 if network access and optional dependencies are available.",
+    "Inspect archival image cutouts at this position and record any nearby source context as external metadata.",
+    "Pull ZTF forced photometry in a plus/minus 90-day window around the most recent detection (MJD 60871.19).",
+    "Add richer comparator families only when the required context is available, and record their residuals without treating them as object identity."
   ],
   "light_curve_points": [
     {
@@ -225,7 +225,7 @@
       ],
       "interpretation": "No comparator was fit in r-band: not enough detections survive the quality cut.",
       "limitations": [
-        "Phenomenological template \u2014 not a physical model. A good fit does not imply a supernova or any specific source class.",
+        "Phenomenological template \u2014 not a physical model. A good fit does not imply a specific source class, physical cause, or object identity.",
         "Fit performed in magnitude space directly, not flux. Magnitude errors are treated as Gaussian; this is approximate for low-SNR detections.",
         "Only detections that passed the rb\u22650.55 quality cut are used. Non-detections and forced photometry are not consumed by this comparator."
       ],
@@ -298,10 +298,21 @@
     "n_points": 1,
     "features": {},
     "interpretation": "Standardized light-curve features were not computed for r-band: only 1 usable detection(s) were available, below the minimum of 5.",
-    "caveat": "Feature values are descriptive summaries only and do not identify the object type."
+    "caveat": "Feature values are descriptive summaries only and do not identify the object type.",
+    "feature_diagnostics": {
+      "minimum_delta_time_days": null,
+      "minimum_delta_time_minutes": null,
+      "maximum_slope_pair_delta_time_days": null,
+      "maximum_slope_pair_delta_time_minutes": null,
+      "maximum_slope_pair_delta_mag": null,
+      "maximum_slope_pair_value_mag_per_day": null,
+      "cadence_sensitive_slope_threshold_days": 0.05,
+      "cadence_sensitive_maximum_slope": false
+    },
+    "feature_quality_notes": []
   },
   "anomaly_assessment": {
-    "score": 8,
+    "score": 7,
     "label": "high",
     "status": "available",
     "drivers": [
@@ -310,14 +321,14 @@
       "Both g and r observations are present for cross-band review.",
       "The largest observed per-band magnitude range is moderate (0.89 mag).",
       "Median g/r magnitudes differ enough to merit cross-band inspection (1.57 mag).",
-      "Brightest-to-median magnitude delta is substantial (0.52 mag).",
-      "Catalog-context status is not_requested; external context remains limited."
+      "Brightest-to-median magnitude delta is substantial (0.52 mag)."
     ],
     "cautions": [
       "Feature summary status is insufficient_data.",
       "Gaussian bump comparator status is insufficient_data.",
       "Variability texture status is insufficient_data.",
       "Template-family probe is limited: missing_required_context.",
+      "Catalog-context status is not_requested; external context remains limited.",
       "Tensor coverage is sparse: 96% of band/time bins are masked.",
       "This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity."
     ],
@@ -422,5 +433,5 @@
     ],
     "caveat": "This narrative summarizes evidence layers. It is not a physical classification."
   },
-  "schema_version": "1.11"
+  "schema_version": "1.12"
 }

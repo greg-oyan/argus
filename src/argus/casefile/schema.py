@@ -8,7 +8,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field, asdict
 from typing import Any, Optional
 
-SCHEMA_VERSION = "1.11"  # 1.11: added observed light_curve_points for public workstation fallback
+SCHEMA_VERSION = "1.12"  # 1.12: added cadence diagnostics/quality notes to feature_summary
 
 
 @dataclass
@@ -119,6 +119,8 @@ class FeatureSummary:
     features: dict[str, Any]
     interpretation: str
     caveat: str
+    feature_diagnostics: dict[str, Any] = field(default_factory=dict)
+    feature_quality_notes: list[str] = field(default_factory=list)
 
 
 @dataclass

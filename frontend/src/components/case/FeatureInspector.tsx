@@ -33,6 +33,13 @@ export function FeatureInspector({ detail }: FeatureInspectorProps) {
   const setFocusedPanelKey = useInvestigationStore((state) => state.setFocusedPanelKey);
   const summary = detail?.feature_summary;
   const features = Object.entries(summary?.features ?? {});
+  const diagnostics = summary?.feature_diagnostics ?? {};
+  const qualityNotes = summary?.feature_quality_notes ?? [];
+  const cadenceDiagnostics = [
+    ["min spacing", diagnostics.minimum_delta_time_minutes],
+    ["max slope dt", diagnostics.maximum_slope_pair_delta_time_minutes],
+    ["max slope dmag", diagnostics.maximum_slope_pair_delta_mag],
+  ] satisfies Array<[string, unknown]>;
   const focused =
     activeComparator === "feature_summary" ||
     activeComparator === "features" ||
@@ -88,6 +95,28 @@ export function FeatureInspector({ detail }: FeatureInspectorProps) {
                 {features.map(([key, value]) => (
                   <div className="contents" key={key}>
                     <dt className="text-workstation-muted">{featureLabel(key)}</dt>
+                    <dd>{formatFeatureValue(value)}</dd>
+                  </div>
+                ))}
+              </dl>
+            ) : null}
+            {qualityNotes.length ? (
+              <div className="mt-4 border-l border-workstation-amber/70 pl-3">
+                <p className="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-workstation-amber">
+                  Feature quality notes
+                </p>
+                <ul className="mt-2 space-y-2 text-xs leading-5 text-workstation-muted">
+                  {qualityNotes.map((note) => (
+                    <li key={note}>{note}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+            {Object.keys(diagnostics).length ? (
+              <dl className="mt-4 grid grid-cols-[120px_minmax(0,1fr)] gap-2 border-t border-workstation-line pt-3 font-mono text-xs">
+                {cadenceDiagnostics.map(([key, value]) => (
+                  <div className="contents" key={key}>
+                    <dt className="text-workstation-muted">{key}</dt>
                     <dd>{formatFeatureValue(value)}</dd>
                   </div>
                 ))}

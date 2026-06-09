@@ -40,7 +40,7 @@ from argus.features.light_curve_features import extract_light_curve_features
 # case file cannot ship a fit without these caveats.
 _PHASE_2C_LIMITATIONS = (
     "Phenomenological template — not a physical model. A good fit does not imply a "
-    "supernova or any specific source class.",
+    "specific source class, physical cause, or object identity.",
     "Fit performed in magnitude space directly, not flux. Magnitude errors are "
     "treated as Gaussian; this is approximate for low-SNR detections.",
     "Only detections that passed the rb≥0.55 quality cut are used. Non-detections "

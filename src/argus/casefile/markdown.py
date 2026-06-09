@@ -214,6 +214,14 @@ def _render_feature_summary(feature_summary: Any) -> list[str]:
         "",
     ]
     lines.extend(_dict_lines(_field(feature_summary, "features") or {}))
+    quality_notes = _as_list(_field(feature_summary, "feature_quality_notes"))
+    if quality_notes:
+        lines.extend(["", "### Feature Quality Notes", ""])
+        lines.extend(_bullet_lines(quality_notes))
+    diagnostics = _field(feature_summary, "feature_diagnostics") or {}
+    if diagnostics:
+        lines.extend(["", "### Feature Diagnostics", ""])
+        lines.extend(_dict_lines(diagnostics))
     lines.extend([
         "",
         _line_item("Interpretation", _field(feature_summary, "interpretation")),

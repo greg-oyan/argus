@@ -59,7 +59,7 @@ The object is not well explained by a single smooth bump. Its r-band detections 
 - **First MJD:** 58340.3
 - **Last MJD:** 61180.4
 - **Time span days:** 2840.14
-- **Schema version:** 1.11
+- **Schema version:** 1.12
 
 ## Classification Metadata
 
@@ -99,7 +99,23 @@ Any external labels shown here are metadata only, not Argus conclusions.
 - **median_absolute_deviation:** 0.124377
 - **standard_deviation:** 0.255895
 
-- **Interpretation:** Descriptive light-curve features were computed for r-band detections using the light-curve package. The r-band observed brightness range is wide (1.10 mag). Standardized scatter is high for this detection set (0.26 mag). These features support comparison across objects.
+### Feature Quality Notes
+
+- maximum_slope is cadence-sensitive: the steepest adjacent pair is separated by 0.7 minute(s). Treat this as a sampling diagnostic, not a robust physical rate.
+- Minimum adjacent detection spacing is 0.7 minute(s).
+
+### Feature Diagnostics
+
+- **cadence_sensitive_maximum_slope:** True
+- **cadence_sensitive_slope_threshold_days:** 0.05
+- **maximum_slope_pair_delta_mag:** 0.232862
+- **maximum_slope_pair_delta_time_days:** 0.000463
+- **maximum_slope_pair_delta_time_minutes:** 0.66672
+- **maximum_slope_pair_value_mag_per_day:** 502.942
+- **minimum_delta_time_days:** 0.0004629
+- **minimum_delta_time_minutes:** 0.666576
+
+- **Interpretation:** Descriptive light-curve features were computed for r-band detections using the light-curve package. The r-band observed brightness range is wide (1.10 mag). Standardized scatter is high for this detection set (0.26 mag). These features support comparison across objects. The maximum_slope value is cadence-sensitive for this object and should be read with the feature quality notes.
 - **Caveat:** Feature values are descriptive summaries only and do not identify the object type.
 
 ## Anomaly Assessment
@@ -122,12 +138,14 @@ Any external labels shown here are metadata only, not Argus conclusions.
 - Largest Gaussian residual is 0.81 mag.
 - Variability texture shows repeated or irregular directional changes.
 - Variability texture scatter is materially larger than typical reported errors.
-- Catalog-context status is not_requested; external context remains limited.
 - Tensor mask diagnostics are available (92% bins masked).
 
 ### Cautions
 
+- maximum_slope is cadence-sensitive: the steepest adjacent pair is separated by 0.7 minute(s). Treat this as a sampling diagnostic, not a robust physical rate.
+- Minimum adjacent detection spacing is 0.7 minute(s).
 - Template-family probe is limited: missing_required_context.
+- Catalog-context status is not_requested; external context remains limited.
 - This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity.
 
 ### Input Summary
@@ -298,8 +316,8 @@ The Gaussian bump comparator fit, but reduced chi-squared is 2.4, so the single 
 
 ### Recommended Next Checks
 
-- Cross-match position (RA=286.67280, Dec=9.63316) against SIMBAD and NED for any known counterpart.
-- Search PanSTARRS at this position for a candidate host galaxy and record offset from any nearby extended source.
-- Pull ZTF forced photometry in a ±90-day window around the most recent detection (MJD 61180.44).
-- Replace the Phase 2C Gaussian-bump baseline with physical templates (Type Ia SN light curve, AGN damped random walk, stellar-flare profile) and add their residuals to model_comparisons.
+- Run the optional cross-survey context check at RA=286.67280, Dec=9.63316 if network access and optional dependencies are available.
+- Inspect archival image cutouts at this position and record any nearby source context as external metadata.
+- Pull ZTF forced photometry in a plus/minus 90-day window around the most recent detection (MJD 61180.44).
+- Add richer comparator families only when the required context is available, and record their residuals without treating them as object identity.
 - If the source is still active (last detection within ~60 days), request follow-up spectroscopy.

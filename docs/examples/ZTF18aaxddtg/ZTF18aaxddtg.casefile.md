@@ -55,7 +55,7 @@ The Gaussian bump comparator fit the r-band detections cleanly within the report
 - **First MJD:** 58263.4
 - **Last MJD:** 61180.5
 - **Time span days:** 2917.05
-- **Schema version:** 1.11
+- **Schema version:** 1.12
 
 ## Classification Metadata
 
@@ -95,14 +95,30 @@ Any external labels shown here are metadata only, not Argus conclusions.
 - **median_absolute_deviation:** 0.0625625
 - **standard_deviation:** 0.111725
 
-- **Interpretation:** Descriptive light-curve features were computed for r-band detections using the light-curve package. The r-band observed brightness range is moderate (0.37 mag). Standardized scatter is moderate for this detection set (0.11 mag). These features support comparison across objects.
+### Feature Quality Notes
+
+- maximum_slope is cadence-sensitive: the steepest adjacent pair is separated by 3.6 minute(s). Treat this as a sampling diagnostic, not a robust physical rate.
+- Minimum adjacent detection spacing is 3.6 minute(s).
+
+### Feature Diagnostics
+
+- **cadence_sensitive_maximum_slope:** True
+- **cadence_sensitive_slope_threshold_days:** 0.05
+- **maximum_slope_pair_delta_mag:** 0.082886
+- **maximum_slope_pair_delta_time_days:** 0.0025347
+- **maximum_slope_pair_delta_time_minutes:** 3.64997
+- **maximum_slope_pair_value_mag_per_day:** 32.7005
+- **minimum_delta_time_days:** 0.0025347
+- **minimum_delta_time_minutes:** 3.64997
+
+- **Interpretation:** Descriptive light-curve features were computed for r-band detections using the light-curve package. The r-band observed brightness range is moderate (0.37 mag). Standardized scatter is moderate for this detection set (0.11 mag). These features support comparison across objects. The maximum_slope value is cadence-sensitive for this object and should be read with the feature quality notes.
 - **Caveat:** Feature values are descriptive summaries only and do not identify the object type.
 
 ## Anomaly Assessment
 
 - **Status:** available
-- **Score:** 6
-- **Label:** high
+- **Score:** 5
+- **Label:** medium
 
 ### Drivers
 
@@ -110,12 +126,14 @@ Any external labels shown here are metadata only, not Argus conclusions.
 - Coverage spans 2917 days, enough to inspect long-baseline behavior.
 - Both g and r observations are present for cross-band review.
 - Standard descriptive light-curve features were computed.
-- Catalog-context status is not_requested; external context remains limited.
 - Tensor mask diagnostics are available (87% bins masked).
 
 ### Cautions
 
+- maximum_slope is cadence-sensitive: the steepest adjacent pair is separated by 3.6 minute(s). Treat this as a sampling diagnostic, not a robust physical rate.
+- Minimum adjacent detection spacing is 3.6 minute(s).
 - Template-family probe is limited: missing_required_context.
+- Catalog-context status is not_requested; external context remains limited.
 - This deterministic assessment supports review triage only. It is not a classification, model verdict, or claim about physical identity.
 
 ### Input Summary
@@ -288,8 +306,8 @@ The Gaussian bump comparator fit the r-band detections cleanly within the report
 
 ### Recommended Next Checks
 
-- Cross-match position (RA=284.45227, Dec=9.60622) against SIMBAD and NED for any known counterpart.
-- Search PanSTARRS at this position for a candidate host galaxy and record offset from any nearby extended source.
-- Pull ZTF forced photometry in a ±90-day window around the most recent detection (MJD 61180.47).
-- Replace the Phase 2C Gaussian-bump baseline with physical templates (Type Ia SN light curve, AGN damped random walk, stellar-flare profile) and add their residuals to model_comparisons.
+- Run the optional cross-survey context check at RA=284.45227, Dec=9.60622 if network access and optional dependencies are available.
+- Inspect archival image cutouts at this position and record any nearby source context as external metadata.
+- Pull ZTF forced photometry in a plus/minus 90-day window around the most recent detection (MJD 61180.47).
+- Add richer comparator families only when the required context is available, and record their residuals without treating them as object identity.
 - If the source is still active (last detection within ~60 days), request follow-up spectroscopy.

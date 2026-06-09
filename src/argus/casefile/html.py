@@ -243,6 +243,12 @@ def _render_feature_summary(feature_summary: Any) -> str:
         ("Usable points", _field(feature_summary, "n_points")),
     ])
     body += "<h3>Feature Values</h3>" + _dict_table(_field(feature_summary, "features") or {})
+    quality_notes = _as_list(_field(feature_summary, "feature_quality_notes"))
+    if quality_notes:
+        body += "<h3>Feature Quality Notes</h3>" + _bullet_list(quality_notes)
+    diagnostics = _field(feature_summary, "feature_diagnostics") or {}
+    if diagnostics:
+        body += "<h3>Feature Diagnostics</h3>" + _dict_table(diagnostics)
     body += _definition_list([
         ("Interpretation", _field(feature_summary, "interpretation")),
         ("Caveat", _field(feature_summary, "caveat")),

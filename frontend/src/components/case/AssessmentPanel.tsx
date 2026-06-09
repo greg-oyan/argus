@@ -1,23 +1,18 @@
 import { useInvestigationStore } from "../../stores/investigationStore";
-import type { AnomalyAssessment, CaseFileDetail, CasefileIndexEntry } from "../../types/casefile";
+import {
+  assessmentCautions,
+  assessmentCaveat,
+  assessmentDrivers,
+  assessmentFromSources,
+  assessmentLabel,
+  assessmentStatus,
+  formatAssessmentScore,
+} from "../../lib/assessmentDisplay";
+import type { CaseFileDetail, CasefileIndexEntry } from "../../types/casefile";
 
 interface AssessmentPanelProps {
   entry: CasefileIndexEntry;
   detail: CaseFileDetail | null | undefined;
-}
-
-function assessmentFromSources(
-  entry: CasefileIndexEntry,
-  detail: CaseFileDetail | null | undefined,
-): AnomalyAssessment | undefined {
-  return detail?.anomaly_assessment ?? entry.anomaly_assessment;
-}
-
-function scoreLabel(assessment: AnomalyAssessment | undefined): string {
-  if (typeof assessment?.score === "number" && Number.isFinite(assessment.score)) {
-    return `${assessment.score}/10`;
-  }
-  return "n/a";
 }
 
 export function AssessmentPanel({ entry, detail }: AssessmentPanelProps) {
@@ -28,8 +23,8 @@ export function AssessmentPanel({ entry, detail }: AssessmentPanelProps) {
     (state) => state.setHighlightedEvidenceKey,
   );
   const assessment = assessmentFromSources(entry, detail);
-  const drivers = assessment?.drivers ?? [];
-  const cautions = assessment?.cautions ?? [];
+  const drivers = assessmentDrivers(assessment, 6);
+  const cautions = assessmentCautions(assessment, 6);
   const isFocused = focusedPanelKey === "anomaly_assessment" || highlightedEvidenceKey === "assessment";
 
   return (
@@ -43,7 +38,7 @@ export function AssessmentPanel({ entry, detail }: AssessmentPanelProps) {
             Assessment
           </p>
           <span className="argus-state-pill">
-            {assessment?.status ?? "missing"}
+            {assessmentStatus(assessment)}
           </span>
         </div>
         <p className="mt-1 text-xs leading-5 text-workstation-muted">
@@ -65,7 +60,7 @@ export function AssessmentPanel({ entry, detail }: AssessmentPanelProps) {
               score
             </span>
             <span className="text-workstation-accent">
-              {scoreLabel(assessment)}
+              {formatAssessmentScore(assessment)}
             </span>
           </div>
           <div className="mt-2 flex items-center justify-between gap-3 font-mono text-xs">
@@ -73,7 +68,7 @@ export function AssessmentPanel({ entry, detail }: AssessmentPanelProps) {
               label
             </span>
             <span className="text-workstation-text">
-              {assessment?.label ?? "unknown"}
+              {assessmentLabel(assessment)}
             </span>
           </div>
         </button>
@@ -111,8 +106,7 @@ export function AssessmentPanel({ entry, detail }: AssessmentPanelProps) {
         ) : null}
 
         <p className="mt-3 border-t border-workstation-line pt-3 text-xs leading-5 text-workstation-muted">
-          {assessment?.caveat ??
-            "This assessment supports review only; it does not identify the object."}
+          {assessmentCaveat(assessment)}
         </p>
       </div>
     </section>

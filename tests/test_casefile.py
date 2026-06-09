@@ -119,6 +119,8 @@ def test_required_fields_present(fixture_layout, fixture_lightcurves):
     assert d["feature_summary"]["band"] == "r"
     assert d["feature_summary"]["status"]
     assert isinstance(d["feature_summary"]["features"], dict)
+    assert isinstance(d["feature_summary"]["feature_diagnostics"], dict)
+    assert isinstance(d["feature_summary"]["feature_quality_notes"], list)
     assert d["anomaly_assessment"]["status"]
     assert d["anomaly_assessment"]["label"] in {"low", "medium", "high", "unknown"}
     assert isinstance(d["anomaly_assessment"]["score"], int)
@@ -303,6 +305,32 @@ def test_unclassified_object_still_has_placeholder_candidates(fixture_layout, fi
     for c in case.candidate_explanations:
         # honesty guardrail: every candidate carries mismatch_notes
         assert c.mismatch_notes
+
+
+def test_default_placeholders_and_next_checks_avoid_stale_physical_labels(fixture_layout, fixture_lightcurves):
+    layout, date = fixture_layout
+    oid = _pick_fixture_oid(fixture_lightcurves)
+    case = build_casefile(
+        oid, date,
+        lightcurves_dir=layout / "lightcurves",
+        raw_dir=layout / "raw",
+        tensors_dir=layout / "tensors_x",
+    )
+    source = json.dumps({
+        "candidate_explanations": [c.__dict__ for c in case.candidate_explanations],
+        "recommended_next_checks": case.recommended_next_checks,
+    }).lower()
+    stale_terms = (
+        "phase 2b",
+        "simbad and ned",
+        "type ia",
+        "supernova",
+        "agn",
+        "stellar-flare",
+        "damped random walk",
+    )
+    for term in stale_terms:
+        assert term not in source
 
 
 def test_phase_2b_emits_no_fitted_statuses(fixture_layout, fixture_lightcurves):

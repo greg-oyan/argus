@@ -36,6 +36,8 @@ export interface FeatureSummary {
   status?: string;
   n_points?: number;
   features?: Record<string, number | string | boolean | null | undefined>;
+  feature_diagnostics?: Record<string, number | string | boolean | null | undefined>;
+  feature_quality_notes?: string[];
   interpretation?: string;
   caveat?: string;
 }

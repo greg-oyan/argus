@@ -1,4 +1,9 @@
 import type { CaseFileDetail, CasefileIndexEntry } from "../../types/casefile";
+import {
+  assessmentFromSources,
+  assessmentLabel,
+  formatAssessmentScore,
+} from "../../lib/assessmentDisplay";
 import { behaviorKind, evidenceRailItems, priorityEncoding } from "../../lib/glyphEncoding";
 import { useInvestigationStore } from "../../stores/investigationStore";
 
@@ -23,7 +28,7 @@ export function CaseHeader({ entry, detail, onBackToQueue }: CaseHeaderProps) {
   const nonDetections = entry.non_detection_count ?? detail?.non_detection_count ?? "n/a";
   const filters = entry.filters_observed ?? detail?.filters_observed;
   const priority = entry.review_priority;
-  const assessment = detail?.anomaly_assessment ?? entry.anomaly_assessment;
+  const assessment = assessmentFromSources(entry, detail);
   const priorityVisual = priorityEncoding(entry);
   const behavior = behaviorKind(entry, detail);
   const railItems = evidenceRailItems(entry);
@@ -58,7 +63,7 @@ export function CaseHeader({ entry, detail, onBackToQueue }: CaseHeaderProps) {
             ) : null}
             {assessment ? (
               <span className="argus-state-pill">
-                assessment {assessment.score ?? "n/a"}/10 {assessment.label ?? "unknown"}
+                assessment {formatAssessmentScore(assessment)} {assessmentLabel(assessment)}
               </span>
             ) : null}
             <span className="argus-state-pill">{behaviorLabel(behavior)}</span>

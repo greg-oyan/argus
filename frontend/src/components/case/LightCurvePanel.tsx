@@ -24,6 +24,18 @@ interface LightCurvePanelProps {
   hasResidualField?: boolean;
 }
 
+function bandColor(band: string | null): string {
+  if (band === "g") return chartColors.residualNegative;
+  if (band === "r") return chartColors.residualPositive;
+  return "#8da7bd";
+}
+
+function bandSymbol(band: string | null): string {
+  if (band === "g") return "circle";
+  if (band === "r") return "diamond";
+  return "rect";
+}
+
 function pointEncoding(
   point: LinkedLightCurvePoint,
   hoveredPointId: string | null,
@@ -33,13 +45,37 @@ function pointEncoding(
   const isHovered = point.pointId === hoveredPointId;
   return {
     itemStyle: {
-      color: isSelected ? chartColors.selected : isHovered ? chartColors.accent : "#8da7bd",
+      color: isSelected ? chartColors.selected : isHovered ? chartColors.accent : bandColor(point.band),
       opacity: isSelected || isHovered ? 1 : 0.76,
       borderColor: isSelected ? chartColors.selected : chartColors.accent,
       borderWidth: isSelected ? 2 : isHovered ? 1.5 : 0,
     },
+    symbol: bandSymbol(point.band),
     symbolSize: isSelected ? 12 : isHovered ? 10 : 6,
   };
+}
+
+function tooltipFormatter(params: unknown): string {
+  const point = params as {
+    data?: {
+      band?: string | null;
+      magerr?: number | null;
+      sourceType?: string;
+      value?: [number, number];
+    };
+    seriesName?: string;
+  };
+  const data = point.data ?? {};
+  const [mjd, mag] = data.value ?? [Number.NaN, Number.NaN];
+  const lines = [
+    point.seriesName ?? "point",
+    `band: ${data.band ?? "n/a"}`,
+    `MJD: ${Number.isFinite(mjd) ? mjd.toFixed(5) : "n/a"}`,
+    `mag: ${Number.isFinite(mag) ? mag.toFixed(3) : "n/a"}`,
+    `magerr: ${typeof data.magerr === "number" && Number.isFinite(data.magerr) ? data.magerr.toFixed(3) : "n/a"}`,
+    `source: ${data.sourceType ?? "observed"}`,
+  ];
+  return lines.join("<br/>");
 }
 
 export function LightCurvePanel({
@@ -70,16 +106,40 @@ export function LightCurvePanel({
             data: [[{ xAxis: rangeStart }, { xAxis: rangeEnd }]],
           }
         : undefined;
-    const observedData = points
-      .filter((point) => point.observedMag !== null)
-      .map((point) => ({
-        ...pointEncoding(point, hoveredPointId, selectedPointId),
-        pointId: point.pointId,
-        value: [point.mjd, point.observedMag as number],
-      }));
+    const observedPoints = points.filter((point) => point.observedMag !== null);
+    const observedBands = Array.from(
+      new Set(observedPoints.map((point) => point.band ?? "unknown")),
+    ).sort();
+    const observedSeries = observedBands.map((band, index) => ({
+      name: `${band}-band observed`,
+      type: "scatter",
+      data: observedPoints
+        .filter((point) => (point.band ?? "unknown") === band)
+        .map((point) => ({
+          ...pointEncoding(point, hoveredPointId, selectedPointId),
+          band: point.band,
+          magerr: point.magerr,
+          pointId: point.pointId,
+          sourceType: hasResidualField ? "residual-backed observation" : "observed detection",
+          value: [point.mjd, point.observedMag as number],
+        })),
+      markArea: index === 0 ? selectedMarkArea : undefined,
+      markLine:
+        index === 0 && activePoint
+          ? {
+              symbol: "none",
+              silent: true,
+              label: { show: false },
+              lineStyle: { color: chartColors.accent, opacity: 0.7, type: "dashed" },
+              data: [{ xAxis: activePoint.mjd }],
+            }
+          : undefined,
+    }));
     const modelData = points
       .filter((point) => point.modelMag !== null)
       .map((point) => ({
+        band: point.band,
+        sourceType: "Gaussian model",
         pointId: point.pointId,
         value: [point.mjd, point.modelMag as number],
       }));
@@ -90,11 +150,19 @@ export function LightCurvePanel({
       color: [chartColors.accent, chartColors.model],
       textStyle: chartTextStyle,
       grid: chartGrid,
+      legend: {
+        top: 6,
+        right: 16,
+        textStyle: { color: chartColors.muted, fontSize: 11 },
+        itemWidth: 9,
+        itemHeight: 9,
+      },
       tooltip: {
         trigger: "item",
         backgroundColor: chartColors.panel,
         borderColor: chartColors.grid,
         textStyle: { color: chartColors.text, fontSize: 12 },
+        formatter: tooltipFormatter,
       },
       xAxis: {
         type: "value",
@@ -137,21 +205,7 @@ export function LightCurvePanel({
         },
       ],
       series: [
-        {
-          name: hasResidualField ? "observed r-band" : "observed detections",
-          type: "scatter",
-          data: observedData,
-          markArea: selectedMarkArea,
-          markLine: activePoint
-            ? {
-                symbol: "none",
-                silent: true,
-                label: { show: false },
-                lineStyle: { color: chartColors.accent, opacity: 0.7, type: "dashed" },
-                data: [{ xAxis: activePoint.mjd }],
-              }
-            : undefined,
-        },
+        ...observedSeries,
         {
           name: "Gaussian model",
           type: "line",

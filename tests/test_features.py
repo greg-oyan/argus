@@ -29,6 +29,8 @@ def test_light_curve_feature_extraction_normal_data():
     assert summary.n_points == len(mjd)
     assert summary.features["amplitude"] > 0
     assert summary.features["standard_deviation"] > 0
+    assert summary.feature_diagnostics["minimum_delta_time_days"] is not None
+    assert summary.feature_quality_notes
     assert "Descriptive light-curve features were computed" in summary.interpretation
 
 
@@ -43,7 +45,23 @@ def test_light_curve_feature_extraction_insufficient_data():
     assert summary.status == "insufficient_data"
     assert summary.n_points == 3
     assert summary.features == {}
+    assert "minimum_delta_time_days" in summary.feature_diagnostics
     assert str(MIN_POINTS_FOR_FEATURES) in summary.interpretation
+
+
+def test_light_curve_feature_extraction_flags_cadence_sensitive_maximum_slope():
+    mjd = np.array([60000.0, 60000.0005, 60002.0, 60005.0, 60008.0, 60011.0])
+    mag = np.array([20.0, 19.4, 19.5, 19.6, 19.55, 19.5])
+    err = np.full_like(mjd, 0.05)
+
+    summary = extract_light_curve_features(mjd, mag, err, band="r")
+
+    assert summary.status == "computed"
+    assert summary.features["maximum_slope"] is not None
+    assert summary.feature_diagnostics["cadence_sensitive_maximum_slope"] is True
+    assert summary.feature_diagnostics["maximum_slope_pair_delta_time_minutes"] == pytest.approx(0.72)
+    assert any("cadence-sensitive" in note for note in summary.feature_quality_notes)
+    assert "cadence-sensitive" in summary.interpretation
 
 
 def test_light_curve_feature_extraction_constant_data():
