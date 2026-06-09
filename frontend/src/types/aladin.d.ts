@@ -12,6 +12,8 @@ interface AladinLiteInstance {
   addCatalog?: (catalog: AladinLiteCatalog) => void;
   gotoRaDec?: (ra: number, dec: number) => void;
   setFoV?: (fov: number) => void;
+  zoomToFoV?: (fov: number, durationSeconds?: number) => void;
+  setImageSurvey?: (survey: string) => void;
   remove?: () => void;
 }
 

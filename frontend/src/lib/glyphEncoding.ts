@@ -21,6 +21,12 @@ export interface PriorityEncoding {
   color: string;
 }
 
+export interface PriorityMarkerEncoding {
+  color: string;
+  size: number;
+  opacity: number;
+}
+
 export interface SparsityEncoding {
   detectionDots: number;
   nonDetectionTexture: number;
@@ -45,6 +51,16 @@ export function priorityEncoding(entry: CasefileIndexEntry): PriorityEncoding {
     return { width: 5, opacity: 0.78, color: "#d8a84c" };
   }
   return { width: score > 0 ? 3 : 2, opacity: score > 0 ? 0.58 : 0.34, color: "#80c990" };
+}
+
+export function priorityMarkerEncoding(entry: CasefileIndexEntry): PriorityMarkerEncoding {
+  const spine = priorityEncoding(entry);
+  const score = Math.max(0, Math.min(10, entry.review_priority?.score ?? 0));
+  return {
+    color: spine.color,
+    opacity: spine.opacity,
+    size: Math.max(9, Math.min(18, 8 + score)),
+  };
 }
 
 export function behaviorKind(

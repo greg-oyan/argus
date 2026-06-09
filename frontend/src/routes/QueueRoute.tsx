@@ -8,7 +8,9 @@ import {
 } from "../lib/assessmentDisplay";
 import { exampleArtifactUrl } from "../lib/paths";
 import { QueueField } from "../components/queue/QueueField";
+import { QueueSkyView } from "../components/queue/QueueSkyView";
 import { useInvestigationStore } from "../stores/investigationStore";
+import type { Coordinates } from "../types/casefile";
 
 interface QueueRouteProps {
   index: CasefileIndex | null;
@@ -17,6 +19,79 @@ interface QueueRouteProps {
   onOpenCase: (oid: string) => void;
   selectedOid: string | null;
   caseDetails: CaseFileDetailMap;
+}
+
+function finiteNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function hasUsableCoordinates(coordinates: Coordinates | undefined): boolean {
+  if (!finiteNumber(coordinates?.ra) || !finiteNumber(coordinates?.dec)) {
+    return false;
+  }
+  const raUnit = coordinates.ra_unit ?? "deg";
+  const decUnit = coordinates.dec_unit ?? "deg";
+  return (
+    raUnit === "deg" &&
+    decUnit === "deg" &&
+    coordinates.ra >= 0 &&
+    coordinates.ra < 360 &&
+    coordinates.dec >= -90 &&
+    coordinates.dec <= 90
+  );
+}
+
+function QueueModeHeader({
+  entries,
+  caseDetails,
+}: {
+  entries: CasefileIndexEntry[];
+  caseDetails: CaseFileDetailMap;
+}) {
+  const selectedOid = useInvestigationStore((state) => state.selectedOid);
+  const queueViewMode = useInvestigationStore((state) => state.queueViewMode);
+  const setQueueViewMode = useInvestigationStore((state) => state.setQueueViewMode);
+  const plotted = entries.filter((entry) => hasUsableCoordinates(caseDetails[entry.oid]?.coordinates)).length;
+  const missing = entries.length - plotted;
+
+  return (
+    <div className="flex flex-wrap items-end justify-between gap-4 border-b border-workstation-line px-4 py-3">
+      <div>
+        <p className="font-mono text-xs uppercase tracking-[0.18em] text-workstation-muted">
+          Queue Mode
+        </p>
+        <h1 className="mt-1 text-lg font-semibold text-white">
+          {queueViewMode === "sky" ? "Sky review field" : "Evidence glyph field"}
+        </h1>
+        <p className="mt-1 font-mono text-xs text-workstation-muted">
+          {entries.length} objects prepared / {plotted} plotted / {missing} without sky position
+          {selectedOid ? ` / selected ${selectedOid}` : ""}
+        </p>
+      </div>
+      <div className="flex items-center gap-3">
+        <div className="flex border border-workstation-line bg-workstation-bg/70 p-1 font-mono text-[0.68rem] uppercase tracking-[0.14em]">
+          {(["field", "sky"] as const).map((mode) => (
+            <button
+              className={`px-3 py-1.5 transition-colors ${
+                queueViewMode === mode
+                  ? "bg-workstation-accent/20 text-workstation-text"
+                  : "text-workstation-muted hover:text-workstation-text"
+              }`}
+              key={mode}
+              onClick={() => setQueueViewMode(mode)}
+              type="button"
+            >
+              {mode === "field" ? "Field" : "Sky"}
+            </button>
+          ))}
+        </div>
+        <p className="hidden max-w-md text-right text-xs leading-5 text-workstation-muted md:block">
+          Field encodes evidence texture. Sky places case files with recorded coordinates on
+          external Aladin imagery; missing positions remain explicit.
+        </p>
+      </div>
+    </div>
+  );
 }
 
 function SelectedPreview({
@@ -176,6 +251,7 @@ export function QueueRoute({
 }: QueueRouteProps) {
   const entries = index?.entries ?? [];
   const selectedEntry = entries.find((entry) => entry.oid === selectedOid) ?? entries[0];
+  const queueViewMode = useInvestigationStore((state) => state.queueViewMode);
 
   if (isLoading) {
     return {
@@ -209,7 +285,23 @@ export function QueueRoute({
   }
 
   return {
-    primary: <QueueField details={caseDetails} entries={entries} onOpenCase={onOpenCase} />,
+    primary: (
+      <div className="flex h-full min-h-0 flex-col">
+        <QueueModeHeader caseDetails={caseDetails} entries={entries} />
+        <div className="min-h-0 flex-1">
+          {queueViewMode === "sky" ? (
+            <QueueSkyView details={caseDetails} entries={entries} onOpenCase={onOpenCase} />
+          ) : (
+            <QueueField
+              details={caseDetails}
+              entries={entries}
+              onOpenCase={onOpenCase}
+              showHeader={false}
+            />
+          )}
+        </div>
+      </div>
+    ),
     secondary: <SelectedPreview caseDetails={caseDetails} entry={selectedEntry} />,
   };
 }

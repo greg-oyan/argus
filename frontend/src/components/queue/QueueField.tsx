@@ -6,9 +6,10 @@ interface QueueFieldProps {
   entries: CasefileIndexEntry[];
   details: CaseFileDetailMap;
   onOpenCase: (oid: string) => void;
+  showHeader?: boolean;
 }
 
-export function QueueField({ entries, details, onOpenCase }: QueueFieldProps) {
+export function QueueField({ entries, details, onOpenCase, showHeader = true }: QueueFieldProps) {
   const selectedOid = useInvestigationStore((state) => state.selectedOid);
   const hoveredOid = useInvestigationStore((state) => state.hoveredOid);
   const setSelectedOid = useInvestigationStore((state) => state.setSelectedOid);
@@ -24,23 +25,25 @@ export function QueueField({ entries, details, onOpenCase }: QueueFieldProps) {
 
   return (
     <div className="h-full overflow-auto p-4">
-      <div className="mb-4 flex items-end justify-between gap-4 border-b border-workstation-line pb-3">
-        <div>
-          <p className="font-mono text-xs uppercase tracking-[0.18em] text-workstation-muted">
-            Queue Mode
-          </p>
-          <h1 className="mt-1 text-lg font-semibold text-white">Evidence glyph field</h1>
-          <p className="mt-1 font-mono text-xs text-workstation-muted">
-            {entries.length} objects prepared for linked-view inspection
-            {selectedOid ? ` / selected ${selectedOid}` : ""}
+      {showHeader ? (
+        <div className="mb-4 flex items-end justify-between gap-4 border-b border-workstation-line pb-3">
+          <div>
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-workstation-muted">
+              Queue Mode
+            </p>
+            <h1 className="mt-1 text-lg font-semibold text-white">Evidence glyph field</h1>
+            <p className="mt-1 font-mono text-xs text-workstation-muted">
+              {entries.length} objects prepared for linked-view inspection
+              {selectedOid ? ` / selected ${selectedOid}` : ""}
+            </p>
+          </div>
+          <p className="hidden max-w-md text-right text-xs leading-5 text-workstation-muted md:block">
+            Select an object to move from the review field into its evidence canvas. The same
+            priority spine, behavior trace, residual barcode, filters, and evidence rail carry
+            into Case Mode.
           </p>
         </div>
-        <p className="hidden max-w-md text-right text-xs leading-5 text-workstation-muted md:block">
-          Select an object to move from the review field into its evidence canvas. The same
-          priority spine, behavior trace, residual barcode, filters, and evidence rail carry
-          into Case Mode.
-        </p>
-      </div>
+      ) : null}
       <div className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-4">
         {entries.map((entry) => (
           <ObjectGlyphCard

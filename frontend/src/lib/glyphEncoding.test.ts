@@ -3,6 +3,7 @@ import {
   behaviorKind,
   evidenceRailItems,
   priorityEncoding,
+  priorityMarkerEncoding,
   sparsityEncoding,
 } from "./glyphEncoding";
 import type { CaseFileDetail, CasefileIndexEntry } from "../types/casefile";
@@ -34,9 +35,12 @@ describe("glyphEncoding", () => {
   it("encodes review priority with stronger high-priority spine", () => {
     const high = priorityEncoding(entry());
     const low = priorityEncoding(entry({ review_priority: { score: 1, level: "low", reasons: [], caveat: "" } }));
+    const marker = priorityMarkerEncoding(entry());
 
     expect(high.width).toBeGreaterThan(low.width);
     expect(high.opacity).toBeGreaterThan(low.opacity);
+    expect(marker.color).toBe(high.color);
+    expect(marker.size).toBe(16);
   });
 
   it("uses comparator details and text to infer behavior kind", () => {
