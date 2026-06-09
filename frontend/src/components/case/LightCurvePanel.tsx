@@ -1,6 +1,7 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import type { EChartsOption } from "echarts";
 import ReactECharts from "echarts-for-react";
+import { useReducedMotion } from "framer-motion";
 import {
   chartAxisLine,
   chartColors,
@@ -93,8 +94,11 @@ export function LightCurvePanel({
   const setSelectedTimeRange = useInvestigationStore((state) => state.setSelectedTimeRange);
   const setFocusedPanelKey = useInvestigationStore((state) => state.setFocusedPanelKey);
   const clearSelectedPointId = useInvestigationStore((state) => state.clearSelectedPointId);
+  const reduceMotion = useReducedMotion();
+  const animateInitialRef = useRef(true);
 
   const option = useMemo(() => {
+    const initialAnimation = !reduceMotion && animateInitialRef.current;
     const zoom = timeRangeToPercent(points, selectedTimeRange);
     const rangeStart = selectedTimeRange?.startMjd;
     const rangeEnd = selectedTimeRange?.endMjd;
@@ -146,7 +150,9 @@ export function LightCurvePanel({
 
     return {
       backgroundColor: "transparent",
-      animation: false,
+      animation: initialAnimation,
+      animationDuration: initialAnimation ? 240 : 0,
+      animationEasing: "cubicOut",
       color: [chartColors.accent, chartColors.model],
       textStyle: chartTextStyle,
       grid: chartGrid,
@@ -205,13 +211,19 @@ export function LightCurvePanel({
         },
       ],
       series: [
-        ...observedSeries,
+        ...observedSeries.map((series) => ({
+          ...series,
+          animationDelay: initialAnimation
+            ? (index: number) => Math.min(index * 12, 600)
+            : 0,
+        })),
         {
           name: "Gaussian model",
           type: "line",
           showSymbol: false,
           smooth: true,
           data: modelData,
+          animationDelay: initialAnimation ? Math.min(observedPoints.length * 12, 600) : 0,
           lineStyle: {
             color: chartColors.model,
             opacity: isComparatorFocused ? 1 : 0.86,
@@ -220,7 +232,7 @@ export function LightCurvePanel({
         },
       ],
     } as EChartsOption;
-  }, [activePoint, hasResidualField, hoveredPointId, isComparatorFocused, points, selectedPointId, selectedTimeRange]);
+  }, [activePoint, hasResidualField, hoveredPointId, isComparatorFocused, points, reduceMotion, selectedPointId, selectedTimeRange]);
 
   const onEvents = useMemo(
     () => ({
@@ -294,7 +306,10 @@ export function LightCurvePanel({
       <div className="min-h-0 flex-1">
         <ReactECharts
           notMerge
-          onChartReady={(chart) => installClearSelectionOnBackgroundClick(chart, clearSelectedPointId)}
+          onChartReady={(chart) => {
+            installClearSelectionOnBackgroundClick(chart, clearSelectedPointId);
+            animateInitialRef.current = false;
+          }}
           onEvents={onEvents}
           option={option}
           opts={{ renderer: "svg" }}

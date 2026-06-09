@@ -1,3 +1,4 @@
+import { motion, useReducedMotion } from "framer-motion";
 import type { CaseFileDetailMap, CasefileIndexEntry } from "../../types/casefile";
 import { useInvestigationStore } from "../../stores/investigationStore";
 import { ObjectGlyphCard } from "./ObjectGlyphCard";
@@ -14,6 +15,7 @@ export function QueueField({ entries, details, onOpenCase, showHeader = true }: 
   const hoveredOid = useInvestigationStore((state) => state.hoveredOid);
   const setSelectedOid = useInvestigationStore((state) => state.setSelectedOid);
   const setHoveredOid = useInvestigationStore((state) => state.setHoveredOid);
+  const reduceMotion = useReducedMotion();
 
   if (entries.length === 0) {
     return (
@@ -45,18 +47,24 @@ export function QueueField({ entries, details, onOpenCase, showHeader = true }: 
         </div>
       ) : null}
       <div className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-4">
-        {entries.map((entry) => (
-          <ObjectGlyphCard
-            detail={details[entry.oid]}
-            entry={entry}
-            isHovered={hoveredOid === entry.oid}
-            isSelected={selectedOid === entry.oid}
+        {entries.map((entry, index) => (
+          <motion.div
+            animate={{ opacity: 1, y: 0 }}
+            initial={reduceMotion ? false : { opacity: 0, y: 8 }}
             key={entry.oid}
-            onHover={() => setHoveredOid(entry.oid)}
-            onLeave={() => setHoveredOid(null)}
-            onOpenCase={() => onOpenCase(entry.oid)}
-            onSelect={() => setSelectedOid(entry.oid)}
-          />
+            transition={reduceMotion ? { duration: 0 } : { delay: Math.min(index * 0.016, 0.6), duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <ObjectGlyphCard
+              detail={details[entry.oid]}
+              entry={entry}
+              isHovered={hoveredOid === entry.oid}
+              isSelected={selectedOid === entry.oid}
+              onHover={() => setHoveredOid(entry.oid)}
+              onLeave={() => setHoveredOid(null)}
+              onOpenCase={() => onOpenCase(entry.oid)}
+              onSelect={() => setSelectedOid(entry.oid)}
+            />
+          </motion.div>
         ))}
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { WorkstationFrame } from "./components/shell/WorkstationFrame";
 import { loadCasefileIndex } from "./lib/casefileIndex";
 import { loadCaseFileDetails } from "./lib/casefileLoader";
@@ -36,6 +37,7 @@ export default function App() {
   const [route, setRoute] = useState<Route>(() => readRoute());
   const selectedOid = useInvestigationStore((state) => state.selectedOid);
   const setSelectedOid = useInvestigationStore((state) => state.setSelectedOid);
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     const handleHashChange = () => setRoute(readRoute());
@@ -119,14 +121,47 @@ export default function App() {
     route,
     selectedOid,
   ]);
+  const routeKey = route.mode === "case" ? `case-${route.oid ?? selectedOid ?? "none"}` : "queue";
+  const motionInitial = reduceMotion ? false : { opacity: 0, y: 8 };
+  const motionAnimate = { opacity: 1, y: 0 };
+  const motionExit = reduceMotion ? { opacity: 0 } : { opacity: 0, y: -4 };
+  const routeTransition = reduceMotion ? { duration: 0 } : { duration: 0.22, ease: [0.16, 1, 0.3, 1] as const };
+  const primary = (
+    <AnimatePresence initial={false} mode="wait">
+      <motion.div
+        animate={motionAnimate}
+        className="h-full"
+        exit={motionExit}
+        initial={motionInitial}
+        key={`primary-${routeKey}`}
+        transition={routeTransition}
+      >
+        {renderedRoute.primary}
+      </motion.div>
+    </AnimatePresence>
+  );
+  const secondary = (
+    <AnimatePresence initial={false} mode="wait">
+      <motion.div
+        animate={motionAnimate}
+        className="h-full"
+        exit={motionExit}
+        initial={motionInitial}
+        key={`secondary-${routeKey}`}
+        transition={reduceMotion ? { duration: 0 } : { ...routeTransition, delay: 0.04 }}
+      >
+        {renderedRoute.secondary}
+      </motion.div>
+    </AnimatePresence>
+  );
 
   return (
     <WorkstationFrame
       index={index}
       isLoading={isLoading}
       mode={route.mode}
-      primary={renderedRoute.primary}
-      secondary={renderedRoute.secondary}
+      primary={primary}
+      secondary={secondary}
     />
   );
 }

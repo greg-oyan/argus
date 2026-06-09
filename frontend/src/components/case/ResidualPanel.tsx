@@ -1,6 +1,7 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import type { EChartsOption } from "echarts";
 import ReactECharts from "echarts-for-react";
+import { useReducedMotion } from "framer-motion";
 import {
   chartAxisLine,
   chartColors,
@@ -68,8 +69,11 @@ export function ResidualPanel({
   const setFocusedPanelKey = useInvestigationStore((state) => state.setFocusedPanelKey);
   const clearSelectedPointId = useInvestigationStore((state) => state.clearSelectedPointId);
   const largest = useMemo(() => largestResidualPoint(points), [points]);
+  const reduceMotion = useReducedMotion();
+  const animateInitialRef = useRef(true);
 
   const option = useMemo(() => {
+    const initialAnimation = !reduceMotion && animateInitialRef.current;
     const zoom = timeRangeToPercent(points, selectedTimeRange);
     const rangeStart = selectedTimeRange?.startMjd;
     const rangeEnd = selectedTimeRange?.endMjd;
@@ -93,7 +97,9 @@ export function ResidualPanel({
 
     return {
       backgroundColor: "transparent",
-      animation: false,
+      animation: initialAnimation,
+      animationDuration: initialAnimation ? 240 : 0,
+      animationEasing: "cubicOut",
       color: [chartColors.accent],
       textStyle: chartTextStyle,
       grid: chartGrid,
@@ -147,6 +153,7 @@ export function ResidualPanel({
           name: "Gaussian residual",
           type: "scatter",
           data: residualData,
+          animationDelay: initialAnimation ? (index: number) => Math.min(index * 12, 600) : 0,
           markArea: selectedMarkArea,
           markLine: {
             symbol: "none",
@@ -158,7 +165,7 @@ export function ResidualPanel({
         },
       ],
     } as EChartsOption;
-  }, [activePoint, hoveredPointId, points, selectedPointId, selectedTimeRange]);
+  }, [activePoint, hoveredPointId, points, reduceMotion, selectedPointId, selectedTimeRange]);
 
   const onEvents = useMemo(
     () => ({
@@ -232,7 +239,10 @@ export function ResidualPanel({
       <div className="min-h-0 flex-1">
         <ReactECharts
           notMerge
-          onChartReady={(chart) => installClearSelectionOnBackgroundClick(chart, clearSelectedPointId)}
+          onChartReady={(chart) => {
+            installClearSelectionOnBackgroundClick(chart, clearSelectedPointId);
+            animateInitialRef.current = false;
+          }}
           onEvents={onEvents}
           option={option}
           opts={{ renderer: "svg" }}

@@ -47,6 +47,17 @@ a {
   background: #34485d;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
 @layer components {
   .argus-panel {
     @apply border border-workstation-line bg-workstation-panel/80 transition-[border-color,background-color,box-shadow] duration-200;
