@@ -359,15 +359,25 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
       }
     };
     project();
-    // Aladin v3 exposes "positionChanged" / "zoomChanged" events when the user
-    // pans or zooms. Subscribe when available; the 250ms tick is a cheap
-    // fallback in case the runtime does not fire them (or the projection
-    // matrix updates asynchronously during a flyTo).
+    // Aladin v3 exposes "positionChanged" / "zoomChanged" events; subscribe to
+    // those when available so the pulse re-projects exactly when the view
+    // moves. The 1000ms interval is a fallback for runtimes that don't fire
+    // those events and for projection-matrix updates that happen async during
+    // a flyTo. The Aladin runtime we load doesn't expose an `off` removal API,
+    // so unmount safety is the existing `cancelled` guard inside `project`.
     if (typeof aladin.on === "function") {
-      aladin.on("positionChanged", project);
-      aladin.on("zoomChanged", project);
+      try {
+        aladin.on("positionChanged", project);
+      } catch {
+        /* event name unsupported in this build */
+      }
+      try {
+        aladin.on("zoomChanged", project);
+      } catch {
+        /* event name unsupported in this build */
+      }
     }
-    const interval = window.setInterval(project, 250);
+    const interval = window.setInterval(project, 1000);
     return () => {
       cancelled = true;
       window.clearInterval(interval);

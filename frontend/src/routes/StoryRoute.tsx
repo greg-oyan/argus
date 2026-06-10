@@ -246,7 +246,7 @@ function ThreeQuestions({
   ];
 
   return (
-    <section className="bg-workstation-bg px-4 py-14 sm:px-8 sm:py-20">
+    <section className="bg-workstation-panel/40 px-4 py-14 sm:px-8 sm:py-20">
       <div className="mx-auto max-w-3xl space-y-14 sm:space-y-16">
         {blocks.map((block, index) => (
           <motion.div
@@ -288,7 +288,7 @@ function StoryHero({
 }) {
   void detail;
   return (
-    <div className="mx-auto max-w-4xl px-4 pb-14 sm:px-8 sm:pb-20">
+    <div className="mx-auto max-w-4xl px-4 pb-14 pt-10 sm:px-8 sm:pb-20 sm:pt-14">
       <LightCurvePanel
         activePoint={activeLightCurvePoint}
         hasResidualField={residuals.length > 0}
@@ -412,23 +412,21 @@ export function StoryRoute({
         onPrev={() => onNavigateRelative(-1)}
       />
       <StoryHeader entry={entry} />
-      <div className="border-y border-workstation-line bg-workstation-panel/40">
-        <section className="px-4 pb-6 pt-10 sm:px-8 sm:pb-8 sm:pt-14">
-          <div className="mx-auto max-w-4xl">
-            <StorySkyCutout detail={detail} />
-            <p className="mt-3 text-sm leading-6 text-workstation-muted">
-              The region of sky around this object.
-            </p>
-          </div>
-        </section>
-        <StoryHero
-          activeLightCurvePoint={activeLightCurvePoint}
-          detail={detail}
-          entry={entry}
-          lightCurvePoints={lightCurvePoints}
-          residuals={residualPoints}
-        />
-      </div>
+      <section className="bg-workstation-panel/40 px-4 pb-10 pt-10 sm:px-8 sm:pb-14 sm:pt-14">
+        <div className="mx-auto max-w-4xl">
+          <StorySkyCutout detail={detail} />
+          <p className="mt-3 text-sm leading-6 text-workstation-muted">
+            The region of sky around this object.
+          </p>
+        </div>
+      </section>
+      <StoryHero
+        activeLightCurvePoint={activeLightCurvePoint}
+        detail={detail}
+        entry={entry}
+        lightCurvePoints={lightCurvePoints}
+        residuals={residualPoints}
+      />
       <ThreeQuestions detail={detail} entry={entry} />
       <StoryExpertExpander
         caseDetails={caseDetails}
