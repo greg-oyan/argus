@@ -1,12 +1,10 @@
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { WorkstationFrame } from "./components/shell/WorkstationFrame";
+import { useCallback, useEffect, useState } from "react";
 import { SkyMain } from "./components/sky/SkyMain";
+import { StoryRoute } from "./routes/StoryRoute";
 import { loadCasefileIndex } from "./lib/casefileIndex";
 import { loadCaseFileDetails } from "./lib/casefileLoader";
 import { useInvestigationStore } from "./stores/investigationStore";
 import type { CaseFileDetailMap, CasefileIndex } from "./types/casefile";
-import { CaseRoute } from "./routes/CaseRoute";
 
 type Route =
   | { mode: "queue"; oid: null }
@@ -37,7 +35,6 @@ export default function App() {
   const [route, setRoute] = useState<Route>(() => readRoute());
   const selectedOid = useInvestigationStore((state) => state.selectedOid);
   const setSelectedOid = useInvestigationStore((state) => state.setSelectedOid);
-  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     const handleHashChange = () => setRoute(readRoute());
@@ -127,6 +124,26 @@ export default function App() {
     return () => window.removeEventListener("keydown", handleEsc);
   }, [route.mode]);
 
+  const navigateRelative = useCallback(
+    (delta: number) => {
+      const entries = index?.entries ?? [];
+      if (entries.length === 0) return;
+      const currentOid = route.oid ?? selectedOid;
+      const currentIndex = currentOid
+        ? entries.findIndex((entry) => entry.oid === currentOid)
+        : -1;
+      const nextIndex =
+        currentIndex < 0
+          ? 0
+          : Math.max(0, Math.min(entries.length - 1, currentIndex + delta));
+      const nextOid = entries[nextIndex]?.oid;
+      if (nextOid && nextOid !== currentOid) {
+        navigateToCase(nextOid);
+      }
+    },
+    [index, route.oid, selectedOid],
+  );
+
   if (route.mode === "queue") {
     return (
       <SkyMain
@@ -139,55 +156,13 @@ export default function App() {
     );
   }
 
-  const caseRoute = CaseRoute({
-    index,
-    oid: route.oid ?? selectedOid,
-    onBackToQueue: navigateToQueue,
-    caseDetails,
-  });
-  const routeKey = `case-${route.oid ?? selectedOid ?? "none"}`;
-  const motionInitial = reduceMotion ? false : { opacity: 0, y: 8 };
-  const motionAnimate = { opacity: 1, y: 0 };
-  const motionExit = reduceMotion ? { opacity: 0 } : { opacity: 0, y: -4 };
-  const routeTransition = reduceMotion
-    ? { duration: 0 }
-    : { duration: 0.22, ease: [0.16, 1, 0.3, 1] as const };
-  const primary = (
-    <AnimatePresence initial={false} mode="wait">
-      <motion.div
-        animate={motionAnimate}
-        className="h-full"
-        exit={motionExit}
-        initial={motionInitial}
-        key={`primary-${routeKey}`}
-        transition={routeTransition}
-      >
-        {caseRoute.primary}
-      </motion.div>
-    </AnimatePresence>
-  );
-  const secondary = (
-    <AnimatePresence initial={false} mode="wait">
-      <motion.div
-        animate={motionAnimate}
-        className="h-full"
-        exit={motionExit}
-        initial={motionInitial}
-        key={`secondary-${routeKey}`}
-        transition={reduceMotion ? { duration: 0 } : { ...routeTransition, delay: 0.04 }}
-      >
-        {caseRoute.secondary}
-      </motion.div>
-    </AnimatePresence>
-  );
-
   return (
-    <WorkstationFrame
+    <StoryRoute
+      caseDetails={caseDetails}
       index={index}
-      isLoading={isLoading}
-      mode={route.mode}
-      primary={primary}
-      secondary={secondary}
+      oid={route.oid ?? selectedOid}
+      onBackToSky={navigateToQueue}
+      onNavigateRelative={navigateRelative}
     />
   );
 }

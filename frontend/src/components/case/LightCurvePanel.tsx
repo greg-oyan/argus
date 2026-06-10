@@ -28,6 +28,7 @@ interface LightCurvePanelProps {
   activePoint: LinkedLightCurvePoint | null;
   isComparatorFocused?: boolean;
   hasResidualField?: boolean;
+  storyMode?: boolean;
 }
 
 function bandColor(band: string | null): string {
@@ -90,6 +91,7 @@ export function LightCurvePanel({
   activePoint,
   isComparatorFocused = false,
   hasResidualField = false,
+  storyMode = false,
 }: LightCurvePanelProps) {
   const hoveredPointId = useInvestigationStore((state) => state.hoveredPointId);
   const selectedPointId = useInvestigationStore((state) => state.selectedPointId);
@@ -227,7 +229,7 @@ export function LightCurvePanel({
       },
       xAxis: {
         type: "value",
-        name: "MJD",
+        name: storyMode ? "Time" : "MJD",
         nameLocation: "middle",
         nameGap: 28,
         axisLine: chartAxisLine,
@@ -236,7 +238,7 @@ export function LightCurvePanel({
       },
       yAxis: {
         type: "value",
-        name: "magnitude",
+        name: storyMode ? "Brightness (lower = brighter)" : "magnitude",
         nameGap: 44,
         inverse: true,
         axisLine: chartAxisLine,
@@ -287,7 +289,7 @@ export function LightCurvePanel({
         },
       ],
     } as EChartsOption;
-  }, [activePoint, displayedPoints, hasResidualField, hoveredPointId, isComparatorFocused, linkedZoomEnabled, points, reduceMotion, selectedPointId, selectedTimeRange]);
+  }, [activePoint, displayedPoints, hasResidualField, hoveredPointId, isComparatorFocused, linkedZoomEnabled, points, reduceMotion, selectedPointId, selectedTimeRange, storyMode]);
 
   const onEvents = useMemo(
     () => ({
@@ -352,36 +354,40 @@ export function LightCurvePanel({
     >
       <div className="argus-panel-header flex items-center justify-between gap-3">
         <h2 className="argus-panel-title">
-          Observed Light Curve
+          {storyMode ? "Brightness over time" : "Observed Light Curve"}
         </h2>
         <div className="flex flex-wrap items-center justify-end gap-2">
-          <p className="font-mono text-xs text-workstation-muted">
-            {activePoint
-              ? `linked MJD ${activePoint.mjd.toFixed(3)}`
-              : playbackMjd == null
-                ? hasResidualField
-                  ? `${oid} r-band residual source`
-                  : `${oid} observed detections`
-                : `revealed through MJD ${formatMjd(playbackMjd)}`}
-          </p>
-          <button
-            className={`argus-state-pill ${linkedZoomEnabled ? "argus-state-pill-active" : ""}`}
-            onClick={() => {
-              setLinkedZoomEnabled(!linkedZoomEnabled);
-              if (linkedZoomEnabled) {
-                setSelectedTimeRange(null);
-              }
-            }}
-            type="button"
-          >
-            linked {linkedZoomEnabled ? "on" : "off"}
-          </button>
+          {!storyMode ? (
+            <p className="font-mono text-xs text-workstation-muted">
+              {activePoint
+                ? `linked MJD ${activePoint.mjd.toFixed(3)}`
+                : playbackMjd == null
+                  ? hasResidualField
+                    ? `${oid} r-band residual source`
+                    : `${oid} observed detections`
+                  : `revealed through MJD ${formatMjd(playbackMjd)}`}
+            </p>
+          ) : null}
+          {!storyMode ? (
+            <button
+              className={`argus-state-pill ${linkedZoomEnabled ? "argus-state-pill-active" : ""}`}
+              onClick={() => {
+                setLinkedZoomEnabled(!linkedZoomEnabled);
+                if (linkedZoomEnabled) {
+                  setSelectedTimeRange(null);
+                }
+              }}
+              type="button"
+            >
+              linked {linkedZoomEnabled ? "on" : "off"}
+            </button>
+          ) : null}
         </div>
       </div>
       {bounds ? (
         <div className="flex flex-wrap items-center gap-3 border-b border-workstation-line px-3 py-2">
           <button
-            className="argus-state-pill hover:border-workstation-accent/70 hover:text-workstation-text"
+            className="argus-state-pill argus-focus-visible hover:border-workstation-accent/70 hover:text-workstation-text"
             onClick={() => {
               if (reduceMotion) {
                 setPlaybackMjd(bounds.max);
@@ -393,7 +399,13 @@ export function LightCurvePanel({
             }}
             type="button"
           >
-            {isPlaying ? "pause" : "play"}
+            {isPlaying
+              ? storyMode
+                ? "⏸ Pause"
+                : "pause"
+              : storyMode
+                ? "▶ Watch it change over time"
+                : "play"}
           </button>
           <input
             aria-label="Detection playback MJD"
