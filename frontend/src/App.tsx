@@ -112,6 +112,37 @@ export default function App() {
     }
   }, [completeColdOpen, reduceMotion, showColdOpen]);
 
+  useEffect(() => {
+    if (route.mode === "case") {
+      const oid = route.oid ?? selectedOid;
+      document.title = oid ? `Argus — ${oid}` : "Argus — Case";
+    } else {
+      document.title = "Argus — Queue";
+    }
+  }, [route.mode, route.oid, selectedOid]);
+
+  useEffect(() => {
+    if (route.mode !== "case") {
+      return undefined;
+    }
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") {
+        return;
+      }
+      const target = event.target;
+      if (target instanceof HTMLElement) {
+        const tag = target.tagName;
+        if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || target.isContentEditable) {
+          return;
+        }
+      }
+      event.preventDefault();
+      navigateToQueue();
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [route.mode]);
+
   const queueRoute = QueueRoute({
     index,
     isLoading,

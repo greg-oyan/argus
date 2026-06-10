@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import type { CaseFileDetailMap, CasefileIndexEntry } from "../../types/casefile";
 import { useInvestigationStore } from "../../stores/investigationStore";
@@ -10,12 +11,96 @@ interface QueueFieldProps {
   showHeader?: boolean;
 }
 
+const NAV_KEYS = new Set([
+  "ArrowDown",
+  "ArrowUp",
+  "ArrowLeft",
+  "ArrowRight",
+  "j",
+  "k",
+  "J",
+  "K",
+  "Enter",
+]);
+
+function ignoresKeyEvent(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) {
+    return false;
+  }
+  const tag = target.tagName;
+  if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") {
+    return true;
+  }
+  if (target.isContentEditable) {
+    return true;
+  }
+  return target.closest("[data-argus-skip-keynav]") !== null;
+}
+
 export function QueueField({ entries, details, onOpenCase, showHeader = true }: QueueFieldProps) {
   const selectedOid = useInvestigationStore((state) => state.selectedOid);
   const hoveredOid = useInvestigationStore((state) => state.hoveredOid);
   const setSelectedOid = useInvestigationStore((state) => state.setSelectedOid);
   const setHoveredOid = useInvestigationStore((state) => state.setHoveredOid);
   const reduceMotion = useReducedMotion();
+  const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+
+  useEffect(() => {
+    if (!selectedOid) {
+      return;
+    }
+    const node = cardRefs.current.get(selectedOid);
+    if (node) {
+      node.scrollIntoView({ block: "nearest" });
+    }
+  }, [selectedOid]);
+
+  useEffect(() => {
+    if (entries.length === 0) {
+      return undefined;
+    }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!NAV_KEYS.has(event.key)) {
+        return;
+      }
+      if (ignoresKeyEvent(event.target)) {
+        return;
+      }
+      if (event.metaKey || event.ctrlKey || event.altKey) {
+        return;
+      }
+      const currentIndex = selectedOid
+        ? entries.findIndex((entry) => entry.oid === selectedOid)
+        : -1;
+      if (event.key === "Enter") {
+        if (currentIndex >= 0) {
+          event.preventDefault();
+          onOpenCase(entries[currentIndex].oid);
+        }
+        return;
+      }
+      const delta =
+        event.key === "ArrowDown" ||
+        event.key === "ArrowRight" ||
+        event.key === "j" ||
+        event.key === "J"
+          ? 1
+          : -1;
+      const nextIndex =
+        currentIndex < 0
+          ? delta > 0
+            ? 0
+            : entries.length - 1
+          : Math.max(0, Math.min(entries.length - 1, currentIndex + delta));
+      const nextOid = entries[nextIndex]?.oid;
+      if (nextOid && nextOid !== selectedOid) {
+        event.preventDefault();
+        setSelectedOid(nextOid);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [entries, onOpenCase, selectedOid, setSelectedOid]);
 
   if (entries.length === 0) {
     return (
@@ -52,6 +137,13 @@ export function QueueField({ entries, details, onOpenCase, showHeader = true }: 
             animate={{ opacity: 1, y: 0 }}
             initial={reduceMotion ? false : { opacity: 0, y: 8 }}
             key={entry.oid}
+            ref={(node) => {
+              if (node) {
+                cardRefs.current.set(entry.oid, node);
+              } else {
+                cardRefs.current.delete(entry.oid);
+              }
+            }}
             transition={reduceMotion ? { duration: 0 } : { delay: Math.min(index * 0.016, 0.6), duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
           >
             <ObjectGlyphCard

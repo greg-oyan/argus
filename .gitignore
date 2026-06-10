@@ -10,6 +10,8 @@ dist/
 notebooks/_plots/
 frontend/node_modules/
 frontend/.vite/
+frontend/test-results/
+frontend/playwright-report/
 .DS_Store
 
 # Pulled data is reproducible from the API; not committed.

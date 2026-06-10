@@ -121,3 +121,12 @@ a {
     @apply flex h-full min-h-[180px] items-center justify-center border border-dashed border-workstation-line bg-workstation-bg/45 p-6 text-center text-xs leading-5 text-workstation-muted;
   }
 }
+
+.argus-focus-visible {
+  outline: none;
+}
+
+.argus-focus-visible:focus-visible {
+  outline: 2px solid #6bb7ff;
+  outline-offset: 2px;
+}

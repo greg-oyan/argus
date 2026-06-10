@@ -355,7 +355,7 @@ export function QueueSkyView({ entries, details, onOpenCase }: QueueSkyViewProps
           {missingEntries.length ? (
             missingEntries.map((entry) => (
               <button
-                className="w-full border border-workstation-line bg-workstation-bg/60 px-3 py-2 text-left text-xs text-workstation-muted transition-colors hover:border-workstation-accent hover:text-workstation-text"
+                className="argus-focus-visible w-full border border-workstation-line bg-workstation-bg/60 px-3 py-2 text-left text-xs text-workstation-muted transition-colors hover:border-workstation-accent hover:text-workstation-text"
                 key={entry.oid}
                 onClick={() => {
                   setSelectedOid(entry.oid);

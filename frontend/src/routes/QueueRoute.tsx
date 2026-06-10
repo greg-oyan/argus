@@ -75,7 +75,7 @@ function QueueModeHeader({
         <div className="flex border border-workstation-line bg-workstation-bg/70 p-1 font-mono text-[0.68rem] uppercase tracking-[0.14em]">
           {(["field", "sky"] as const).map((mode) => (
             <button
-              className={`px-3 py-1.5 transition-colors ${
+              className={`argus-focus-visible px-3 py-1.5 transition-colors ${
                 queueViewMode === mode
                   ? "bg-workstation-accent/20 text-workstation-text"
                   : "text-workstation-muted hover:text-workstation-text"
@@ -175,7 +175,7 @@ function SelectedPreview({
             ["catalog", entry.cross_survey_context_status],
           ] satisfies Array<[string, string | undefined]>).map(([key, value]) => (
             <button
-              className={`flex justify-between border bg-workstation-bg/60 px-3 py-2 text-left transition-colors hover:border-workstation-accent/70 ${
+              className={`argus-focus-visible flex justify-between border bg-workstation-bg/60 px-3 py-2 text-left transition-colors hover:border-workstation-accent/70 ${
                 activeComparator === key
                   ? "border-workstation-accent/70 text-workstation-text"
                   : "border-workstation-line"

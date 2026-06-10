@@ -22,11 +22,13 @@ export function QueueHintBar() {
     <div className="border-b border-workstation-line bg-workstation-panel2/70 px-4 py-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="max-w-4xl text-xs leading-5 text-workstation-muted">
-          Reviewer path: select a glyph, inspect linked observations and residuals in Case Mode,
+          Reviewer path: select a glyph (or use arrow keys / j and k, Enter to open),
+          inspect linked observations and residuals in Case Mode (Esc returns to the queue),
           then open the static report or JSON when you need the portable case-file artifact.
         </p>
         <button
-          className="argus-state-pill hover:border-workstation-accent/70 hover:text-workstation-text"
+          className="argus-state-pill argus-focus-visible hover:border-workstation-accent/70 hover:text-workstation-text"
+          data-argus-skip-keynav
           onClick={() => {
             dismissHint();
             setIsVisible(false);

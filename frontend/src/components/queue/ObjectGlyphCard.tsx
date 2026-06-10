@@ -47,7 +47,7 @@ export function ObjectGlyphCard({
     <button
       aria-label={`Inspect ${entry.oid}`}
       aria-pressed={isSelected}
-      className={`group relative h-[150px] w-[260px] overflow-hidden border bg-workstation-panel text-left transition-[border-color,background-color,box-shadow,transform] duration-200 ${
+      className={`argus-focus-visible group relative h-[150px] w-[260px] overflow-hidden border bg-workstation-panel text-left transition-[border-color,background-color,box-shadow,transform] duration-200 ${
         isSelected
           ? "border-workstation-accent bg-workstation-panel2 shadow-[0_0_0_1px_rgba(107,183,255,0.48),inset_0_0_0_1px_rgba(107,183,255,0.16)]"
           : "border-workstation-line hover:border-workstation-accent/60 hover:bg-workstation-panel2/70"

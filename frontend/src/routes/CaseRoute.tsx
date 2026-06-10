@@ -18,7 +18,7 @@ export function CaseRoute({ index, oid, onBackToQueue, caseDetails }: CaseRouteP
         <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center">
           <p className="font-mono text-sm text-workstation-muted">No selected case is loaded.</p>
           <button
-            className="border border-workstation-line px-4 py-2 text-sm hover:border-workstation-accent"
+            className="argus-focus-visible border border-workstation-line px-4 py-2 text-sm hover:border-workstation-accent"
             onClick={onBackToQueue}
             type="button"
           >

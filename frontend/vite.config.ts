@@ -19,6 +19,14 @@ export default defineConfig({
   build: {
     outDir: "../docs/workstation",
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          echarts: ["echarts", "echarts-for-react"],
+          react: ["react", "react-dom"],
+        },
+      },
+    },
   },
   server: {
     fs: {

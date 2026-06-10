@@ -110,13 +110,18 @@ export function CaseHeader({ entry, detail, onBackToQueue }: CaseHeaderProps) {
               </span>
             ))}
           </div>
-          <button
-            className="border border-workstation-line px-4 py-2 text-sm text-workstation-text transition-colors hover:border-workstation-accent hover:bg-workstation-bg/70"
-            onClick={onBackToQueue}
-            type="button"
-          >
-            Queue Mode
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              className="argus-focus-visible border border-workstation-line px-4 py-2 text-sm text-workstation-text transition-colors hover:border-workstation-accent hover:bg-workstation-bg/70"
+              onClick={onBackToQueue}
+              type="button"
+            >
+              Queue Mode
+            </button>
+            <span className="font-mono text-[0.62rem] uppercase tracking-[0.16em] text-workstation-muted">
+              Esc
+            </span>
+          </div>
         </div>
       </div>
     </header>
