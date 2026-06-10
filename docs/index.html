@@ -268,7 +268,7 @@
 
     <section class="section" aria-labelledby="review-index">
       <h2 id="review-index">Review Index</h2>
-      <p>The public demo now includes a small multi-object case-file index: a compact static review queue of objects prepared for inspection. It sorts existing case files with a transparent review-priority heuristic, includes the deterministic assessment summary, summarizes evidence status, and links to the available artifacts.</p>
+      <p>The public demo now includes a small multi-object case-file index: a compact static review queue of objects prepared for inspection. It sorts existing case files with a transparent review-priority heuristic, includes the deterministic evidence triage summary, summarizes evidence status, and links to the available artifacts.</p>
       <p><a href="examples/index.html">Open the review-prioritized case-file index</a></p>
     </section>
 
@@ -277,7 +277,7 @@
       <ol class="plain-list">
         <li>Open the review-prioritized case-file index to see the prepared public examples.</li>
         <li>Enter the analyst workstation and scan Queue Mode as an evidence field, not a ranked detector feed.</li>
-        <li>Select one object and compare its glyph, review-priority reasons, and assessment summary.</li>
+        <li>Select one object and compare its glyph, review-priority reasons, and evidence triage summary.</li>
         <li>Open Case Mode to inspect linked observed points, Gaussian residuals when present, evidence text, and sky context.</li>
         <li>Open the static HTML or Markdown case file when you need a portable report.</li>
         <li>Inspect the JSON when you want to see the exact case-file fields behind the public artifacts.</li>
@@ -292,7 +292,8 @@
 
     <section class="section" aria-labelledby="scientific-honesty">
       <h2 id="scientific-honesty">Scientific Honesty</h2>
-      <p>Review priority is a transparent queue-ordering aid from existing case-file fields. Missing catalog context, unavailable optional dependencies, and sparse coverage are limitations to inspect, not evidence of object identity. Argus keeps observed facts, external metadata, comparator output, uncertainty, and next checks separate.</p>
+      <p>Review priority is a queue sorting heuristic: it orders the review queue for inspection and is not a model result or object-identity claim. The <code>anomaly_assessment</code> field is an evidence triage summary inside a case file; it summarizes available signals for review and is not an object-identity claim.</p>
+      <p>Missing catalog context, unavailable optional dependencies, and sparse coverage are limitations to inspect, not evidence of object identity. Argus keeps observed facts, external metadata, comparator output, uncertainty, and next checks separate.</p>
     </section>
 
     <section class="section" aria-labelledby="architecture-snapshot">

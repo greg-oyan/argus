@@ -41,6 +41,7 @@ def _case_data(*, oid: str = "ZTFindex") -> dict:
         "recommended_next_checks": ["Inspect residual structure visually."],
         "feature_summary": {"status": "computed"},
         "cross_survey_context": {"status": "not_requested"},
+        "context_enriched": False,
         "anomaly_assessment": {
             "status": "available",
             "score": 8,
@@ -121,7 +122,7 @@ def test_review_priority_score_level_and_reasons():
     assert priority["level"] == "high"
     assert "not a clean fit" in priority["reasons"][0]
     assert "repeated or irregular behavior" in priority["reasons"][1]
-    assert "review-priority heuristic" in priority["caveat"]
+    assert "queue sorting heuristic" in priority["caveat"]
 
 
 def test_review_priority_level_mapping():
@@ -146,6 +147,7 @@ def test_index_entry_extraction_from_full_case_file(tmp_path):
     assert entry["feature_summary_status"] == "computed"
     assert entry["sncosmo_template_probe_status"] == "missing_required_context"
     assert entry["cross_survey_context_status"] == "not_requested"
+    assert entry["context_enriched"] is False
     assert entry["classification_metadata"]["kind"] == "external_metadata"
     assert entry["anomaly_assessment"]["status"] == "available"
     assert entry["anomaly_assessment"]["score"] == 8
@@ -154,6 +156,22 @@ def test_index_entry_extraction_from_full_case_file(tmp_path):
     assert entry["review_priority"]["score"] == 9
     assert entry["review_priority"]["level"] == "high"
     assert entry["top_recommended_next_check"] == "Inspect residual structure visually."
+
+
+def test_index_entry_marks_context_enriched_when_queried(tmp_path):
+    json_path = _write_case_bundle(tmp_path, oid="ZTFcontext")
+    data = json.loads(json_path.read_text(encoding="utf-8"))
+    data["cross_survey_context"] = {"status": "queried"}
+
+    entry = extract_index_entry(data, json_path, base_dir=tmp_path)
+    html = render_index_html({
+        "case_count": 1,
+        "generated_at": "2026-05-21T00:00:00+00:00",
+        "entries": [entry],
+    })
+
+    assert entry["context_enriched"] is True
+    assert "Context-enriched" in html
 
 
 def test_index_entry_links_available_artifacts_with_relative_paths(tmp_path):
@@ -237,9 +255,9 @@ def test_index_json_and_html_writers(tmp_path):
     assert "\\" not in parsed["casefile_dir"]
     assert "\\" not in json.dumps(parsed["entries"], sort_keys=True)
     assert "Argus Case-File Index" in html
-    assert "Anomaly assessment" in html
+    assert "Evidence triage" in html
     assert "Review priority" in html
-    assert "review-priority heuristic" in html
+    assert "queue sorting heuristic" in html
     assert "ZTFindex/ZTFindex.casefile.html" in html
     assert "ZTFindex/ZTFindex.residuals.png" in html
     assert "<script" not in html.lower()

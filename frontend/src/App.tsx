@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ColdOpen, coldOpenWasSeen, markColdOpenSeen } from "./components/shell/ColdOpen";
 import { WorkstationFrame } from "./components/shell/WorkstationFrame";
@@ -112,31 +112,21 @@ export default function App() {
     }
   }, [completeColdOpen, reduceMotion, showColdOpen]);
 
-  const renderedRoute = useMemo(() => {
-    if (route.mode === "case") {
-      return CaseRoute({
-        index,
-        oid: route.oid ?? selectedOid,
-        onBackToQueue: navigateToQueue,
-        caseDetails,
-      });
-    }
-    return QueueRoute({
-      index,
-      isLoading,
-      error,
-      onOpenCase: navigateToCase,
-      selectedOid,
-      caseDetails,
-    });
-  }, [
-    caseDetails,
-    error,
+  const queueRoute = QueueRoute({
     index,
     isLoading,
-    route,
+    error,
+    onOpenCase: navigateToCase,
     selectedOid,
-  ]);
+    caseDetails,
+  });
+  const caseRoute = CaseRoute({
+    index,
+    oid: route.oid ?? selectedOid,
+    onBackToQueue: navigateToQueue,
+    caseDetails,
+  });
+  const renderedRoute = route.mode === "case" ? caseRoute : queueRoute;
   const routeKey = route.mode === "case" ? `case-${route.oid ?? selectedOid ?? "none"}` : "queue";
   const motionInitial = reduceMotion ? false : { opacity: 0, y: 8 };
   const motionAnimate = { opacity: 1, y: 0 };

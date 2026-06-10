@@ -232,11 +232,16 @@ def _render_feature_summary(feature_summary: Any) -> list[str]:
 
 def _render_anomaly_assessment(assessment: Any) -> list[str]:
     if assessment is None:
-        return _section("Anomaly Assessment", [
-            "Anomaly assessment is not present in this case file.",
+        return _section("Evidence Triage Assessment", [
+            "The anomaly_assessment field is not present in this case file.",
         ])
 
     lines = [
+        (
+            "`anomaly_assessment` is an evidence triage summary inside this case file. "
+            "It summarizes available signals for review; it is not an object-identity claim."
+        ),
+        "",
         _line_item("Status", _field(assessment, "status")),
         _line_item("Score", _field(assessment, "score")),
         _line_item("Label", _field(assessment, "label")),
@@ -250,7 +255,7 @@ def _render_anomaly_assessment(assessment: Any) -> list[str]:
     lines.extend(["", "### Input Summary", ""])
     lines.extend(_dict_lines(_field(assessment, "input_summary") or {}))
     lines.extend(["", _line_item("Caveat", _field(assessment, "caveat"))])
-    return _section("Anomaly Assessment", lines)
+    return _section("Evidence Triage Assessment", lines)
 
 
 def _render_comparison_summary(summary: Any) -> list[str]:

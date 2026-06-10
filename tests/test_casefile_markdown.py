@@ -147,7 +147,8 @@ def test_markdown_renderer_with_full_casefile():
     assert "Complex light-curve behavior" in text
     assert "## Feature Summary" in text
     assert "amplitude" in text
-    assert "## Anomaly Assessment" in text
+    assert "## Evidence Triage Assessment" in text
+    assert "anomaly_assessment` is an evidence triage summary" in text
     assert "Gaussian residual structure supports early review" in text
     assert "## Comparison Summary" in text
     assert "## Model Comparisons" in text
@@ -171,7 +172,7 @@ def test_markdown_renderer_handles_missing_optional_fields():
 
     assert "Evidence narrative is not present" in text
     assert "Feature summary is not present" in text
-    assert "Anomaly assessment is not present" in text
+    assert "anomaly_assessment field is not present" in text
     assert "Comparison summary is not present" in text
     assert "No model comparisons are present" in text
     assert "Cross-survey context is not present" in text

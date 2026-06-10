@@ -116,7 +116,9 @@ Any external labels shown here are metadata only, not Argus conclusions.
 - **Interpretation:** Descriptive light-curve features were computed for r-band detections using the light-curve package. The r-band observed brightness range is moderate (0.49 mag). Standardized scatter is moderate for this detection set (0.16 mag). These features support comparison across objects. The maximum_slope value is cadence-sensitive for this object and should be read with the feature quality notes.
 - **Caveat:** Feature values are descriptive summaries only and do not identify the object type.
 
-## Anomaly Assessment
+## Evidence Triage Assessment
+
+`anomaly_assessment` is an evidence triage summary inside this case file. It summarizes available signals for review; it is not an object-identity claim.
 
 - **Status:** available
 - **Score:** 8

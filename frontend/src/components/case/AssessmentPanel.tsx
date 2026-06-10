@@ -1,5 +1,6 @@
 import { useInvestigationStore } from "../../stores/investigationStore";
 import {
+  ANOMALY_ASSESSMENT_DEFINITION,
   assessmentCautions,
   assessmentCaveat,
   assessmentDrivers,
@@ -30,19 +31,20 @@ export function AssessmentPanel({ entry, detail }: AssessmentPanelProps) {
   return (
     <section
       className={`argus-panel ${isFocused ? "argus-panel-focus" : ""}`}
+      data-testid="assessment-panel"
       onMouseEnter={() => setFocusedPanelKey("anomaly_assessment")}
     >
       <div className="argus-panel-header">
         <div className="flex items-center justify-between gap-3">
           <p className="argus-panel-title">
-            Assessment
+            Evidence Triage Assessment
           </p>
-          <span className="argus-state-pill">
+          <span className="argus-state-pill" title={ANOMALY_ASSESSMENT_DEFINITION}>
             {assessmentStatus(assessment)}
           </span>
         </div>
         <p className="mt-1 text-xs leading-5 text-workstation-muted">
-          Deterministic public-demo assessment for review support only.
+          {ANOMALY_ASSESSMENT_DEFINITION}
         </p>
       </div>
 

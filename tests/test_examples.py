@@ -86,7 +86,7 @@ def test_public_example_index_links_case_bundle():
 
     text = index_html.read_text(encoding="utf-8")
     assert "6 case files available." in text
-    assert "Anomaly assessment" in text
+    assert "Evidence triage" in text
     assert "Review priority" in text
     for oid in PUBLIC_DEMO_OIDS:
         assert f"{oid}/{oid}.casefile.html" in text

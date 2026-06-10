@@ -1,5 +1,11 @@
 import type { AnomalyAssessment, CaseFileDetail, CasefileIndexEntry } from "../types/casefile";
 
+export const REVIEW_PRIORITY_DEFINITION =
+  "Review priority is a queue sorting heuristic. It orders the review queue for inspection; it is not a model score or object-identity claim.";
+
+export const ANOMALY_ASSESSMENT_DEFINITION =
+  "anomaly_assessment is an evidence triage summary inside this case file. It summarizes available signals for review; it is not an object-identity claim.";
+
 export function assessmentFromSources(
   entry: CasefileIndexEntry,
   detail: CaseFileDetail | null | undefined,

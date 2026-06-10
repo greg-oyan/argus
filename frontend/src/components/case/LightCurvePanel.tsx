@@ -348,6 +348,7 @@ export function LightCurvePanel({
       className={`argus-panel flex min-h-[300px] flex-col ${
         isComparatorFocused ? "argus-panel-focus" : ""
       }`}
+      data-testid="light-curve-panel"
     >
       <div className="argus-panel-header flex items-center justify-between gap-3">
         <h2 className="argus-panel-title">

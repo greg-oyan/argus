@@ -100,7 +100,9 @@ Any external labels shown here are metadata only, not Argus conclusions.
 - **Interpretation:** Standardized light-curve features were not computed for r-band: only 0 usable detection(s) were available, below the minimum of 5.
 - **Caveat:** Feature values are descriptive summaries only and do not identify the object type.
 
-## Anomaly Assessment
+## Evidence Triage Assessment
+
+`anomaly_assessment` is an evidence triage summary inside this case file. It summarizes available signals for review; it is not an object-identity claim.
 
 - **Status:** insufficient_data
 - **Score:** 0

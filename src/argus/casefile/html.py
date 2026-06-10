@@ -259,10 +259,15 @@ def _render_feature_summary(feature_summary: Any) -> str:
 def _render_anomaly_assessment(assessment: Any) -> str:
     if assessment is None:
         return _section(
-            "Anomaly Assessment",
-            '<p class="muted">Anomaly assessment is not present in this case file.</p>',
+            "Evidence Triage Assessment",
+            '<p class="muted">The anomaly_assessment field is not present in this case file.</p>',
         )
-    body = _definition_list([
+    body = (
+        "<p class=\"caveat\"><code>anomaly_assessment</code> is an evidence triage "
+        "summary inside this case file. It summarizes available signals for review; "
+        "it is not an object-identity claim.</p>"
+    )
+    body += _definition_list([
         ("Status", _field(assessment, "status")),
         ("Score", _field(assessment, "score")),
         ("Label", _field(assessment, "label")),
@@ -271,7 +276,7 @@ def _render_anomaly_assessment(assessment: Any) -> str:
     body += "<h3>Cautions</h3>" + _bullet_list(_as_list(_field(assessment, "cautions")))
     body += "<h3>Input Summary</h3>" + _dict_table(_field(assessment, "input_summary") or {})
     body += f'<p class="caveat"><strong>Caveat:</strong> {_h(_field(assessment, "caveat"))}</p>'
-    return _section("Anomaly Assessment", body)
+    return _section("Evidence Triage Assessment", body)
 
 
 def _render_comparison_summary(summary: Any) -> str:

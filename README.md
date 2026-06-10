@@ -6,7 +6,7 @@ A small system that watches the sky for novel astronomical patterns that current
 transient pipelines miss. The current product spine is a readable, inspectable
 case-file evidence package for one object at a time — not another classifier.
 
-**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export + Phase 2K static figures + Phase 2L static HTML export + Phase 2M public example bundle + Phase 2N GitHub Pages demo page + Phase 2O Gaussian residual plots + Phase 2P static case-file index + Phase 2Q batch case-file generation + Phase 2S multi-object public demo + Phase 2T GitHub Actions CI + Phase 2U CI documentation polish + Phase 2V review-priority index heuristic + Phase 3A analyst-workstation shell + Phase 3B visual queue glyph field + Phase 3C linked Case Mode charts + Phase 3D linked evidence panels + Phase 3E Aladin Lite sky context + Phase 3F workstation polish + Phase 3G sky queue view + Phase 3H workstation motion + Phase 3I temporal playback and sky controls + Phase 3J cold open and reviewer path complete.**
+**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export + Phase 2K static figures + Phase 2L static HTML export + Phase 2M public example bundle + Phase 2N GitHub Pages demo page + Phase 2O Gaussian residual plots + Phase 2P static case-file index + Phase 2Q batch case-file generation + Phase 2S multi-object public demo + Phase 2T GitHub Actions CI + Phase 2U CI documentation polish + Phase 2V review-priority index heuristic + Phase 3A analyst-workstation shell + Phase 3B visual queue glyph field + Phase 3C linked Case Mode charts + Phase 3D linked evidence panels + Phase 3E Aladin Lite sky context + Phase 3F workstation polish + Phase 3G sky queue view + Phase 3H workstation motion + Phase 3I temporal playback and sky controls + Phase 3J cold open and reviewer path + Phase 3K credibility packaging complete.**
 
 The product vision and the strategic decision behind Phase 2B live in
 [`docs/ARGUS_VISION.md`](docs/ARGUS_VISION.md) and
@@ -43,6 +43,22 @@ GitHub Pages can serve it by setting the Pages source to the repository's
 GitHub Pages and when opened directly from disk. The Pages-ready case-file
 index lives at [`docs/examples/index.html`](docs/examples/index.html).
 
+## 90-Second Tour
+
+![Argus workstation preview](docs/media/social-preview.png)
+
+1. Open the static demo page from `docs/index.html` or GitHub Pages.
+2. Open the review-prioritized queue to see generated case files prepared for
+   inspection.
+3. Launch the analyst workstation and scan Queue Mode as an evidence field.
+4. Select a case and use Case Mode to inspect linked observations, residuals
+   when present, evidence text, evidence triage, and external sky context.
+5. Open the HTML/Markdown/JSON artifacts when you need a portable case-file
+   report.
+
+Review priority orders the queue for inspection. The `anomaly_assessment` block
+is evidence triage inside a case file. Neither is an object-identity claim.
+
 ## Analyst Workstation (Phase 3A)
 
 The first frontend workstation scaffold lives under [`frontend/`](frontend/).
@@ -55,6 +71,11 @@ The workstation reads the existing public case-file index from
 `../examples/index.json` after it is built under `docs/workstation/`. It does
 not change the Python pipeline, recompute case-file evidence, or add new
 science logic.
+
+![Argus workstation queue field](docs/media/workstation-queue-field.png)
+
+Additional presentation screenshots live under [`docs/media/`](docs/media/):
+Queue Field, Sky Queue, Case Mode, and a 1280x640 social preview image.
 
 Phase 3A established the dark analyst shell, Queue Mode / Case Mode route
 scaffold, shared investigation state, and static index loading. Phase 3B
@@ -101,18 +122,23 @@ reduced-motion-aware motion system for route transitions, queue reveals, and
 initial chart cascades. Phase 3I adds detection playback, shared linked-zoom
 controls, and a sky survey toggle for Case Mode. Phase 3J adds a skippable cold
 open plus a first-visit reviewer hint and a clearer public demo reviewer path.
+Phase 3K harmonizes score language, adds a Playwright smoke test for the static
+workstation, documents a manually enriched golden-case workflow, and adds
+presentation screenshots under `docs/media/`.
 
 ```bash
 cd frontend
 npm install
 npm run test:run
 npm run build
+npm run e2e:smoke
 ```
 
 The frontend checks are lightweight Vitest helper tests plus the TypeScript/Vite
-production build. These tests cover data/assessment display helpers and chart
-series fallbacks without requiring a browser, live network access, or optional
-science packages.
+production build. The Playwright smoke test serves the built `docs/` assets and
+opens `/workstation/?nointro=1` to verify the queue-to-case path in Chromium.
+These checks cover data/evidence-triage display helpers and chart series
+fallbacks without requiring optional science packages.
 
 ## Architecture
 
@@ -139,7 +165,7 @@ Current pipeline:
 6. **Optional science/context probes** — lazily use optional dependencies such
    as `sncosmo` and `astroquery`/SIMBAD for template-family probing and catalog
    context. These are external evidence layers, not Argus classifications.
-7. **Deterministic review assessment** — compute a transparent case-file
+7. **Deterministic evidence triage** — compute a transparent case-file
    `anomaly_assessment` from existing counts, spans, bands, tensor-manifest
    diagnostics, feature status, comparator outputs, and context status. This is
    review support, not a detector verdict.
@@ -191,6 +217,10 @@ pip install -e ".[science]"
 On Windows with Python 3.14, optional science packages may require source-build
 tooling if compatible wheels are unavailable. Python 3.10 or 3.11 may be the
 smoother path for the full science extras.
+
+For a manually context-enriched canonical demo run, see
+[`docs/GOLDEN_CASE.md`](docs/GOLDEN_CASE.md). That workflow is optional and not
+part of the base CI path.
 
 ## Run a pull
 
@@ -296,10 +326,12 @@ GitHub Actions runs the same offline test suite on pushes to `main` and pull
 requests targeting `main` using Python 3.11 and `pip install -e ".[dev]"`.
 CI also builds one fixture-backed sample case file without live network access,
 then runs the frontend helper tests and production build from `frontend/` with
-Node 20: `npm ci`, `npm run test:run`, and `npm run build`. The CI path does
-not install optional `science` extras, so `sncosmo` and `astroquery` are not
-required for the default reliability check. Networked integrations are either
-mocked in tests or require explicit opt-in outside the base CI path.
+Node 20: `npm ci`, `npm run test:run`, and `npm run build`. A separate
+workstation smoke job installs Playwright Chromium, serves the static `docs/`
+output, and runs `npm run e2e:smoke`. The CI path does not install optional
+`science` extras, so `sncosmo` and `astroquery` are not required for the default
+reliability check. Networked integrations are either mocked in tests or require
+explicit opt-in outside the base CI path.
 
 A fresh clone can regenerate one local demo case without live network calls
 from committed fixtures:
@@ -512,10 +544,10 @@ particular, `maximum_slope` can be dominated by very closely spaced adjacent
 detections, so Argus flags cadence-sensitive slope values as sampling
 diagnostics rather than robust physical rates.
 
-## Deterministic Assessment (MVP)
+## Evidence Triage Assessment (MVP)
 
 Case files include a top-level `anomaly_assessment` block. It is a transparent
-review-support heuristic built from existing local evidence: detection count,
+evidence triage summary built from existing local evidence: detection count,
 time span, observed bands, magnitude ranges, tensor-manifest mask diagnostics
 when present, standardized feature status, comparator outputs, template-probe
 status, and cross-survey context status. Missing or unrequested catalog context
@@ -524,8 +556,8 @@ is treated as a limitation/caution, not as a positive evidence driver.
 The assessment records `score`, `label`, `status`, `drivers`, `cautions`,
 `input_summary`, and a caveat. Sparse or malformed inputs produce
 `status: insufficient_data` instead of an exception. This block is designed to
-help a reviewer decide what to inspect first; it is not a detector verdict,
-object identity, or physical interpretation.
+summarize evidence inside a case file; it is not a detector verdict, object
+identity, or physical interpretation.
 
 ## Cross-Survey Context (Phase 2H)
 
@@ -566,8 +598,8 @@ Case files can also be exported as presentation-ready Markdown with
 `--write-markdown`. The Markdown report is written next to the JSON file as
 `data/casefiles/{oid}.casefile.md` and renders the evidence narrative near the
 top, followed by object metadata, light-curve summary, feature summary,
-anomaly assessment, comparison summary, model comparisons, cross-survey context,
-uncertainty notes, and recommended next checks.
+evidence triage assessment, comparison summary, model comparisons, cross-survey
+context, uncertainty notes, and recommended next checks.
 
 Markdown export does not recompute metrics, query external services, or change
 the JSON case file. It is a readable rendering of the existing case-file
@@ -600,9 +632,9 @@ web server, or network access.
 
 The HTML report renders the same evidence layers as the JSON and Markdown
 artifacts: evidence narrative, optional visual summary, object metadata,
-light-curve summary, feature summary, anomaly assessment, comparison summary,
-model comparisons, cross-survey context, uncertainty notes, and recommended next
-checks. When
+light-curve summary, feature summary, evidence triage assessment, comparison
+summary, model comparisons, cross-survey context, uncertainty notes, and
+recommended next checks. When
 `--write-figures` is used in the same run, the HTML links only to generated PNG
 files, so skipped residual plots do not create broken image links.
 
@@ -617,7 +649,7 @@ python -m scripts.build_casefile_index --casefile-dir data/casefiles --write-htm
 This writes `data/casefiles/index.json` and, with `--write-html`,
 `data/casefiles/index.html`. The index scans existing case-file JSON, extracts
 evidence headlines, data counts, comparator statuses, feature/context statuses,
-the deterministic `anomaly_assessment` summary, the top recommended next check,
+the deterministic `anomaly_assessment` evidence triage summary, the top recommended next check,
 review-priority signals, and links to available artifacts. Paths in index JSON
 use POSIX-style relative links so the public artifacts are stable across local
 Windows and Linux/CI generation. The index does not recompute metrics, query
@@ -627,11 +659,11 @@ Phase 2V adds a transparent `review_priority` block to each index entry. The
 score is a capped additive heuristic from existing evidence signals such as
 single-bump mismatch, repeated or irregular variability texture, computed
 features, limited template checks, and recorded next checks. It lives in the
-index layer and controls queue ordering; it is separate from the case-file
-`anomaly_assessment`, which summarizes evidence inside each generated case.
-Entries are sorted by review-priority score descending, then `oid` ascending for
-stable tiebreaks. This is a review aid for human inspection, not a model result
-or object-identity claim.
+index layer and controls queue ordering. Review priority is a queue sorting
+heuristic; it is separate from `anomaly_assessment`, which summarizes evidence
+inside each generated case. Entries are sorted by review-priority score
+descending, then `oid` ascending for stable tiebreaks. This is a review aid for
+human inspection, not a model result or object-identity claim.
 
 The index is a mini-feed for objects prepared for inspection. It is not a
 detector and does not decide object identity.

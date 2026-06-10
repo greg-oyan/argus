@@ -17,8 +17,12 @@ from argus.config import CASEFILES_DIR
 
 INDEX_VERSION = "1.2"
 REVIEW_PRIORITY_CAVEAT = (
-    "This is a review-priority heuristic for inspection only, not a model result "
-    "or object-identity claim."
+    "Review priority is a queue sorting heuristic. It orders the review queue "
+    "for inspection; it is not a model score or object-identity claim."
+)
+ANOMALY_ASSESSMENT_DEFINITION = (
+    "anomaly_assessment is an evidence triage summary inside this case file. "
+    "It summarizes available signals for review; it is not an object-identity claim."
 )
 
 
@@ -325,6 +329,8 @@ def extract_index_entry(
     cross_survey_context = _as_dict(case_data.get("cross_survey_context"))
     recommended = _as_list(case_data.get("recommended_next_checks"))
     classification_metadata = case_data.get("classification_metadata")
+    cross_status = str(cross_survey_context.get("status") or "missing")
+    context_enriched = bool(case_data.get("context_enriched")) or cross_status == "queried"
 
     return {
         "oid": oid,
@@ -347,7 +353,8 @@ def extract_index_entry(
         "sncosmo_template_probe_status": _model_status(
             case_data, "sncosmo_template_probe"
         ),
-        "cross_survey_context_status": str(cross_survey_context.get("status") or "missing"),
+        "cross_survey_context_status": cross_status,
+        "context_enriched": context_enriched,
         "anomaly_assessment": _indexable_anomaly_assessment(case_data),
         "review_priority": compute_review_priority(case_data),
         "top_recommended_next_check": (
@@ -389,7 +396,8 @@ def build_casefile_index(
         "sort_order": "review_priority_desc_then_oid",
         "description": (
             "Static case-file review index built from existing Argus case-file JSON. "
-            "Entries are sorted by a transparent review-priority heuristic for inspection."
+            "Entries are sorted by a transparent review-priority heuristic for inspection. "
+            f"{ANOMALY_ASSESSMENT_DEFINITION}"
         ),
         "entries": entries,
     }
@@ -425,10 +433,11 @@ def _assessment_block(entry: dict[str, Any]) -> str:
     driver_items = "\n".join(f"<li>{_h(driver)}</li>" for driver in drivers[:3])
     return "\n".join([
         '<div class="assessment">',
-        "<p><strong>Anomaly assessment:</strong> "
+        "<p><strong>Evidence triage:</strong> "
         f'<span class="assessment-label">{_h(assessment.get("label") or "unknown")}</span> '
         f'<span class="assessment-score">{_h(score_text)}</span> '
         f'<span class="muted">({_h(assessment.get("status") or "missing")})</span></p>',
+        f'<p class="priority-caveat">{_h(ANOMALY_ASSESSMENT_DEFINITION)}</p>',
         f"<ul>{driver_items}</ul>" if drivers else '<p class="muted">No assessment drivers recorded.</p>',
         f'<p class="priority-caveat">{_h(assessment.get("caveat") or "Assessment supports review only.")}</p>',
         "</div>",
@@ -454,6 +463,12 @@ def _artifact_link_list(entry: dict[str, Any]) -> str:
     return " ".join(items)
 
 
+def _context_badge(entry: dict[str, Any]) -> str:
+    if not entry.get("context_enriched"):
+        return ""
+    return '<span class="context-badge">Context-enriched</span>'
+
+
 def _priority_block(entry: dict[str, Any]) -> str:
     priority = _as_dict(entry.get("review_priority"))
     score = int(priority.get("score") or 0)
@@ -465,6 +480,8 @@ def _priority_block(entry: dict[str, Any]) -> str:
         "<p><strong>Review priority:</strong> "
         f'<span class="priority-level level-{escape(level, quote=True)}">{_h(level)}</span> '
         f'<span class="priority-score">{score}/10</span></p>',
+        '<p class="priority-caveat">Review priority is a queue sorting heuristic; '
+        'it orders entries for inspection and is not a model result.</p>',
         f"<ul>{reason_items}</ul>",
         f'<p class="priority-caveat">{_h(priority.get("caveat") or REVIEW_PRIORITY_CAVEAT)}</p>',
         "</div>",
@@ -489,7 +506,7 @@ def render_index_html(index: dict[str, Any]) -> str:
             data_summary += f"; span {_plain(entry.get('time_span_days'))} days"
         cards.append(
             '<article class="case-card">'
-            f'<h2>{_h(entry.get("oid"))}</h2>'
+            f'<h2>{_h(entry.get("oid"))} {_context_badge(entry)}</h2>'
             f'<p class="headline">{_h(entry.get("headline"))}</p>'
             f'<p>{_h(entry.get("short_summary"))}</p>'
             f'<p class="muted">{_h(data_summary)}</p>'
@@ -556,6 +573,16 @@ a { color: #174ea6; text-underline-offset: 0.18em; }
 .assessment li { margin: 4px 0; }
 .assessment-label { color: #24476f; font-weight: 700; margin-left: 4px; }
 .assessment-score { color: #24476f; font-weight: 700; margin-left: 6px; }
+.context-badge {
+  border: 1px solid #4f8f63;
+  border-radius: 999px;
+  color: #386641;
+  display: inline-block;
+  font-size: 0.78rem;
+  margin-left: 8px;
+  padding: 2px 7px;
+  vertical-align: middle;
+}
 .priority ul { margin: 8px 0; padding-left: 20px; }
 .priority li { margin: 4px 0; }
 .priority-level {
@@ -593,7 +620,9 @@ footer { color: #5e6a78; font-size: 0.9rem; margin-top: 28px; }
         "<h1>Argus Case-File Index</h1>",
         '<p class="lede">A static review queue of generated case files. '
         "This mini-feed sorts existing evidence packages by a transparent "
-        "review-priority heuristic and links to their artifacts.</p>",
+        "review-priority heuristic and links to their artifacts. The "
+        "<code>anomaly_assessment</code> field is shown as evidence triage, "
+        "not an object-identity claim.</p>",
         f'<span class="count">{count} case file{"s" if count != 1 else ""} available.</span>',
         "</header>",
         '<section class="case-grid">',

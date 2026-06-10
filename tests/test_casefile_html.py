@@ -136,7 +136,9 @@ def test_html_renderer_with_full_case_file():
     assert "Classification Metadata" in html
     assert "Light-Curve Summary" in html
     assert "Feature Summary" in html
-    assert "Anomaly Assessment" in html
+    assert "Evidence Triage Assessment" in html
+    assert "anomaly_assessment" in html
+    assert "evidence triage summary" in html
     assert "Gaussian residual structure supports early review" in html
     assert "Comparison Summary" in html
     assert "Model Comparisons" in html
@@ -160,7 +162,7 @@ def test_html_renderer_handles_missing_optional_fields():
 
     assert "Evidence narrative is not present" in html
     assert "Feature summary is not present" in html
-    assert "Anomaly assessment is not present" in html
+    assert "anomaly_assessment field is not present" in html
     assert "Comparison summary is not present" in html
     assert "No model comparisons are present" in html
     assert "Cross-survey context is not present" in html

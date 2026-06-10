@@ -1,5 +1,7 @@
 import type { CaseFileDetail, CasefileIndexEntry } from "../../types/casefile";
 import {
+  ANOMALY_ASSESSMENT_DEFINITION,
+  REVIEW_PRIORITY_DEFINITION,
   assessmentFromSources,
   assessmentLabel,
   formatAssessmentScore,
@@ -57,13 +59,13 @@ export function CaseHeader({ entry, detail, onBackToQueue }: CaseHeaderProps) {
           <div className="mt-2 flex flex-wrap items-center gap-3">
             <h1 className="font-mono text-2xl text-white">{entry.oid}</h1>
             {priority ? (
-              <span className="argus-state-pill argus-state-pill-active">
+              <span className="argus-state-pill argus-state-pill-active" title={REVIEW_PRIORITY_DEFINITION}>
                 review priority {priority.score}/10 {priority.level}
               </span>
             ) : null}
             {assessment ? (
-              <span className="argus-state-pill">
-                assessment {formatAssessmentScore(assessment)} {assessmentLabel(assessment)}
+              <span className="argus-state-pill" title={ANOMALY_ASSESSMENT_DEFINITION}>
+                evidence triage {formatAssessmentScore(assessment)} {assessmentLabel(assessment)}
               </span>
             ) : null}
             <span className="argus-state-pill">{behaviorLabel(behavior)}</span>

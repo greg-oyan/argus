@@ -1,5 +1,7 @@
 import type { CaseFileDetailMap, CasefileIndex, CasefileIndexEntry } from "../types/casefile";
 import {
+  ANOMALY_ASSESSMENT_DEFINITION,
+  REVIEW_PRIORITY_DEFINITION,
   assessmentCaveat,
   assessmentDrivers,
   assessmentFromSources,
@@ -146,9 +148,9 @@ function SelectedPreview({
           <span className="text-workstation-muted">filters</span>
           <span>{(entry.filters_observed ?? []).join(", ") || "n/a"}</span>
           <span className="text-workstation-muted">priority</span>
-          <span>{priority ? `${priority.score}/10 ${priority.level}` : "n/a"}</span>
+          <span title={REVIEW_PRIORITY_DEFINITION}>{priority ? `${priority.score}/10 ${priority.level}` : "n/a"}</span>
           <span className="text-workstation-muted">assessment</span>
-          <span>
+          <span title={ANOMALY_ASSESSMENT_DEFINITION}>
             {assessment ? `${formatAssessmentScore(assessment)} ${assessmentLabel(assessment)}` : "n/a"}
           </span>
           <span className="text-workstation-muted">sort</span>
@@ -197,6 +199,7 @@ function SelectedPreview({
           <p className="mb-2 font-mono text-xs uppercase tracking-[0.18em] text-workstation-muted">
             Priority Reasons
           </p>
+          <p className="mb-3 text-xs leading-5 text-workstation-muted">{REVIEW_PRIORITY_DEFINITION}</p>
           <ul className="space-y-2 text-sm leading-5 text-workstation-text">
             {priority.reasons.map((reason) => (
               <li className="border-l border-workstation-line pl-3" key={reason}>
@@ -211,8 +214,9 @@ function SelectedPreview({
       {assessment ? (
         <div>
           <p className="mb-2 font-mono text-xs uppercase tracking-[0.18em] text-workstation-muted">
-            Assessment Drivers
+            Evidence Triage Drivers
           </p>
+          <p className="mb-3 text-xs leading-5 text-workstation-muted">{ANOMALY_ASSESSMENT_DEFINITION}</p>
           <ul className="space-y-2 text-sm leading-5 text-workstation-text">
             {assessmentDrivers(assessment, 3).map((driver) => (
               <li className="border-l border-workstation-line pl-3" key={driver}>

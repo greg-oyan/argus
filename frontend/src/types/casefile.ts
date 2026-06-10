@@ -107,6 +107,7 @@ export interface CasefileIndexEntry {
   feature_summary_status?: string;
   sncosmo_template_probe_status?: string;
   cross_survey_context_status?: string;
+  context_enriched?: boolean;
   anomaly_assessment?: AnomalyAssessment;
   review_priority?: ReviewPriority;
   top_recommended_next_check?: string;

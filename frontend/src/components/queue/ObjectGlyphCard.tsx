@@ -5,6 +5,7 @@ import {
   residualPoints,
   sparsityEncoding,
 } from "../../lib/glyphEncoding";
+import { REVIEW_PRIORITY_DEFINITION } from "../../lib/assessmentDisplay";
 import type { CaseFileDetail, CasefileIndexEntry } from "../../types/casefile";
 import { BehaviorTrace } from "./BehaviorTrace";
 import { EvidenceStatusRail } from "./EvidenceStatusRail";
@@ -57,6 +58,7 @@ export function ObjectGlyphCard({
       }}
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
+      data-testid="object-glyph-card"
       type="button"
     >
       <div
@@ -90,7 +92,14 @@ export function ObjectGlyphCard({
             <p className="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-workstation-muted">
               {isSelected ? "Selected Object" : "Object"}
             </p>
-            <p className="mt-1 font-mono text-sm text-white">{entry.oid}</p>
+            <p className="mt-1 flex flex-wrap items-center gap-2 font-mono text-sm text-white">
+              <span>{entry.oid}</span>
+              {entry.context_enriched ? (
+                <span className="border border-workstation-green/70 px-1 text-[0.58rem] uppercase tracking-[0.12em] text-workstation-green">
+                  ctx
+                </span>
+              ) : null}
+            </p>
           </div>
           <div className="flex items-center gap-1">
             {(["g", "r"] as const).map((filter) => (
@@ -112,7 +121,7 @@ export function ObjectGlyphCard({
             {entry.headline}
           </p>
           <div className="text-right">
-            <p className="font-mono text-[0.68rem] uppercase tracking-[0.12em] text-workstation-muted">
+            <p className="font-mono text-[0.68rem] uppercase tracking-[0.12em] text-workstation-muted" title={REVIEW_PRIORITY_DEFINITION}>
               {entry.review_priority
                 ? `${entry.review_priority.score}/10 ${entry.review_priority.level}`
                 : "priority n/a"}
