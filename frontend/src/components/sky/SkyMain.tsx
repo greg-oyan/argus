@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { loadAladinLite } from "../../lib/aladin";
-import { priorityMarkerEncoding } from "../../lib/glyphEncoding";
 import { plainHeadline } from "../../lib/plainLanguage";
 import { staticDemoUrl } from "../../lib/paths";
 import { isPresenterMode, shouldSkipIntro } from "../../lib/presenterMode";
@@ -108,6 +107,91 @@ function extractOid(object: unknown): string | null {
   return data && typeof data.oid === "string" ? data.oid : null;
 }
 
+type MarkerTier = "high" | "medium" | "low";
+
+interface MarkerStyle {
+  core: string;
+  coreRadius: number;
+  ringRadius: number;
+  glowRadius: number;
+}
+
+const MARKER_STYLES: Record<MarkerTier, MarkerStyle> = {
+  // High priority wears the accent thread that ties the sky pulse, the
+  // hover chip, and the playback button together. Medium and low go to
+  // cooler existing palette tokens; nothing on the sky is the angry red.
+  high: { core: "#6bb7ff", coreRadius: 4, ringRadius: 8, glowRadius: 13 },
+  medium: { core: "#d8a84c", coreRadius: 3, ringRadius: 6, glowRadius: 10 },
+  low: { core: "#80c990", coreRadius: 2.5, ringRadius: 5, glowRadius: 8 },
+};
+
+function entryTier(entry: CasefileIndexEntry): MarkerTier {
+  const level = entry.review_priority?.level?.toLowerCase();
+  if (level === "high") return "high";
+  if (level === "medium") return "medium";
+  return "low";
+}
+
+function hexToRgba(hex: string, alpha: number): string {
+  const trimmed = hex.replace("#", "");
+  if (trimmed.length !== 6) return `rgba(255,255,255,${alpha})`;
+  const r = parseInt(trimmed.slice(0, 2), 16);
+  const g = parseInt(trimmed.slice(2, 4), 16);
+  const b = parseInt(trimmed.slice(4, 6), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+// Aladin Lite v3 catalogs accept a custom shape function:
+//   (source, ctx, viewParams) => void
+// The source has x, y in canvas pixels and exposes its data dict.
+// We render: soft radial glow -> outer ring -> filled core.
+function buildMarkerDraw(tier: MarkerTier) {
+  const style = MARKER_STYLES[tier];
+  return function drawMarker(source: unknown, ctx: CanvasRenderingContext2D) {
+    const s = source as { x?: number; y?: number } | undefined;
+    if (!s || typeof s.x !== "number" || typeof s.y !== "number") return;
+    const { x, y } = s;
+    // 1. Radial glow
+    const grad = ctx.createRadialGradient(x, y, 0, x, y, style.glowRadius);
+    grad.addColorStop(0, hexToRgba(style.core, 0.55));
+    grad.addColorStop(0.45, hexToRgba(style.core, 0.18));
+    grad.addColorStop(1, hexToRgba(style.core, 0));
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(x, y, style.glowRadius, 0, Math.PI * 2);
+    ctx.fill();
+    // 2. Thin outer ring
+    ctx.strokeStyle = hexToRgba(style.core, 0.85);
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(x, y, style.ringRadius, 0, Math.PI * 2);
+    ctx.stroke();
+    // 3. Filled core
+    ctx.fillStyle = style.core;
+    ctx.beginPath();
+    ctx.arc(x, y, style.coreRadius, 0, Math.PI * 2);
+    ctx.fill();
+  };
+}
+
+function buildSelectionDraw() {
+  return function drawSelected(source: unknown, ctx: CanvasRenderingContext2D) {
+    const s = source as { x?: number; y?: number } | undefined;
+    if (!s || typeof s.x !== "number" || typeof s.y !== "number") return;
+    const { x, y } = s;
+    ctx.strokeStyle = "rgba(255,255,255,0.95)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(x, y, 11, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(255,255,255,0.4)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(x, y, 14, 0, Math.PI * 2);
+    ctx.stroke();
+  };
+}
+
 function overlayWasDismissed(): boolean {
   try {
     return sessionStorage.getItem(OVERLAY_STORAGE_KEY) === "1";
@@ -190,6 +274,7 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
   const [invitationPos, setInvitationPos] = useState<{ x: number; y: number } | null>(
     null,
   );
+  const [hoveredPos, setHoveredPos] = useState<{ x: number; y: number } | null>(null);
   const missingEntries = useMemo(
     () =>
       entries.filter((entry) => {
@@ -314,35 +399,39 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
         // sketches in during its first frames.
         const addCatalogsAndEvents = () => {
         if (A.catalog && A.source && aladin.addCatalog) {
-          const buckets = new Map<
-            string,
-            { color: string; size: number; entries: SkyEntry[] }
-          >();
+          // One catalog per priority tier so each gets its own custom draw
+          // function. Lower-priority drawn first so high sits on top.
+          const tierOrder: MarkerTier[] = ["low", "medium", "high"];
+          const byTier = new Map<MarkerTier, SkyEntry[]>();
           for (const item of skyEntries) {
-            const encoding = priorityMarkerEncoding(item.entry);
-            const key = `${encoding.color}|${encoding.size}`;
-            const bucket = buckets.get(key);
-            if (bucket) {
-              bucket.entries.push(item);
-            } else {
-              buckets.set(key, {
-                color: encoding.color,
-                size: encoding.size,
-                entries: [item],
-              });
-            }
+            const tier = entryTier(item.entry);
+            const list = byTier.get(tier) ?? [];
+            list.push(item);
+            byTier.set(tier, list);
           }
-          const sorted = Array.from(buckets.values()).sort((a, b) => a.size - b.size);
-          for (const bucket of sorted) {
+          for (const tier of tierOrder) {
+            const items = byTier.get(tier);
+            if (!items || items.length === 0) continue;
+            const style = MARKER_STYLES[tier];
             const catalog = A.catalog({
-              name: `Argus flagged (${bucket.color})`,
-              color: bucket.color,
-              sourceSize: bucket.size,
-              shape: "circle",
+              name: `Argus flagged (${tier})`,
+              color: style.core,
+              // sourceSize is used by Aladin to compute the click-target
+              // bounding box, even when shape is a draw function.
+              sourceSize: Math.max(14, style.glowRadius * 2),
+              // Custom draw: filled core + ring + radial glow per tier.
+              // If the runtime can't honor a function shape it will fall
+              // back to drawing nothing for that catalog; the sourceSize
+              // keeps the hit area large enough to still register clicks.
+              shape: buildMarkerDraw(tier),
             });
-            const sources = bucket.entries
+            const sources = items
               .map((item) =>
-                A.source?.(item.ra, item.dec, { oid: item.entry.oid, name: item.entry.oid }),
+                A.source?.(item.ra, item.dec, {
+                  oid: item.entry.oid,
+                  name: item.entry.oid,
+                  tier,
+                }),
               )
               .filter((s): s is AladinLiteSource => Boolean(s));
             catalog.addSources?.(sources);
@@ -352,7 +441,7 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
             name: "Argus selected",
             color: SELECTION_COLOR,
             sourceSize: SELECTION_SOURCE_SIZE,
-            shape: "circle",
+            shape: buildSelectionDraw(),
           });
           aladin.addCatalog(selectionCatalog);
           selectionCatalogRef.current = selectionCatalog;
@@ -418,11 +507,13 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
   useEffect(() => {
     if (status !== "ready" || !invitationEntry) {
       setInvitationPos(null);
+      setHoveredPos(null);
       return undefined;
     }
     const aladin = aladinRef.current;
     if (!aladin || typeof aladin.world2pix !== "function") {
       setInvitationPos(null);
+      setHoveredPos(null);
       return undefined;
     }
     let cancelled = false;
@@ -437,6 +528,25 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
         }
       } catch {
         setInvitationPos(null);
+      }
+      // Project the hovered marker too so the chip can dock next to it.
+      const hoveredOid = hoveredEntry?.oid;
+      const hoveredCoords = hoveredOid
+        ? sourceByOidRef.current.get(hoveredOid)
+        : undefined;
+      if (hoveredCoords) {
+        try {
+          const r = aladin.world2pix?.(hoveredCoords.ra, hoveredCoords.dec);
+          if (r && Number.isFinite(r[0]) && Number.isFinite(r[1])) {
+            setHoveredPos({ x: r[0], y: r[1] });
+          } else {
+            setHoveredPos(null);
+          }
+        } catch {
+          setHoveredPos(null);
+        }
+      } else {
+        setHoveredPos(null);
       }
     };
     project();
@@ -463,7 +573,7 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
       cancelled = true;
       window.clearInterval(interval);
     };
-  }, [invitationEntry, status]);
+  }, [invitationEntry, status, hoveredEntry]);
 
   useEffect(() => {
     if (status !== "ready") return;
@@ -713,17 +823,37 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
       ) : null}
 
       {hoveredEntry && !overlayVisible ? (
-        <div className="pointer-events-none absolute inset-x-0 top-16 z-20 mx-auto flex justify-center px-4 sm:top-20">
-          <div className="pointer-events-auto max-w-md border border-workstation-accent/70 bg-workstation-bg/85 px-4 py-3 shadow-[0_0_0_1px_rgba(107,183,255,0.18)] backdrop-blur">
-            <p className="font-mono text-xs uppercase tracking-[0.16em] text-workstation-accent">
-              {hoveredEntry.oid}
-            </p>
-            <p className="mt-1 text-sm leading-5 text-white">{plainHeadline(hoveredEntry)}</p>
-            <p className="mt-2 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-workstation-accent">
-              Click to investigate
-            </p>
+        hoveredPos ? (
+          <div
+            className="pointer-events-none absolute z-20 max-w-xs"
+            style={{
+              left: Math.max(12, Math.min(hoveredPos.x + 18, window.innerWidth - 320)),
+              top: Math.max(12, Math.min(hoveredPos.y + 18, window.innerHeight - 140)),
+            }}
+          >
+            <div className="pointer-events-auto border border-workstation-accent/70 bg-workstation-bg/90 px-4 py-3 shadow-[0_0_0_1px_rgba(107,183,255,0.18)] backdrop-blur">
+              <p className="font-mono text-xs uppercase tracking-[0.16em] text-workstation-accent">
+                {hoveredEntry.oid}
+              </p>
+              <p className="mt-1 text-sm leading-5 text-white">{plainHeadline(hoveredEntry)}</p>
+              <p className="mt-2 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-workstation-accent">
+                Click to investigate →
+              </p>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="pointer-events-none absolute inset-x-0 top-16 z-20 mx-auto flex justify-center px-4 sm:top-20">
+            <div className="pointer-events-auto max-w-md border border-workstation-accent/70 bg-workstation-bg/85 px-4 py-3 shadow-[0_0_0_1px_rgba(107,183,255,0.18)] backdrop-blur">
+              <p className="font-mono text-xs uppercase tracking-[0.16em] text-workstation-accent">
+                {hoveredEntry.oid}
+              </p>
+              <p className="mt-1 text-sm leading-5 text-white">{plainHeadline(hoveredEntry)}</p>
+              <p className="mt-2 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-workstation-accent">
+                Click to investigate →
+              </p>
+            </div>
+          </div>
+        )
       ) : null}
 
       {!presenter && status === "ready" ? (
