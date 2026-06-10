@@ -2,6 +2,8 @@
 
 [![Tests](https://github.com/greg-oyan/argus/actions/workflows/tests.yml/badge.svg)](https://github.com/greg-oyan/argus/actions/workflows/tests.yml)
 
+**Live demo:** [greg-oyan.github.io/argus](https://greg-oyan.github.io/argus/) · analyst workstation at [greg-oyan.github.io/argus/workstation/](https://greg-oyan.github.io/argus/workstation/).
+
 A small system that watches the sky for novel astronomical patterns that current
 transient pipelines miss. The current product spine is a readable, inspectable
 case-file evidence package for one object at a time — not another classifier.
@@ -47,10 +49,13 @@ index lives at [`docs/examples/index.html`](docs/examples/index.html).
 
 ![Argus workstation preview](docs/media/social-preview.png)
 
-1. Open the static demo page from `docs/index.html` or GitHub Pages.
+1. Open the static demo page from `docs/index.html` or GitHub Pages at
+   [greg-oyan.github.io/argus](https://greg-oyan.github.io/argus/).
 2. Open the review-prioritized queue to see generated case files prepared for
    inspection.
-3. Launch the analyst workstation and scan Queue Mode as an evidence field.
+3. Launch the analyst workstation at
+   [greg-oyan.github.io/argus/workstation/](https://greg-oyan.github.io/argus/workstation/)
+   and scan Queue Mode as an evidence field.
 4. Select a case and use Case Mode to inspect linked observations, residuals
    when present, evidence text, evidence triage, and external sky context.
 5. Open the HTML/Markdown/JSON artifacts when you need a portable case-file

@@ -2,6 +2,10 @@
 
 Argus is now a public, case-file-first astronomy review aid.
 
+- Public demo: <https://greg-oyan.github.io/argus/>
+- Analyst workstation: <https://greg-oyan.github.io/argus/workstation/>
+
+
 The project turns local ZTF/ALeRCE light-curve data into inspectable evidence
 packages: structured JSON, static HTML and Markdown reports, light-curve and
 residual figures, a review-prioritized index, and a browser-based analyst
