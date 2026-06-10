@@ -58,6 +58,25 @@ a {
   }
 }
 
+.argus-sky-pulse {
+  animation: argus-sky-pulse 900ms ease-out 1;
+}
+
+@keyframes argus-sky-pulse {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.3;
+    transform: scale(1.08);
+  }
+}
+
 @layer components {
   .argus-panel {
     @apply border border-workstation-line bg-workstation-panel/80 transition-[border-color,background-color,box-shadow] duration-200;

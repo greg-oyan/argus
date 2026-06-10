@@ -1,4 +1,5 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useReducedMotion } from "framer-motion";
 import { loadAladinLite } from "../../lib/aladin";
 import { useInvestigationStore } from "../../stores/investigationStore";
 import type { CaseFileDetail, Coordinates, CrossSurveySource } from "../../types/casefile";
@@ -13,6 +14,13 @@ interface UsableCoordinates extends Coordinates {
   ra: number;
   dec: number;
 }
+
+const SURVEY_OPTIONS = [
+  { id: "P/DSS2/color", label: "DSS2 color" },
+  { id: "P/PanSTARRS/DR1/color-z-zg-g", label: "Pan-STARRS DR1" },
+] as const;
+
+type SurveyOption = (typeof SURVEY_OPTIONS)[number];
 
 function finiteNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
@@ -52,17 +60,26 @@ function formatSource(source: CrossSurveySource): string {
 export function SkyContextPanel({ detail }: SkyContextPanelProps) {
   const focusedPanelKey = useInvestigationStore((state) => state.focusedPanelKey);
   const setFocusedPanelKey = useInvestigationStore((state) => state.setFocusedPanelKey);
+  const reduceMotion = useReducedMotion();
   const aladinId = useId().replace(/[^a-zA-Z0-9_-]/g, "");
   const containerRef = useRef<HTMLDivElement | null>(null);
   const aladinRef = useRef<AladinLiteInstance | null>(null);
+  const selectedSurveyRef = useRef<SurveyOption>(SURVEY_OPTIONS[0]);
   const [status, setStatus] = useState<SkyStatus>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [selectedSurveyIndex, setSelectedSurveyIndex] = useState(0);
+  const [crosshairPulse, setCrosshairPulse] = useState(false);
   const coordinates = detail?.coordinates;
   const usableCoordinates = coordinatesAreUsable(coordinates) ? coordinates : null;
   const context = detail?.cross_survey_context;
   const sources = context?.sources ?? [];
+  const selectedSurvey = SURVEY_OPTIONS[selectedSurveyIndex];
 
   const selector = useMemo(() => `#${aladinId}`, [aladinId]);
+
+  useEffect(() => {
+    selectedSurveyRef.current = selectedSurvey;
+  }, [selectedSurvey]);
 
   useEffect(() => {
     aladinRef.current?.remove?.();
@@ -75,6 +92,8 @@ export function SkyContextPanel({ detail }: SkyContextPanelProps) {
     }
 
     let cancelled = false;
+    let flyToTimeout: number | null = null;
+    let pulseTimeout: number | null = null;
     setStatus("loading");
     containerRef.current.innerHTML = "";
 
@@ -85,7 +104,8 @@ export function SkyContextPanel({ detail }: SkyContextPanelProps) {
         }
         const aladin = A.aladin(selector, {
           target: `${usableCoordinates.ra} ${usableCoordinates.dec}`,
-          fov: 0.08,
+          survey: selectedSurveyRef.current.id,
+          fov: reduceMotion ? 0.08 : 0.22,
           cooFrame: "equatorial",
           projection: "TAN",
           showReticle: true,
@@ -115,6 +135,26 @@ export function SkyContextPanel({ detail }: SkyContextPanelProps) {
 
         aladinRef.current = aladin;
         setStatus("ready");
+        if (reduceMotion) {
+          return;
+        }
+        flyToTimeout = window.setTimeout(() => {
+          if (cancelled) {
+            return;
+          }
+          try {
+            aladin.gotoRaDec?.(usableCoordinates.ra, usableCoordinates.dec);
+            if (aladin.zoomToFoV) {
+              aladin.zoomToFoV(0.08, 0.85);
+            } else {
+              aladin.setFoV?.(0.08);
+            }
+            setCrosshairPulse(true);
+            pulseTimeout = window.setTimeout(() => setCrosshairPulse(false), 900);
+          } catch {
+            setCrosshairPulse(false);
+          }
+        }, 260);
       })
       .catch((error: unknown) => {
         if (cancelled) {
@@ -126,23 +166,52 @@ export function SkyContextPanel({ detail }: SkyContextPanelProps) {
 
     return () => {
       cancelled = true;
+      if (flyToTimeout !== null) {
+        window.clearTimeout(flyToTimeout);
+      }
+      if (pulseTimeout !== null) {
+        window.clearTimeout(pulseTimeout);
+      }
       aladinRef.current?.remove?.();
       aladinRef.current = null;
     };
-  }, [detail?.oid, selector, usableCoordinates]);
+  }, [detail?.oid, reduceMotion, selector, usableCoordinates]);
+
+  useEffect(() => {
+    if (status !== "ready" || !aladinRef.current) {
+      return;
+    }
+    try {
+      aladinRef.current.setImageSurvey?.(selectedSurvey.id);
+      setErrorMessage(null);
+    } catch (error: unknown) {
+      setStatus("failed");
+      setErrorMessage(error instanceof Error ? error.message : "The selected survey imagery could not be loaded.");
+    }
+  }, [selectedSurvey, status]);
 
   return (
     <section
       className={`argus-panel ${focusedPanelKey === "sky_context" ? "argus-panel-focus" : ""}`}
       onMouseEnter={() => setFocusedPanelKey("sky_context")}
     >
-      <div className="argus-panel-header">
-        <p className="argus-panel-title">
-          Sky Context
-        </p>
-        <p className="mt-1 text-xs leading-5 text-workstation-muted">
-          External sky imagery centered on the recorded object position.
-        </p>
+      <div className="argus-panel-header flex items-start justify-between gap-3">
+        <div>
+          <p className="argus-panel-title">
+            Sky Context
+          </p>
+          <p className="mt-1 text-xs leading-5 text-workstation-muted">
+            External sky imagery centered on the recorded object position.
+          </p>
+        </div>
+        <button
+          className="argus-state-pill hover:border-workstation-accent/70 hover:text-workstation-text"
+          disabled={!usableCoordinates || status === "loading"}
+          onClick={() => setSelectedSurveyIndex((index) => (index + 1) % SURVEY_OPTIONS.length)}
+          type="button"
+        >
+          {selectedSurvey.label}
+        </button>
       </div>
 
       <div className="p-3">
@@ -151,6 +220,13 @@ export function SkyContextPanel({ detail }: SkyContextPanelProps) {
           id={aladinId}
           ref={containerRef}
         >
+          {usableCoordinates && status === "ready" ? (
+            <div className={`pointer-events-none absolute inset-0 z-10 ${crosshairPulse ? "argus-sky-pulse" : ""}`}>
+              <div className="absolute left-1/2 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 border border-workstation-accent/70" />
+              <div className="absolute left-1/2 top-1/2 h-px w-16 -translate-x-1/2 bg-workstation-accent/55" />
+              <div className="absolute left-1/2 top-1/2 h-16 w-px -translate-y-1/2 bg-workstation-accent/55" />
+            </div>
+          ) : null}
           {!usableCoordinates ? (
             <div className="argus-missing-state min-h-full border-0">
               Coordinate context is unavailable for this case-file artifact.
@@ -173,6 +249,8 @@ export function SkyContextPanel({ detail }: SkyContextPanelProps) {
           <dd>{formatCoordinate(coordinates?.dec)} {coordinates?.dec_unit ?? "deg"}</dd>
           <dt className="text-workstation-muted">status</dt>
           <dd>{context?.status ?? "missing"}</dd>
+          <dt className="text-workstation-muted">survey</dt>
+          <dd>{selectedSurvey.label}</dd>
         </dl>
 
         {sources.length ? (
@@ -193,6 +271,9 @@ export function SkyContextPanel({ detail }: SkyContextPanelProps) {
         <p className="mt-3 text-xs leading-5 text-workstation-muted">
           {context?.caveat ??
             "Sky imagery and catalog-context status are external evidence layers, not Argus conclusions."}
+        </p>
+        <p className="mt-2 text-xs leading-5 text-workstation-muted">
+          Imagery is external HiPS survey imagery, not Argus output.
         </p>
         {errorMessage ? (
           <p className="mt-2 font-mono text-[0.68rem] text-workstation-muted">{errorMessage}</p>

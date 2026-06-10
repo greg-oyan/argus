@@ -26,6 +26,7 @@ interface InvestigationState {
   hoveredPointId: string | null;
   selectedPointId: string | null;
   selectedTimeRange: SelectedTimeRange | null;
+  linkedZoomEnabled: boolean;
   queueViewMode: QueueViewMode;
   activeComparator: string | null;
   highlightedEvidenceKey: string | null;
@@ -35,6 +36,7 @@ interface InvestigationState {
   setHoveredPointId: (pointId: string | null) => void;
   setSelectedPointId: (pointId: string | null) => void;
   setQueueViewMode: (mode: QueueViewMode) => void;
+  setLinkedZoomEnabled: (enabled: boolean) => void;
   clearSelectedPointId: () => void;
   clearPointSelection: () => void;
   setSelectedTimeRange: (range: SelectedTimeRange | null) => void;
@@ -49,6 +51,7 @@ export const useInvestigationStore = create<InvestigationState>((set) => ({
   hoveredPointId: null,
   selectedPointId: null,
   selectedTimeRange: null,
+  linkedZoomEnabled: true,
   queueViewMode: readQueueViewMode(),
   activeComparator: null,
   highlightedEvidenceKey: null,
@@ -63,6 +66,7 @@ export const useInvestigationStore = create<InvestigationState>((set) => ({
     persistQueueViewMode(queueViewMode);
     set({ queueViewMode });
   },
+  setLinkedZoomEnabled: (linkedZoomEnabled) => set({ linkedZoomEnabled }),
   clearSelectedPointId: () => set({ selectedPointId: null }),
   clearPointSelection: () => set({ hoveredPointId: null, selectedPointId: null }),
   setSelectedTimeRange: (selectedTimeRange) => set({ selectedTimeRange }),

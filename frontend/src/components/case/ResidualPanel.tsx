@@ -63,9 +63,11 @@ export function ResidualPanel({
   const hoveredPointId = useInvestigationStore((state) => state.hoveredPointId);
   const selectedPointId = useInvestigationStore((state) => state.selectedPointId);
   const selectedTimeRange = useInvestigationStore((state) => state.selectedTimeRange);
+  const linkedZoomEnabled = useInvestigationStore((state) => state.linkedZoomEnabled);
   const setHoveredPointId = useInvestigationStore((state) => state.setHoveredPointId);
   const setSelectedPointId = useInvestigationStore((state) => state.setSelectedPointId);
   const setSelectedTimeRange = useInvestigationStore((state) => state.setSelectedTimeRange);
+  const setLinkedZoomEnabled = useInvestigationStore((state) => state.setLinkedZoomEnabled);
   const setFocusedPanelKey = useInvestigationStore((state) => state.setFocusedPanelKey);
   const clearSelectedPointId = useInvestigationStore((state) => state.clearSelectedPointId);
   const largest = useMemo(() => largestResidualPoint(points), [points]);
@@ -74,7 +76,7 @@ export function ResidualPanel({
 
   const option = useMemo(() => {
     const initialAnimation = !reduceMotion && animateInitialRef.current;
-    const zoom = timeRangeToPercent(points, selectedTimeRange);
+    const zoom = timeRangeToPercent(points, linkedZoomEnabled ? selectedTimeRange : null);
     const rangeStart = selectedTimeRange?.startMjd;
     const rangeEnd = selectedTimeRange?.endMjd;
     const selectedMarkArea =
@@ -165,7 +167,7 @@ export function ResidualPanel({
         },
       ],
     } as EChartsOption;
-  }, [activePoint, hoveredPointId, points, reduceMotion, selectedPointId, selectedTimeRange]);
+  }, [activePoint, hoveredPointId, linkedZoomEnabled, points, reduceMotion, selectedPointId, selectedTimeRange]);
 
   const onEvents = useMemo(
     () => ({
@@ -189,6 +191,9 @@ export function ResidualPanel({
         }
       },
       datazoom: (params: unknown) => {
+        if (!linkedZoomEnabled) {
+          return;
+        }
         const bounds = timeBounds(points);
         if (!bounds) {
           return;
@@ -197,7 +202,7 @@ export function ResidualPanel({
         setFocusedPanelKey("selected_window");
       },
     }),
-    [points, setFocusedPanelKey, setHoveredPointId, setSelectedPointId, setSelectedTimeRange],
+    [linkedZoomEnabled, points, setFocusedPanelKey, setHoveredPointId, setSelectedPointId, setSelectedTimeRange],
   );
 
   if (points.length === 0) {
@@ -228,13 +233,27 @@ export function ResidualPanel({
         <h2 className="argus-panel-title">
           Gaussian Residual Field
         </h2>
-        <p className="font-mono text-xs text-workstation-muted">
-          {activePoint
-            ? `linked MJD ${activePoint.mjd.toFixed(3)}`
-            : largest
-              ? `${oid} largest ${formatMagnitude(residualAbsoluteValue(largest))} mag`
-              : `${oid} point residuals`}
-        </p>
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          <p className="font-mono text-xs text-workstation-muted">
+            {activePoint
+              ? `linked MJD ${activePoint.mjd.toFixed(3)}`
+              : largest
+                ? `${oid} largest ${formatMagnitude(residualAbsoluteValue(largest))} mag`
+                : `${oid} point residuals`}
+          </p>
+          <button
+            className={`argus-state-pill ${linkedZoomEnabled ? "argus-state-pill-active" : ""}`}
+            onClick={() => {
+              setLinkedZoomEnabled(!linkedZoomEnabled);
+              if (linkedZoomEnabled) {
+                setSelectedTimeRange(null);
+              }
+            }}
+            type="button"
+          >
+            linked {linkedZoomEnabled ? "on" : "off"}
+          </button>
+        </div>
       </div>
       <div className="min-h-0 flex-1">
         <ReactECharts

@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { EChartsOption } from "echarts";
 import ReactECharts from "echarts-for-react";
 import { useReducedMotion } from "framer-motion";
@@ -14,7 +14,12 @@ import {
   pointIdFromChartEvent,
   selectedTimeRangeFromDataZoomEvent,
 } from "../../lib/chartInteractions";
-import { timeBounds, timeRangeToPercent, type LinkedLightCurvePoint } from "../../lib/chartSeries";
+import {
+  formatMjd,
+  timeBounds,
+  timeRangeToPercent,
+  type LinkedLightCurvePoint,
+} from "../../lib/chartSeries";
 import { useInvestigationStore } from "../../stores/investigationStore";
 
 interface LightCurvePanelProps {
@@ -89,17 +94,67 @@ export function LightCurvePanel({
   const hoveredPointId = useInvestigationStore((state) => state.hoveredPointId);
   const selectedPointId = useInvestigationStore((state) => state.selectedPointId);
   const selectedTimeRange = useInvestigationStore((state) => state.selectedTimeRange);
+  const linkedZoomEnabled = useInvestigationStore((state) => state.linkedZoomEnabled);
   const setHoveredPointId = useInvestigationStore((state) => state.setHoveredPointId);
   const setSelectedPointId = useInvestigationStore((state) => state.setSelectedPointId);
   const setSelectedTimeRange = useInvestigationStore((state) => state.setSelectedTimeRange);
+  const setLinkedZoomEnabled = useInvestigationStore((state) => state.setLinkedZoomEnabled);
   const setFocusedPanelKey = useInvestigationStore((state) => state.setFocusedPanelKey);
   const clearSelectedPointId = useInvestigationStore((state) => state.clearSelectedPointId);
   const reduceMotion = useReducedMotion();
   const animateInitialRef = useRef(true);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [playbackMjd, setPlaybackMjd] = useState<number | null>(null);
+  const bounds = useMemo(() => timeBounds(points), [points]);
+  const playbackEpochs = useMemo(
+    () => Array.from(new Set(points.map((point) => point.mjd))).sort((a, b) => a - b),
+    [points],
+  );
+  const displayedPoints = useMemo(
+    () => (playbackMjd == null ? points : points.filter((point) => point.mjd <= playbackMjd)),
+    [playbackMjd, points],
+  );
+
+  useEffect(() => {
+    setIsPlaying(false);
+    setPlaybackMjd(null);
+  }, [oid]);
+
+  useEffect(() => {
+    if (!isPlaying || playbackEpochs.length === 0 || reduceMotion) {
+      return undefined;
+    }
+    let frame = 0;
+    const startedAt = performance.now();
+    const startIndex =
+      playbackMjd == null
+        ? 0
+        : Math.max(0, playbackEpochs.findIndex((mjd) => mjd >= playbackMjd));
+    const remaining = Math.max(1, playbackEpochs.length - 1 - startIndex);
+    const durationMs = Math.max(6000, Math.min(10000, remaining * 95));
+
+    const tick = (now: number) => {
+      const progress = Math.min(1, (now - startedAt) / durationMs);
+      const eased = 1 - Math.pow(1 - progress, 1.8);
+      const index = Math.min(
+        playbackEpochs.length - 1,
+        startIndex + Math.round(eased * remaining),
+      );
+      setPlaybackMjd(playbackEpochs[index]);
+      if (progress >= 1) {
+        setIsPlaying(false);
+        return;
+      }
+      frame = window.requestAnimationFrame(tick);
+    };
+
+    frame = window.requestAnimationFrame(tick);
+    return () => window.cancelAnimationFrame(frame);
+  }, [isPlaying, playbackEpochs, playbackMjd, reduceMotion]);
 
   const option = useMemo(() => {
     const initialAnimation = !reduceMotion && animateInitialRef.current;
-    const zoom = timeRangeToPercent(points, selectedTimeRange);
+    const zoom = timeRangeToPercent(points, linkedZoomEnabled ? selectedTimeRange : null);
     const rangeStart = selectedTimeRange?.startMjd;
     const rangeEnd = selectedTimeRange?.endMjd;
     const selectedMarkArea =
@@ -110,7 +165,7 @@ export function LightCurvePanel({
             data: [[{ xAxis: rangeStart }, { xAxis: rangeEnd }]],
           }
         : undefined;
-    const observedPoints = points.filter((point) => point.observedMag !== null);
+    const observedPoints = displayedPoints.filter((point) => point.observedMag !== null);
     const observedBands = Array.from(
       new Set(observedPoints.map((point) => point.band ?? "unknown")),
     ).sort();
@@ -139,7 +194,7 @@ export function LightCurvePanel({
             }
           : undefined,
     }));
-    const modelData = points
+    const modelData = displayedPoints
       .filter((point) => point.modelMag !== null)
       .map((point) => ({
         band: point.band,
@@ -232,7 +287,7 @@ export function LightCurvePanel({
         },
       ],
     } as EChartsOption;
-  }, [activePoint, hasResidualField, hoveredPointId, isComparatorFocused, points, reduceMotion, selectedPointId, selectedTimeRange]);
+  }, [activePoint, displayedPoints, hasResidualField, hoveredPointId, isComparatorFocused, linkedZoomEnabled, points, reduceMotion, selectedPointId, selectedTimeRange]);
 
   const onEvents = useMemo(
     () => ({
@@ -256,6 +311,9 @@ export function LightCurvePanel({
         }
       },
       datazoom: (params: unknown) => {
+        if (!linkedZoomEnabled) {
+          return;
+        }
         const bounds = timeBounds(points);
         if (!bounds) {
           return;
@@ -264,7 +322,7 @@ export function LightCurvePanel({
         setFocusedPanelKey("selected_window");
       },
     }),
-    [points, setFocusedPanelKey, setHoveredPointId, setSelectedPointId, setSelectedTimeRange],
+    [linkedZoomEnabled, points, setFocusedPanelKey, setHoveredPointId, setSelectedPointId, setSelectedTimeRange],
   );
 
   if (points.length === 0) {
@@ -295,14 +353,75 @@ export function LightCurvePanel({
         <h2 className="argus-panel-title">
           Observed Light Curve
         </h2>
-        <p className="font-mono text-xs text-workstation-muted">
-          {activePoint
-            ? `linked MJD ${activePoint.mjd.toFixed(3)}`
-            : hasResidualField
-              ? `${oid} r-band residual source`
-              : `${oid} observed detections`}
-        </p>
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          <p className="font-mono text-xs text-workstation-muted">
+            {activePoint
+              ? `linked MJD ${activePoint.mjd.toFixed(3)}`
+              : playbackMjd == null
+                ? hasResidualField
+                  ? `${oid} r-band residual source`
+                  : `${oid} observed detections`
+                : `revealed through MJD ${formatMjd(playbackMjd)}`}
+          </p>
+          <button
+            className={`argus-state-pill ${linkedZoomEnabled ? "argus-state-pill-active" : ""}`}
+            onClick={() => {
+              setLinkedZoomEnabled(!linkedZoomEnabled);
+              if (linkedZoomEnabled) {
+                setSelectedTimeRange(null);
+              }
+            }}
+            type="button"
+          >
+            linked {linkedZoomEnabled ? "on" : "off"}
+          </button>
+        </div>
       </div>
+      {bounds ? (
+        <div className="flex flex-wrap items-center gap-3 border-b border-workstation-line px-3 py-2">
+          <button
+            className="argus-state-pill hover:border-workstation-accent/70 hover:text-workstation-text"
+            onClick={() => {
+              if (reduceMotion) {
+                setPlaybackMjd(bounds.max);
+                setIsPlaying(false);
+                return;
+              }
+              setPlaybackMjd(playbackMjd ?? bounds.min);
+              setIsPlaying(!isPlaying);
+            }}
+            type="button"
+          >
+            {isPlaying ? "pause" : "play"}
+          </button>
+          <input
+            aria-label="Detection playback MJD"
+            className="min-w-[180px] flex-1 accent-workstation-accent"
+            max={bounds.max}
+            min={bounds.min}
+            onChange={(event) => {
+              setIsPlaying(false);
+              setPlaybackMjd(Number(event.target.value));
+            }}
+            step="0.001"
+            type="range"
+            value={playbackMjd ?? bounds.max}
+          />
+          <button
+            className="argus-state-pill hover:border-workstation-accent/70 hover:text-workstation-text"
+            onClick={() => {
+              setIsPlaying(false);
+              setPlaybackMjd(null);
+            }}
+            type="button"
+          >
+            show all
+          </button>
+          <span className="font-mono text-[0.68rem] uppercase tracking-[0.14em] text-workstation-muted">
+            {displayedPoints.length}/{points.length} points
+          </span>
+        </div>
+      ) : null}
       <div className="min-h-0 flex-1">
         <ReactECharts
           notMerge
