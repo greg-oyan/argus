@@ -6,7 +6,7 @@ A small system that watches the sky for novel astronomical patterns that current
 transient pipelines miss. The current product spine is a readable, inspectable
 case-file evidence package for one object at a time — not another classifier.
 
-**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export + Phase 2K static figures + Phase 2L static HTML export + Phase 2M public example bundle + Phase 2N GitHub Pages demo page + Phase 2O Gaussian residual plots + Phase 2P static case-file index + Phase 2Q batch case-file generation + Phase 2S multi-object public demo + Phase 2T GitHub Actions CI + Phase 2U CI documentation polish + Phase 2V review-priority index heuristic + Phase 3A analyst-workstation shell + Phase 3B visual queue glyph field + Phase 3C linked Case Mode charts + Phase 3D linked evidence panels + Phase 3E Aladin Lite sky context + Phase 3F workstation polish complete.**
+**Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export + Phase 2K static figures + Phase 2L static HTML export + Phase 2M public example bundle + Phase 2N GitHub Pages demo page + Phase 2O Gaussian residual plots + Phase 2P static case-file index + Phase 2Q batch case-file generation + Phase 2S multi-object public demo + Phase 2T GitHub Actions CI + Phase 2U CI documentation polish + Phase 2V review-priority index heuristic + Phase 3A analyst-workstation shell + Phase 3B visual queue glyph field + Phase 3C linked Case Mode charts + Phase 3D linked evidence panels + Phase 3E Aladin Lite sky context + Phase 3F workstation polish + Phase 3G sky queue view + Phase 3H workstation motion + Phase 3I temporal playback and sky controls + Phase 3J cold open and reviewer path complete.**
 
 The product vision and the strategic decision behind Phase 2B live in
 [`docs/ARGUS_VISION.md`](docs/ARGUS_VISION.md) and
@@ -94,6 +94,13 @@ The public-demo workstation now also surfaces the deterministic
 stored observed light-curve points even when a Gaussian residual field is not
 available; residual inspection remains limited to objects with stored residual
 points.
+
+Phase 3G adds a Sky Queue view that plots case files with usable coordinates on
+Aladin Lite imagery while keeping missing positions explicit. Phase 3H adds a
+reduced-motion-aware motion system for route transitions, queue reveals, and
+initial chart cascades. Phase 3I adds detection playback, shared linked-zoom
+controls, and a sky survey toggle for Case Mode. Phase 3J adds a skippable cold
+open plus a first-visit reviewer hint and a clearer public demo reviewer path.
 
 ```bash
 cd frontend

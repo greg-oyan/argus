@@ -62,6 +62,17 @@ a {
   animation: argus-sky-pulse 900ms ease-out 1;
 }
 
+.argus-cold-open-starfield {
+  background:
+    radial-gradient(circle at 16% 22%, rgba(107, 183, 255, 0.22) 0 1px, transparent 2px),
+    radial-gradient(circle at 72% 18%, rgba(230, 238, 250, 0.18) 0 1px, transparent 2px),
+    radial-gradient(circle at 44% 68%, rgba(139, 208, 154, 0.14) 0 1px, transparent 2px),
+    radial-gradient(circle at 83% 74%, rgba(216, 168, 76, 0.16) 0 1px, transparent 2px),
+    linear-gradient(115deg, rgba(107, 183, 255, 0.08), transparent 42%),
+    #05070a;
+  background-size: 180px 180px, 230px 230px, 260px 260px, 310px 310px, 100% 100%, 100% 100%;
+}
+
 @keyframes argus-sky-pulse {
   0% {
     opacity: 0;

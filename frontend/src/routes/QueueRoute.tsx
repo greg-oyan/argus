@@ -8,6 +8,7 @@ import {
 } from "../lib/assessmentDisplay";
 import { exampleArtifactUrl } from "../lib/paths";
 import { QueueField } from "../components/queue/QueueField";
+import { QueueHintBar } from "../components/queue/QueueHintBar";
 import { QueueSkyView } from "../components/queue/QueueSkyView";
 import { useInvestigationStore } from "../stores/investigationStore";
 import type { Coordinates } from "../types/casefile";
@@ -288,6 +289,7 @@ export function QueueRoute({
     primary: (
       <div className="flex h-full min-h-0 flex-col">
         <QueueModeHeader caseDetails={caseDetails} entries={entries} />
+        <QueueHintBar />
         <div className="min-h-0 flex-1">
           {queueViewMode === "sky" ? (
             <QueueSkyView details={caseDetails} entries={entries} onOpenCase={onOpenCase} />

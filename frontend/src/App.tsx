@@ -1,8 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { ColdOpen, coldOpenWasSeen, markColdOpenSeen } from "./components/shell/ColdOpen";
 import { WorkstationFrame } from "./components/shell/WorkstationFrame";
 import { loadCasefileIndex } from "./lib/casefileIndex";
 import { loadCaseFileDetails } from "./lib/casefileLoader";
+import { shouldSkipIntro } from "./lib/presenterMode";
 import { useInvestigationStore } from "./stores/investigationStore";
 import type { CaseFileDetailMap, CasefileIndex } from "./types/casefile";
 import { CaseRoute } from "./routes/CaseRoute";
@@ -35,9 +37,17 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [route, setRoute] = useState<Route>(() => readRoute());
+  const [showColdOpen, setShowColdOpen] = useState(
+    () => !shouldSkipIntro() && !coldOpenWasSeen(),
+  );
   const selectedOid = useInvestigationStore((state) => state.selectedOid);
   const setSelectedOid = useInvestigationStore((state) => state.setSelectedOid);
   const reduceMotion = useReducedMotion();
+
+  const completeColdOpen = useCallback(() => {
+    markColdOpenSeen();
+    setShowColdOpen(false);
+  }, []);
 
   useEffect(() => {
     const handleHashChange = () => setRoute(readRoute());
@@ -95,6 +105,12 @@ export default function App() {
       setSelectedOid(route.oid);
     }
   }, [route, setSelectedOid]);
+
+  useEffect(() => {
+    if (reduceMotion && showColdOpen) {
+      completeColdOpen();
+    }
+  }, [completeColdOpen, reduceMotion, showColdOpen]);
 
   const renderedRoute = useMemo(() => {
     if (route.mode === "case") {
@@ -154,6 +170,10 @@ export default function App() {
       </motion.div>
     </AnimatePresence>
   );
+
+  if (showColdOpen && !reduceMotion) {
+    return <ColdOpen onComplete={completeColdOpen} />;
+  }
 
   return (
     <WorkstationFrame
