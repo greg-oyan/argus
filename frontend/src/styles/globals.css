@@ -124,7 +124,20 @@ a {
 #argus-sky-main .aladin-stack-control,
 #argus-sky-main .aladin-settings-control,
 #argus-sky-main .aladin-status-bar,
-#argus-sky-main .aladin-context-menu {
+#argus-sky-main .aladin-context-menu,
+.argus-cutout-host .aladin-logo-container,
+.argus-cutout-host .aladin-location,
+.argus-cutout-host .aladin-fov,
+.argus-cutout-host .aladin-reticle,
+.argus-cutout-host .aladin-zoomControl,
+.argus-cutout-host .aladin-frameChoice,
+.argus-cutout-host .aladin-projectionChoice,
+.argus-cutout-host .aladin-share-control,
+.argus-cutout-host .aladin-fullscreen-control,
+.argus-cutout-host .aladin-stack-control,
+.argus-cutout-host .aladin-settings-control,
+.argus-cutout-host .aladin-status-bar,
+.argus-cutout-host .aladin-context-menu {
   display: none !important;
 }
 

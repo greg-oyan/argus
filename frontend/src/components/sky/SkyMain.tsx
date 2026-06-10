@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { loadAladinLite } from "../../lib/aladin";
+import { initAladinHardened } from "../../lib/aladinInit";
 import { plainHeadline } from "../../lib/plainLanguage";
 import { staticDemoUrl } from "../../lib/paths";
 import { isPresenterMode, shouldSkipIntro } from "../../lib/presenterMode";
@@ -327,83 +327,37 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
       return undefined;
     }
 
-    let cancelled = false;
+    const signal = { cancelled: false };
     setStatus("loading");
     containerRef.current.innerHTML = "";
-
-    // Aladin Lite v3 reads container size synchronously at init and locks
-    // canvas dimensions to those values. If we call init while the container
-    // is still 0-height (layout not yet applied / React 19 + StrictMode
-    // ordering), the canvases end up 1px tall and the page renders as a
-    // black void regardless of which survey responds. Wait until the
-    // container has a real height (up to ~2s) before init.
-    const waitForContainerSize = (): Promise<HTMLDivElement | null> => {
-      return new Promise((resolve) => {
-        const start = performance.now();
-        const tick = () => {
-          if (cancelled) {
-            resolve(null);
-            return;
-          }
-          const node = containerRef.current;
-          if (node && node.clientHeight > 4 && node.clientWidth > 4) {
-            resolve(node);
-            return;
-          }
-          if (performance.now() - start > 2000) {
-            resolve(node ?? null);
-            return;
-          }
-          window.requestAnimationFrame(tick);
-        };
-        tick();
-      });
-    };
 
     // Stops the loading state from flashing too briefly to read.
     const minimumLoadingMs = 1500;
     // If we are still in loading after this, the external service didn't
     // deliver. Show the failure panel with a fallback object list.
     const failTimer = window.setTimeout(() => {
-      if (cancelled) return;
+      if (signal.cancelled) return;
       setStatus((current) => (current === "ready" ? current : "failed"));
     }, 12_000);
 
     const initStart = performance.now();
+    const container = containerRef.current;
 
-    Promise.all([loadAladinLite(), waitForContainerSize()])
-      .then(([A, node]) => {
-        if (cancelled) return;
-        if (!node || node.clientHeight <= 4) {
-          window.clearTimeout(failTimer);
-          setStatus("failed");
-          return;
-        }
-        const aladin = A.aladin("#argus-sky-main", {
-          survey: "P/DSS2/color",
-          target: `${frame.centerRa} ${frame.centerDec}`,
-          fov: frame.fov,
-          cooFrame: "equatorial",
-          // SIN renders a recognizable star field at our framed FoVs;
-          // AIT collapsed everything to a small ellipse on the dark canvas.
-          projection: "SIN",
-          showReticle: false,
-          showCooGrid: false,
-          showCooGridControl: false,
-          showSimbadPointerControl: false,
-          showFullscreenControl: false,
-          showLayersControl: false,
-          showGotoControl: false,
-          showShareControl: false,
-          // Aladin v3 also exposes these widget toggles separately; default
-          // values vary by build, so the inversion belongs on the caller.
-          showFrame: false,
-          showProjectionControl: false,
-          showZoomControl: false,
-          showSettingsControl: false,
-          showStatusBar: false,
-          showContextMenu: false,
-        });
+    initAladinHardened({
+      container,
+      signal,
+      options: {
+        survey: "P/DSS2/color",
+        target: `${frame.centerRa} ${frame.centerDec}`,
+        fov: frame.fov,
+        cooFrame: "equatorial",
+        // SIN renders a recognizable star field at our framed FoVs;
+        // AIT collapsed everything to a small ellipse on the dark canvas.
+        projection: "SIN",
+      },
+    })
+      .then(({ A, aladin }) => {
+        if (signal.cancelled) return;
         aladinRef.current = aladin;
         aladinGlobalRef.current = A;
 
@@ -507,20 +461,20 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
         const elapsed = performance.now() - initStart;
         const remaining = Math.max(0, minimumLoadingMs - elapsed);
         window.setTimeout(() => {
-          if (cancelled) return;
+          if (signal.cancelled) return;
           addCatalogsAndEvents();
           window.clearTimeout(failTimer);
           setStatus("ready");
         }, remaining);
       })
       .catch(() => {
-        if (cancelled) return;
+        if (signal.cancelled) return;
         window.clearTimeout(failTimer);
         setStatus("failed");
       });
 
     return () => {
-      cancelled = true;
+      signal.cancelled = true;
       window.clearTimeout(failTimer);
       aladinRef.current?.remove?.();
       aladinRef.current = null;

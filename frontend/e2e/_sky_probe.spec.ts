@@ -158,3 +158,91 @@ test("diagnose sky render", async ({ page }) => {
   console.log("Aladin DOM children:", JSON.stringify(chrome, null, 2));
   await page.screenshot({ path: "test-results/sky-probe.png", fullPage: false });
 });
+
+test("diagnose story cutout render", async ({ page }) => {
+  const consoleLines: string[] = [];
+  page.on("console", (msg) => {
+    const text = msg.text();
+    if (msg.type() === "error" || text.startsWith("ARGUS-PROBE-")) {
+      consoleLines.push(`[${msg.type()}] ${text}`);
+    }
+  });
+
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/workstation/?nointro=1#case/ZTF18abujsbq");
+  await page.waitForTimeout(10000);
+
+  const cutout = await page.evaluate(() => {
+    const host = document.querySelector(".argus-cutout-host");
+    if (!host) return { error: "no .argus-cutout-host" } as const;
+    const hostRect = host.getBoundingClientRect();
+    const canvases = Array.from(host.querySelectorAll("canvas"));
+    const results = canvases.map((canvas, index) => {
+      const ctx = canvas.getContext("2d");
+      const size = 30;
+      const cx = Math.max(0, Math.floor(canvas.width / 2 - size / 2));
+      const cy = Math.max(0, Math.floor(canvas.height / 2 - size / 2));
+      let nonBlack = 0;
+      let totalR = 0;
+      let totalG = 0;
+      let totalB = 0;
+      let n = 0;
+      if (!ctx) {
+        return {
+          index,
+          width: canvas.width,
+          height: canvas.height,
+          ctx2d: false,
+        };
+      }
+      try {
+        const data = ctx.getImageData(cx, cy, size, size).data;
+        for (let i = 0; i < data.length; i += 4) {
+          totalR += data[i];
+          totalG += data[i + 1];
+          totalB += data[i + 2];
+          n += 1;
+          if (data[i] > 12 || data[i + 1] > 12 || data[i + 2] > 12) nonBlack += 1;
+        }
+      } catch (e) {
+        return {
+          index,
+          width: canvas.width,
+          height: canvas.height,
+          ctx2d: true,
+          err: String(e),
+        };
+      }
+      const avg: [number, number, number] = n
+        ? [Math.round(totalR / n), Math.round(totalG / n), Math.round(totalB / n)]
+        : [0, 0, 0];
+      return {
+        index,
+        width: canvas.width,
+        height: canvas.height,
+        ctx2d: true,
+        nonBlack,
+        nonBlackPct: Math.round((nonBlack / Math.max(1, n)) * 100),
+        avg,
+      };
+    });
+    const chrome = Array.from(host.querySelectorAll<HTMLElement>("[class*='aladin-']"))
+      .filter((el) => {
+        const r = el.getBoundingClientRect();
+        return r.width > 4 && r.height > 4;
+      })
+      .map((el) => ({ tag: el.tagName.toLowerCase(), cls: el.className.slice(0, 60) }));
+    return {
+      hostWidth: Math.round(hostRect.width),
+      hostHeight: Math.round(hostRect.height),
+      canvases: results,
+      chrome,
+    } as const;
+  });
+
+  console.log("=== STORY CUTOUT PROBE ===");
+  console.log("Console errors:", consoleLines.length);
+  for (const line of consoleLines) console.log("  " + line);
+  console.log("Cutout:", JSON.stringify(cutout, null, 2));
+  await page.screenshot({ path: "test-results/cutout-probe.png", fullPage: false });
+});
