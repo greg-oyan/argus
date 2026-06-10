@@ -2,11 +2,10 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useInvestigationStore } from "../stores/investigationStore";
 import type { CaseFileDetail, CaseFileDetailMap, CasefileIndex, CasefileIndexEntry } from "../types/casefile";
-import { CaseCanvas } from "../components/case/CaseCanvas";
-import { CaseEvidenceColumn } from "../components/case/CaseEvidenceColumn";
 import { CaseErrorState } from "../components/case/CaseErrorState";
 import { CaseLoadingState } from "../components/case/CaseLoadingState";
 import { LightCurvePanel } from "../components/case/LightCurvePanel";
+import { StoryExpertExpander, type ExpertTab } from "../components/story/StoryExpertExpander";
 import { StorySkyCutout } from "../components/story/StorySkyCutout";
 import {
   activeLinkedPoint,
@@ -29,6 +28,7 @@ interface StoryRouteProps {
   caseDetails: CaseFileDetailMap;
   onBackToSky: () => void;
   onNavigateRelative: (delta: number) => void;
+  onOpenCase: (oid: string) => void;
 }
 
 function findEntry(
@@ -301,64 +301,15 @@ function StoryHero({
   );
 }
 
-function StoryExpertExpander({
-  entry,
-  detail,
-  onBackToQueue,
-}: {
-  entry: CasefileIndexEntry;
-  detail: CaseFileDetail | null | undefined;
-  onBackToQueue: () => void;
-}) {
-  const [open, setOpen] = useState(false);
-  return (
-    <section className="border-t border-workstation-line bg-workstation-bg px-4 py-10 sm:px-8 sm:py-12">
-      <div className="mx-auto max-w-6xl">
-        <div className="flex flex-wrap items-center justify-between gap-3 border border-workstation-line bg-workstation-panel/70 px-4 py-3">
-          <div>
-            <p className="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-workstation-muted">
-              For the technically curious
-            </p>
-            <p className="mt-1 text-sm text-white">
-              Full evidence panels — assessment, residuals, comparators, features,
-              narrative
-            </p>
-          </div>
-          <button
-            aria-expanded={open}
-            className="argus-focus-visible border border-workstation-accent/70 bg-workstation-accent/10 px-4 py-2 font-mono text-xs uppercase tracking-[0.18em] text-white hover:bg-workstation-accent/20"
-            data-testid="story-expert-toggle"
-            onClick={() => setOpen((value) => !value)}
-            type="button"
-          >
-            {open ? "Hide expert view" : "Open expert view"}
-          </button>
-        </div>
-        {open ? (
-          <div
-            className="mt-6 grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)]"
-            data-testid="story-expert-content"
-          >
-            <div className="min-h-[480px] border border-workstation-line bg-workstation-bg/40">
-              <CaseCanvas detail={detail} entry={entry} onBackToQueue={onBackToQueue} />
-            </div>
-            <div className="min-h-[480px] border border-workstation-line bg-workstation-panel/70">
-              <CaseEvidenceColumn detail={detail} entry={entry} />
-            </div>
-          </div>
-        ) : null}
-      </div>
-    </section>
-  );
-}
-
 export function StoryRoute({
   index,
   oid,
   caseDetails,
   onBackToSky,
   onNavigateRelative,
+  onOpenCase,
 }: StoryRouteProps) {
+  const [activeExpertTab, setActiveExpertTab] = useState<ExpertTab | null>(null);
   const entry = findEntry(index, oid);
   const hoveredPointId = useInvestigationStore((state) => state.hoveredPointId);
   const selectedPointId = useInvestigationStore((state) => state.selectedPointId);
@@ -383,6 +334,9 @@ export function StoryRoute({
 
   useEffect(() => {
     if (typeof window === "undefined") return undefined;
+    if (activeExpertTab === "queue") {
+      return undefined;
+    }
     const handler = (event: KeyboardEvent) => {
       const target = event.target;
       if (target instanceof HTMLElement) {
@@ -399,7 +353,7 @@ export function StoryRoute({
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [onNavigateRelative]);
+  }, [activeExpertTab, onNavigateRelative]);
 
   if (!entry) {
     return <StoryFallback onBackToSky={onBackToSky} />;
@@ -465,7 +419,15 @@ export function StoryRoute({
         residuals={residualPoints}
       />
       <ThreeQuestions detail={detail} entry={entry} />
-      <StoryExpertExpander detail={detail} entry={entry} onBackToQueue={onBackToSky} />
+      <StoryExpertExpander
+        caseDetails={caseDetails}
+        detail={detail}
+        entries={entries}
+        entry={entry}
+        onActiveTabChange={setActiveExpertTab}
+        onBackToQueue={onBackToSky}
+        onOpenCase={onOpenCase}
+      />
     </div>
   );
 }

@@ -163,6 +163,7 @@ export default function App() {
       oid={route.oid ?? selectedOid}
       onBackToSky={navigateToQueue}
       onNavigateRelative={navigateRelative}
+      onOpenCase={navigateToCase}
     />
   );
 }
