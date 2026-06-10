@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Argus Demo</title>
+  <title>About Argus</title>
   <style>
     :root {
       color-scheme: light;
@@ -17,9 +17,7 @@
       --chip: #eef4ff;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -30,7 +28,7 @@
     }
 
     main {
-      max-width: 1040px;
+      max-width: 880px;
       margin: 0 auto;
       padding: 48px 20px 56px;
     }
@@ -44,24 +42,14 @@
       margin: 0;
       font-size: clamp(2.4rem, 7vw, 5rem);
       line-height: 1;
-      letter-spacing: 0;
     }
 
     h2 {
       margin: 0 0 16px;
       font-size: 1.45rem;
-      letter-spacing: 0;
     }
 
-    h3 {
-      margin: 0 0 8px;
-      font-size: 1rem;
-      letter-spacing: 0;
-    }
-
-    p {
-      margin: 0 0 16px;
-    }
+    p { margin: 0 0 16px; }
 
     a {
       color: var(--accent-dark);
@@ -70,7 +58,7 @@
     }
 
     .lede {
-      max-width: 760px;
+      max-width: 720px;
       margin-top: 18px;
       font-size: 1.25rem;
       color: var(--muted);
@@ -81,37 +69,18 @@
       border-bottom: 1px solid var(--line);
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .visual-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px;
-    }
-
-    .panel {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 18px;
-    }
-
     .actions {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-      margin-top: 20px;
+      margin-top: 24px;
     }
 
     .button {
       display: inline-flex;
       align-items: center;
-      min-height: 42px;
-      padding: 10px 14px;
+      min-height: 44px;
+      padding: 10px 18px;
       border-radius: 8px;
       border: 1px solid var(--accent);
       background: var(--accent);
@@ -125,9 +94,12 @@
       color: var(--accent-dark);
     }
 
-    figure {
-      margin: 0;
+    .button.large {
+      font-size: 1.1rem;
+      padding: 12px 22px;
     }
+
+    figure { margin: 0; }
 
     img {
       display: block;
@@ -144,36 +116,18 @@
       font-size: 0.95rem;
     }
 
-    .flow {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      padding: 0;
-      margin: 0;
-      list-style: none;
-    }
-
-    .flow li {
-      padding: 8px 10px;
-      border-radius: 999px;
-      background: var(--chip);
-      color: #24476f;
-      font-size: 0.92rem;
-      font-weight: 650;
-    }
-
     .plain-list {
       margin: 0;
       padding-left: 20px;
     }
 
-    .plain-list li {
-      margin: 6px 0;
-    }
+    .plain-list li { margin: 6px 0; }
 
     .caveat {
       background: #fff8e8;
-      border-color: #ead18f;
+      border: 1px solid #ead18f;
+      border-radius: 8px;
+      padding: 18px;
     }
 
     footer {
@@ -183,26 +137,9 @@
     }
 
     @media (max-width: 760px) {
-      main {
-        padding: 28px 16px 40px;
-      }
-
-      header {
-        padding-top: 32px;
-      }
-
-      .grid {
-        grid-template-columns: 1fr;
-      }
-
-      .visual-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .button {
-        width: 100%;
-        justify-content: center;
-      }
+      main { padding: 28px 16px 40px; }
+      header { padding-top: 32px; }
+      .button { width: 100%; justify-content: center; }
     }
   </style>
 </head>
@@ -210,131 +147,64 @@
   <main>
     <header>
       <h1>Argus</h1>
-      <p class="lede">A case-file-first system for finding astronomical objects worth human attention.</p>
-      <p>Argus turns real ZTF/ALeRCE light-curve data into readable evidence packages. It preserves broker classifications as metadata, runs cautious comparison layers, and explains what the evidence can and cannot support.</p>
+      <p class="lede">A small review aid that watches public sky-survey data for objects worth a closer human look — and shows its work.</p>
       <div class="actions" aria-label="Primary links">
-        <a class="button" href="workstation/">Open analyst workstation</a>
-        <a class="button" href="examples/index.html">Open review-prioritized queue</a>
-        <a class="button" href="examples/ZTF18abujsbq/ZTF18abujsbq.casefile.html">Open representative case</a>
-        <a class="button secondary" href="examples/ZTF18abujsbq/ZTF18abujsbq.casefile.md">Read Markdown</a>
-        <a class="button secondary" href="examples/ZTF18abujsbq/ZTF18abujsbq.casefile.json">View JSON</a>
+        <a class="button large" href="workstation/">Open the sky →</a>
         <a class="button secondary" href="https://github.com/greg-oyan/argus">GitHub repo</a>
       </div>
     </header>
 
+    <section class="section" aria-labelledby="what-is-argus">
+      <h2 id="what-is-argus">What Argus is</h2>
+      <p>Argus pulls light-curve data on astronomical objects from the public ZTF survey (via the ALeRCE broker) and runs a few simple comparison checks on each one. When the simple checks don't fit cleanly, the object is queued for a human reviewer.</p>
+      <p>The thing Argus produces is not a score, and not a classification. It's a small <em>case file</em> for each flagged object: observed brightness over time, where simple models match and where they don't, recommended next checks, and the uncertainty and caveats around all of it.</p>
+      <p>The web app is just a way to read those case files. The sky view is the entry point; a story view shows one object at a time in plain language; an Expert view exposes the full evidence panels for anyone who wants the precise terms and numbers.</p>
+    </section>
+
     <section class="section" aria-labelledby="visual-summary">
-      <h2 id="visual-summary">Representative Case: ZTF18abujsbq</h2>
-      <div class="visual-grid">
-        <figure>
-          <img src="examples/ZTF18abujsbq/ZTF18abujsbq.lightcurve.png" alt="Observed ZTF light curve for ZTF18abujsbq">
-          <figcaption>Observed light-curve figure from one case in the public review queue.</figcaption>
-        </figure>
-        <figure>
-          <img src="examples/ZTF18abujsbq/ZTF18abujsbq.residuals.png" alt="Gaussian comparator residuals for ZTF18abujsbq">
-          <figcaption>Gaussian comparator residuals show where the simple bump model under- or over-predicts observed magnitudes.</figcaption>
-        </figure>
-      </div>
+      <h2 id="visual-summary">A look</h2>
+      <figure>
+        <img alt="Argus sky view — full-screen Aladin sky with the overlay sentence" src="media/workstation-sky.png">
+        <figcaption>The sky view is the entry point. The first-visit sentence fades after a moment.</figcaption>
+      </figure>
+      <figure style="margin-top: 18px;">
+        <img alt="Argus story view — one flagged object in plain language" src="media/workstation-story.png">
+        <figcaption>The story view explains one flagged object in plain English, with brightness over time as the hero.</figcaption>
+      </figure>
     </section>
 
-    <section class="section" aria-labelledby="example-demonstrates">
-      <h2 id="example-demonstrates">What The Example Shows</h2>
-      <div class="grid">
-        <article class="panel">
-          <h3>Evidence Narrative</h3>
-          <p>A short, readable synthesis of the separate evidence layers and their limits.</p>
-        </article>
-        <article class="panel">
-          <h3>Descriptive Features</h3>
-          <p>Standard light-curve summary values that support comparison across objects.</p>
-        </article>
-        <article class="panel">
-          <h3>Comparators</h3>
-          <p>Phenomenological checks that make simple model fit and model failure easier to inspect.</p>
-        </article>
-        <article class="panel">
-          <h3>Optional Context</h3>
-          <p>Catalog context is handled as external metadata and is kept separate from Argus conclusions.</p>
-        </article>
-        <article class="panel">
-          <h3>Uncertainty</h3>
-          <p>The case file records caveats, sparse-context limits, and recommended next checks.</p>
-        </article>
-        <article class="panel">
-          <h3>Portable Exports</h3>
-          <p>The same case can be inspected as JSON, Markdown, HTML, and static figures.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="review-index">
-      <h2 id="review-index">Review Index</h2>
-      <p>The public demo now includes a small multi-object case-file index: a compact static review queue of objects prepared for inspection. It sorts existing case files with a transparent review-priority heuristic, includes the deterministic evidence triage summary, summarizes evidence status, and links to the available artifacts.</p>
-      <p><a href="examples/index.html">Open the review-prioritized case-file index</a></p>
-    </section>
-
-    <section class="section" aria-labelledby="reviewer-path">
-      <h2 id="reviewer-path">Demo Reviewer Path</h2>
-      <p>The live analyst workstation is hosted at <a href="https://greg-oyan.github.io/argus/workstation/">https://greg-oyan.github.io/argus/workstation/</a>. The steps below assume the public demo on GitHub Pages or a local copy of this <code>docs/</code> folder.</p>
+    <section class="section" aria-labelledby="guided-tour">
+      <h2 id="guided-tour">Guided tour</h2>
       <ol class="plain-list">
-        <li>Open the review-prioritized case-file index to see the prepared public examples.</li>
-        <li>Enter the analyst workstation and scan Queue Mode as an evidence field, not a ranked detector feed.</li>
-        <li>Select one object and compare its glyph, review-priority reasons, and evidence triage summary.</li>
-        <li>Open Case Mode to inspect linked observed points, Gaussian residuals when present, evidence text, and sky context.</li>
-        <li>Open the static HTML or Markdown case file when you need a portable report.</li>
-        <li>Inspect the JSON when you want to see the exact case-file fields behind the public artifacts.</li>
+        <li>Open the workstation at <a href="https://greg-oyan.github.io/argus/workstation/">greg-oyan.github.io/argus/workstation/</a>. You arrive inside a sky view with flagged objects marked.</li>
+        <li>Click a marker. The view flies in and opens that object's story page.</li>
+        <li>Read the three plain-English questions: <em>what is this</em>, <em>why was it flagged</em>, <em>what would an astronomer check next</em>. All three are derived from the case-file JSON; nothing is invented.</li>
+        <li>If you want the technical layer, open the Expert view. It contains the full evidence panels (assessment, residuals, comparators, features, narrative, sky context, next checks), the priority-ordered queue table, and a short glossary.</li>
+        <li>If you'd rather read static reports, every case has portable HTML, Markdown, and JSON exports — links live under <a href="examples/index.html">the public review queue</a>.</li>
       </ol>
     </section>
 
-    <section class="section" aria-labelledby="workstation">
-      <h2 id="workstation">Analyst Workstation</h2>
-      <p>The static workstation prototype turns the same public case-file artifacts into a dark linked-view inspection surface. Queue Mode shows visual glyphs, and Case Mode links light-curve, residual, assessment, evidence, and sky-context panels for one selected object.</p>
-      <p><a href="workstation/">Open the analyst workstation</a></p>
-    </section>
-
-    <section class="section" aria-labelledby="scientific-honesty">
-      <h2 id="scientific-honesty">Scientific Honesty</h2>
-      <p>Review priority is a queue sorting heuristic: it orders the review queue for inspection and is not a model result or object-identity claim. The <code>anomaly_assessment</code> field is an evidence triage summary inside a case file; it summarizes available signals for review and is not an object-identity claim.</p>
-      <p>Missing catalog context, unavailable optional dependencies, and sparse coverage are limitations to inspect, not evidence of object identity. Argus keeps observed facts, external metadata, comparator output, uncertainty, and next checks separate.</p>
-    </section>
-
-    <section class="section" aria-labelledby="architecture-snapshot">
-      <h2 id="architecture-snapshot">Architecture Snapshot</h2>
-      <ul class="flow" aria-label="Argus pipeline steps">
-        <li>Ingestion</li>
-        <li>Preprocessing</li>
-        <li>Case file</li>
-        <li>Comparators</li>
-        <li>Features</li>
-        <li>Context</li>
-        <li>Evidence narrative</li>
-        <li>Exports</li>
-      </ul>
-    </section>
-
-    <section class="section" aria-labelledby="links">
-      <h2 id="links">Review Queue Links</h2>
-      <ul class="plain-list">
-        <li><a href="examples/index.html">Open the review-prioritized case-file index</a></li>
-        <li><a href="workstation/">Open the analyst workstation prototype</a></li>
-        <li><a href="examples/index.json">Inspect the structured index JSON</a></li>
-        <li><a href="examples/ZTF18abujsbq/ZTF18abujsbq.casefile.html">Open the browser-readable case file</a></li>
-        <li><a href="examples/ZTF18abujsbq/ZTF18abujsbq.casefile.md">Read the Markdown case file</a></li>
-        <li><a href="examples/ZTF18abujsbq/ZTF18abujsbq.casefile.json">Inspect the structured JSON case file</a></li>
-        <li><a href="examples/ZTF18abujsbq/ZTF18abujsbq.lightcurve.png">Open the light-curve PNG</a></li>
-        <li><a href="examples/ZTF18abujsbq/ZTF18abujsbq.residuals.png">Open the Gaussian residual PNG</a></li>
-        <li><a href="https://github.com/greg-oyan/argus">View the GitHub repository</a></li>
-      </ul>
-    </section>
-
-    <section class="section" aria-labelledby="caveat">
-      <div class="panel caveat">
-        <h2 id="caveat">Caveat</h2>
-        <p>Argus is a case-file-first astronomy system, not another classifier. These examples do not decide any object's physical identity or assert a final finding. They organize evidence for further review.</p>
+    <section class="section" aria-labelledby="honest-boundaries">
+      <h2 id="honest-boundaries">Honest boundaries</h2>
+      <div class="caveat">
+        <p>Argus is a case-file-first astronomy review aid, not another classifier. These examples do not decide any object's physical identity or assert a final finding. They organize evidence for further review.</p>
+        <p>Broker labels and catalog matches are metadata, not conclusions. Review priority is a queue sorting heuristic, not a model result. The <code>anomaly_assessment</code> field is an evidence triage summary inside a case file, not an object-identity claim.</p>
       </div>
     </section>
 
+    <section class="section" aria-labelledby="links">
+      <h2 id="links">Links</h2>
+      <ul class="plain-list">
+        <li><a href="workstation/">Open the sky</a> (the analyst workstation)</li>
+        <li><a href="examples/index.html">Public review-prioritized case-file index</a></li>
+        <li><a href="examples/ZTF18abujsbq/ZTF18abujsbq.casefile.html">A representative static case-file report</a></li>
+        <li><a href="examples/index.json">The structured index JSON</a></li>
+        <li><a href="https://github.com/greg-oyan/argus">Source on GitHub</a></li>
+      </ul>
+    </section>
+
     <footer>
-      <p>This static page has no build step, external stylesheets, external fonts, or JavaScript. It can be opened from disk or served from the repository's <code>docs/</code> folder with GitHub Pages.</p>
+      <p>This About page has no build step, external stylesheets, external fonts, or JavaScript. It can be opened from disk or served from the repository's <code>docs/</code> folder with GitHub Pages.</p>
     </footer>
   </main>
 </body>

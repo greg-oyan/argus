@@ -2,21 +2,21 @@
 
 Argus is now a public, case-file-first astronomy review aid.
 
-- Public demo: <https://greg-oyan.github.io/argus/>
-- Analyst workstation: <https://greg-oyan.github.io/argus/workstation/>
+- Live workstation: <https://greg-oyan.github.io/argus/workstation/>
+- About: <https://greg-oyan.github.io/argus/>
 
+You arrive *inside* the visualization. The workstation root is a full-screen
+sky view; the objects Argus flagged sit on it as glowing priority-encoded
+markers. Click one and the view flies in and opens that object's story page —
+a single vertical layout that explains the case in plain English, with the
+brightness-over-time light curve as the hero and three questions answered from
+the case-file JSON: *what is this*, *why was it flagged*, *what would an
+astronomer check next*.
 
-The project turns local ZTF/ALeRCE light-curve data into inspectable evidence
-packages: structured JSON, static HTML and Markdown reports, light-curve and
-residual figures, a review-prioritized index, and a browser-based analyst
-workstation served from static GitHub Pages assets.
-
-The workstation is designed for triage rather than verdicts. Queue Mode shows a
-visual field of case-file glyphs, including review priority, filters, behavior
-texture, residual structure, and missing evidence. Case Mode links observed
-points, Gaussian residuals, evidence text, deterministic evidence triage, and
-external sky context when available. The same evidence remains accessible in the
-portable static reports and JSON artifacts.
+The technical evidence didn't disappear. It moved one click away, into an
+"Expert view" expander that contains the full evidence panels (assessment,
+residuals, comparators, features, narrative, sky context), the
+priority-ordered queue table, and a short glossary for the precise terms.
 
 Argus keeps its boundaries visible. Broker labels and catalog matches are
 metadata, not conclusions. Review priority is a queue sorting heuristic, not a

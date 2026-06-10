@@ -2,11 +2,11 @@
 
 [![Tests](https://github.com/greg-oyan/argus/actions/workflows/tests.yml/badge.svg)](https://github.com/greg-oyan/argus/actions/workflows/tests.yml)
 
-**Live demo:** [greg-oyan.github.io/argus](https://greg-oyan.github.io/argus/) · analyst workstation at [greg-oyan.github.io/argus/workstation/](https://greg-oyan.github.io/argus/workstation/).
+**Live demo:** [greg-oyan.github.io/argus/workstation/](https://greg-oyan.github.io/argus/workstation/) · about: [greg-oyan.github.io/argus/](https://greg-oyan.github.io/argus/).
 
-A small system that watches the sky for novel astronomical patterns that current
-transient pipelines miss. The current product spine is a readable, inspectable
-case-file evidence package for one object at a time — not another classifier.
+A small review aid that watches public sky-survey data for objects whose
+brightness doesn't match the simple models astronomers usually try first — and
+shows its work. Not a classifier; a case-file builder for human review.
 
 **Status: Phase 1 ingestion + Phase 2a preprocessing + Phase 2B case-file foundation + Phase 2C first fitted comparator + Phase 2D descriptive variability comparator + Phase 2E comparison summary + Phase 2F standardized feature extraction + Phase 2G conservative sncosmo probe + Phase 2H optional cross-survey context + Phase 2I evidence narrative + Phase 2J Markdown export + Phase 2K static figures + Phase 2L static HTML export + Phase 2M public example bundle + Phase 2N GitHub Pages demo page + Phase 2O Gaussian residual plots + Phase 2P static case-file index + Phase 2Q batch case-file generation + Phase 2S multi-object public demo + Phase 2T GitHub Actions CI + Phase 2U CI documentation polish + Phase 2V review-priority index heuristic + Phase 3A analyst-workstation shell + Phase 3B visual queue glyph field + Phase 3C linked Case Mode charts + Phase 3D linked evidence panels + Phase 3E Aladin Lite sky context + Phase 3F workstation polish + Phase 3G sky queue view + Phase 3H workstation motion + Phase 3I temporal playback and sky controls + Phase 3J cold open and reviewer path + Phase 3K credibility packaging complete.**
 
@@ -47,19 +47,20 @@ index lives at [`docs/examples/index.html`](docs/examples/index.html).
 
 ## 90-Second Tour
 
-![Argus workstation preview](docs/media/social-preview.png)
+![Argus sky view — overlay sentence over an Aladin sky canvas](docs/media/social-preview.png)
 
-1. Open the static demo page from `docs/index.html` or GitHub Pages at
-   [greg-oyan.github.io/argus](https://greg-oyan.github.io/argus/).
-2. Open the review-prioritized queue to see generated case files prepared for
-   inspection.
-3. Launch the analyst workstation at
-   [greg-oyan.github.io/argus/workstation/](https://greg-oyan.github.io/argus/workstation/)
-   and scan Queue Mode as an evidence field.
-4. Select a case and use Case Mode to inspect linked observations, residuals
-   when present, evidence text, evidence triage, and external sky context.
-5. Open the HTML/Markdown/JSON artifacts when you need a portable case-file
-   report.
+1. Open [the workstation](https://greg-oyan.github.io/argus/workstation/).
+   You arrive *inside* a full-screen sky view with flagged objects marked.
+2. Click a marker. The view flies in and the object's story page opens.
+3. Read the three plain-English questions: *what is this*, *why was it
+   flagged*, *what would an astronomer check next*. Every word is derived
+   from existing case-file JSON — Argus never invents claims.
+4. Open the Expert view at the bottom for the full evidence panels
+   (assessment, residuals, comparators, features, narrative, sky context),
+   the priority-ordered queue table, and a short glossary.
+5. If you'd rather read static reports, every case has portable HTML,
+   Markdown, and JSON exports linked from the
+   [public review queue](https://greg-oyan.github.io/argus/examples/index.html).
 
 Review priority orders the queue for inspection. The `anomaly_assessment` block
 is evidence triage inside a case file. Neither is an object-identity claim.
@@ -77,10 +78,12 @@ The workstation reads the existing public case-file index from
 not change the Python pipeline, recompute case-file evidence, or add new
 science logic.
 
-![Argus workstation queue field](docs/media/workstation-queue-field.png)
+![Argus story view — one flagged object in plain English](docs/media/workstation-story.png)
 
-Additional presentation screenshots live under [`docs/media/`](docs/media/):
-Queue Field, Sky Queue, Case Mode, and a 1280x640 social preview image.
+Additional screenshots live under [`docs/media/`](docs/media/): the sky view
+(`workstation-sky.png`), the story view (`workstation-story.png`), the Expert
+view with evidence panels open (`workstation-expert.png`), and a 1280x640
+social preview image (`social-preview.png`).
 
 Phase 3A established the dark analyst shell, Queue Mode / Case Mode route
 scaffold, shared investigation state, and static index loading. Phase 3B
