@@ -347,47 +347,69 @@ export function LightCurvePanel({
 
   return (
     <section
-      className={`argus-panel flex min-h-[300px] flex-col ${
-        isComparatorFocused ? "argus-panel-focus" : ""
-      }`}
+      className={`argus-panel flex flex-col ${
+        storyMode ? "min-h-[420px] sm:min-h-[480px]" : "min-h-[300px]"
+      } ${isComparatorFocused ? "argus-panel-focus" : ""}`}
       data-testid="light-curve-panel"
     >
-      <div className="argus-panel-header flex items-center justify-between gap-3">
-        <h2 className="argus-panel-title">
-          {storyMode ? "Brightness over time" : "Observed Light Curve"}
-        </h2>
-        <div className="flex flex-wrap items-center justify-end gap-2">
-          {!storyMode ? (
-            <p className="font-mono text-xs text-workstation-muted">
-              {activePoint
-                ? `linked MJD ${activePoint.mjd.toFixed(3)}`
-                : playbackMjd == null
-                  ? hasResidualField
-                    ? `${oid} r-band residual source`
-                    : `${oid} observed detections`
-                  : `revealed through MJD ${formatMjd(playbackMjd)}`}
+      <div
+        className={
+          storyMode
+            ? "border-b border-workstation-line px-4 py-4 sm:px-6 sm:py-5"
+            : "argus-panel-header flex items-center justify-between gap-3"
+        }
+      >
+        {storyMode ? (
+          <>
+            <h2 className="text-lg font-semibold text-white sm:text-xl">
+              Brightness over time
+            </h2>
+            <p className="mt-1 text-sm leading-6 text-workstation-muted">
+              Each dot is one brightness measurement. Press play to watch the
+              observations arrive over time.
             </p>
-          ) : null}
-          {!storyMode ? (
-            <button
-              className={`argus-state-pill ${linkedZoomEnabled ? "argus-state-pill-active" : ""}`}
-              onClick={() => {
-                setLinkedZoomEnabled(!linkedZoomEnabled);
-                if (linkedZoomEnabled) {
-                  setSelectedTimeRange(null);
-                }
-              }}
-              type="button"
-            >
-              linked {linkedZoomEnabled ? "on" : "off"}
-            </button>
-          ) : null}
-        </div>
+          </>
+        ) : (
+          <>
+            <h2 className="argus-panel-title">Observed Light Curve</h2>
+            <div className="flex flex-wrap items-center justify-end gap-2">
+              <p className="font-mono text-xs text-workstation-muted">
+                {activePoint
+                  ? `linked MJD ${activePoint.mjd.toFixed(3)}`
+                  : playbackMjd == null
+                    ? hasResidualField
+                      ? `${oid} r-band residual source`
+                      : `${oid} observed detections`
+                    : `revealed through MJD ${formatMjd(playbackMjd)}`}
+              </p>
+              <button
+                className={`argus-state-pill ${linkedZoomEnabled ? "argus-state-pill-active" : ""}`}
+                onClick={() => {
+                  setLinkedZoomEnabled(!linkedZoomEnabled);
+                  if (linkedZoomEnabled) {
+                    setSelectedTimeRange(null);
+                  }
+                }}
+                type="button"
+              >
+                linked {linkedZoomEnabled ? "on" : "off"}
+              </button>
+            </div>
+          </>
+        )}
       </div>
       {bounds ? (
-        <div className="flex flex-wrap items-center gap-3 border-b border-workstation-line px-3 py-2">
+        <div
+          className={`flex flex-wrap items-center gap-3 border-b border-workstation-line ${
+            storyMode ? "px-4 py-3 sm:px-6 sm:py-4" : "px-3 py-2"
+          }`}
+        >
           <button
-            className="argus-state-pill argus-focus-visible hover:border-workstation-accent/70 hover:text-workstation-text"
+            className={
+              storyMode
+                ? "argus-focus-visible inline-flex min-h-[44px] items-center gap-2 border border-workstation-accent bg-workstation-accent/15 px-4 py-2 text-sm font-semibold text-white hover:bg-workstation-accent/25"
+                : "argus-state-pill argus-focus-visible hover:border-workstation-accent/70 hover:text-workstation-text"
+            }
             onClick={() => {
               if (reduceMotion) {
                 setPlaybackMjd(bounds.max);

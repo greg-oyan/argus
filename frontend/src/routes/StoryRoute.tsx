@@ -153,16 +153,18 @@ function StoryHeader({ entry }: { entry: CasefileIndexEntry }) {
   const headline = plainHeadline(entry);
   const reviewLevel = plainReviewLevel(entry.review_priority);
   return (
-    <header className="border-b border-workstation-line bg-workstation-bg px-4 py-8 sm:px-8 sm:py-10">
+    <header className="bg-workstation-bg px-4 pb-10 pt-12 sm:px-8 sm:pb-14 sm:pt-16">
       <div className="mx-auto max-w-3xl">
-        <p className="font-mono text-xs uppercase tracking-[0.18em] text-workstation-muted">
+        <p className="font-mono text-xs uppercase tracking-[0.22em] text-workstation-accent">
+          {entry.oid}
+        </p>
+        <h1 className="mt-4 text-3xl font-semibold leading-tight text-white sm:text-4xl sm:leading-[1.15]">
+          {headline}
+        </h1>
+        <p className="mt-3 font-mono text-xs uppercase tracking-[0.18em] text-workstation-muted">
           {reviewLevel}
         </p>
-        <h1 className="mt-3 font-mono text-2xl text-white sm:text-3xl">{entry.oid}</h1>
-        <p className="mt-3 text-lg leading-8 text-workstation-text sm:text-xl sm:leading-9">
-          {headline}
-        </p>
-        <div className="mt-4">
+        <div className="mt-6">
           <WhatAmILookingAtPopover />
         </div>
       </div>
@@ -244,8 +246,8 @@ function ThreeQuestions({
   ];
 
   return (
-    <section className="bg-workstation-bg px-4 py-10 sm:px-8 sm:py-12">
-      <div className="mx-auto max-w-3xl space-y-10">
+    <section className="bg-workstation-bg px-4 py-14 sm:px-8 sm:py-20">
+      <div className="mx-auto max-w-3xl space-y-14 sm:space-y-16">
         {blocks.map((block, index) => (
           <motion.div
             animate={{ opacity: 1, y: 0 }}
@@ -257,8 +259,13 @@ function ThreeQuestions({
                 : { delay: 0.05 + index * 0.06, duration: 0.28, ease: [0.16, 1, 0.3, 1] as const }
             }
           >
-            <h2 className="text-lg font-semibold text-white sm:text-xl">{block.title}</h2>
-            <div className="mt-3 text-base leading-7 text-workstation-text">{block.body}</div>
+            <p className="font-mono text-3xl font-light leading-none text-workstation-accent/45 sm:text-4xl">
+              {String(index + 1).padStart(2, "0")}
+            </p>
+            <h2 className="mt-3 text-xl font-semibold text-white sm:text-2xl">
+              {block.title}
+            </h2>
+            <div className="mt-5 text-[17px] leading-[1.7] text-white">{block.body}</div>
           </motion.div>
         ))}
       </div>
@@ -281,23 +288,15 @@ function StoryHero({
 }) {
   void detail;
   return (
-    <section className="bg-workstation-bg px-4 py-8 sm:px-8 sm:py-10">
-      <div className="mx-auto max-w-4xl">
-        <div className="min-h-[360px] border border-workstation-line bg-workstation-panel/70">
-          <LightCurvePanel
-            activePoint={activeLightCurvePoint}
-            hasResidualField={residuals.length > 0}
-            oid={entry.oid}
-            points={lightCurvePoints}
-            storyMode
-          />
-        </div>
-        <p className="mt-3 text-xs leading-5 text-workstation-muted">
-          Each dot is one brightness measurement. Press play to watch the observations
-          arrive over time.
-        </p>
-      </div>
-    </section>
+    <div className="mx-auto max-w-4xl px-4 pb-14 sm:px-8 sm:pb-20">
+      <LightCurvePanel
+        activePoint={activeLightCurvePoint}
+        hasResidualField={residuals.length > 0}
+        oid={entry.oid}
+        points={lightCurvePoints}
+        storyMode
+      />
+    </div>
   );
 }
 
@@ -310,6 +309,7 @@ export function StoryRoute({
   onOpenCase,
 }: StoryRouteProps) {
   const [activeExpertTab, setActiveExpertTab] = useState<ExpertTab | null>(null);
+  const reduceMotion = useReducedMotion();
   const entry = findEntry(index, oid);
   const hoveredPointId = useInvestigationStore((state) => state.hoveredPointId);
   const selectedPointId = useInvestigationStore((state) => state.selectedPointId);
@@ -396,7 +396,13 @@ export function StoryRoute({
   }
 
   return (
-    <div className="min-h-screen bg-workstation-bg" data-testid="story-root">
+    <motion.div
+      animate={{ opacity: 1 }}
+      className="min-h-screen bg-workstation-bg"
+      data-testid="story-root"
+      initial={reduceMotion ? false : { opacity: 0 }}
+      transition={reduceMotion ? { duration: 0 } : { duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+    >
       <StoryNav
         hasNext={hasNext}
         hasPrev={hasPrev}
@@ -406,18 +412,23 @@ export function StoryRoute({
         onPrev={() => onNavigateRelative(-1)}
       />
       <StoryHeader entry={entry} />
-      <section className="bg-workstation-bg px-4 py-8 sm:px-8 sm:py-10">
-        <div className="mx-auto max-w-4xl">
-          <StorySkyCutout detail={detail} />
-        </div>
-      </section>
-      <StoryHero
-        activeLightCurvePoint={activeLightCurvePoint}
-        detail={detail}
-        entry={entry}
-        lightCurvePoints={lightCurvePoints}
-        residuals={residualPoints}
-      />
+      <div className="border-y border-workstation-line bg-workstation-panel/40">
+        <section className="px-4 pb-6 pt-10 sm:px-8 sm:pb-8 sm:pt-14">
+          <div className="mx-auto max-w-4xl">
+            <StorySkyCutout detail={detail} />
+            <p className="mt-3 text-sm leading-6 text-workstation-muted">
+              The region of sky around this object.
+            </p>
+          </div>
+        </section>
+        <StoryHero
+          activeLightCurvePoint={activeLightCurvePoint}
+          detail={detail}
+          entry={entry}
+          lightCurvePoints={lightCurvePoints}
+          residuals={residualPoints}
+        />
+      </div>
       <ThreeQuestions detail={detail} entry={entry} />
       <StoryExpertExpander
         caseDetails={caseDetails}
@@ -428,6 +439,6 @@ export function StoryRoute({
         onBackToQueue={onBackToSky}
         onOpenCase={onOpenCase}
       />
-    </div>
+    </motion.div>
   );
 }
