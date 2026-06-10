@@ -21,6 +21,8 @@ import {
   whatIsThisAnswer,
   whyFlaggedAnswer,
 } from "../lib/plainLanguage";
+import { isPresenterMode } from "../lib/presenterMode";
+import { useTourStore } from "../lib/tour";
 
 interface StoryRouteProps {
   index: CasefileIndex | null;
@@ -287,8 +289,13 @@ function StoryHero({
   activeLightCurvePoint: LinkedLightCurvePoint | null;
 }) {
   void detail;
+  const reduceMotion = useReducedMotion();
+  const tourStep = useTourStore((state) => state.step);
+  const setTourStep = useTourStore((state) => state.setStep);
+  const presenter = isPresenterMode();
+  const showTourStep3 = !presenter && tourStep === "3";
   return (
-    <div className="mx-auto max-w-4xl px-4 pb-14 pt-10 sm:px-8 sm:pb-20 sm:pt-14">
+    <div className="relative mx-auto max-w-4xl px-4 pb-14 pt-10 sm:px-8 sm:pb-20 sm:pt-14">
       <LightCurvePanel
         activePoint={activeLightCurvePoint}
         hasResidualField={residuals.length > 0}
@@ -296,6 +303,35 @@ function StoryHero({
         points={lightCurvePoints}
         storyMode
       />
+      {showTourStep3 ? (
+        <motion.div
+          animate={{ opacity: 1, y: 0 }}
+          aria-label="Step 3 of 3"
+          className="pointer-events-auto absolute left-4 right-4 top-32 z-30 mx-auto max-w-xs border border-workstation-accent/70 bg-workstation-panel/95 p-5 shadow-lg backdrop-blur sm:left-12 sm:right-auto"
+          exit={reduceMotion ? { opacity: 0 } : { opacity: 0, transition: { duration: 0.2 } }}
+          initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+          role="dialog"
+          transition={reduceMotion ? { duration: 0 } : { duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <p className="font-mono text-[0.62rem] uppercase tracking-[0.22em] text-workstation-muted">
+            3 of 3
+          </p>
+          <p className="mt-3 text-base leading-7 text-white">
+            Press play to watch its brightness change over time — the pattern is why
+            Argus flagged it.
+          </p>
+          <div className="mt-5 flex items-center justify-end">
+            <button
+              autoFocus
+              className="argus-focus-visible border border-workstation-accent bg-workstation-accent/15 px-5 py-2 font-mono text-xs uppercase tracking-[0.22em] text-white hover:bg-workstation-accent/25"
+              onClick={() => setTourStep("done")}
+              type="button"
+            >
+              Got it
+            </button>
+          </div>
+        </motion.div>
+      ) : null}
     </div>
   );
 }
@@ -310,6 +346,34 @@ export function StoryRoute({
 }: StoryRouteProps) {
   const [activeExpertTab, setActiveExpertTab] = useState<ExpertTab | null>(null);
   const reduceMotion = useReducedMotion();
+  const tourStep = useTourStore((state) => state.step);
+  const setTourStep = useTourStore((state) => state.setStep);
+  // The sky arms the tour on first marker open; the story view advances it
+  // to the visible step 3 once the case is loaded.
+  useEffect(() => {
+    if (tourStep === "armed" && !isPresenterMode()) {
+      setTourStep("3");
+    }
+  }, [tourStep, setTourStep]);
+  // Esc dismisses the tour from step 3; Enter "Got it"s.
+  useEffect(() => {
+    if (tourStep !== "3") return undefined;
+    const handler = (event: KeyboardEvent) => {
+      const target = event.target;
+      if (target instanceof HTMLElement) {
+        const tag = target.tagName;
+        if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || target.isContentEditable) {
+          return;
+        }
+      }
+      if (event.key === "Escape" || event.key === "Enter") {
+        event.preventDefault();
+        setTourStep("done");
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [tourStep, setTourStep]);
   const entry = findEntry(index, oid);
   const hoveredPointId = useInvestigationStore((state) => state.hoveredPointId);
   const selectedPointId = useInvestigationStore((state) => state.selectedPointId);

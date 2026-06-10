@@ -5,6 +5,7 @@ import { plainHeadline } from "../../lib/plainLanguage";
 import { staticDemoUrl } from "../../lib/paths";
 import { isPresenterMode, shouldSkipIntro } from "../../lib/presenterMode";
 import { useInvestigationStore } from "../../stores/investigationStore";
+import { useTourStore } from "../../lib/tour";
 import type {
   CaseFileDetailMap,
   CasefileIndex,
@@ -200,14 +201,6 @@ function overlayWasDismissed(): boolean {
   }
 }
 
-function markOverlayDismissed(): void {
-  try {
-    sessionStorage.setItem(OVERLAY_STORAGE_KEY, "1");
-  } catch {
-    /* noop */
-  }
-}
-
 export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: SkyMainProps) {
   const selectedOid = useInvestigationStore((state) => state.selectedOid);
   const setSelectedOid = useInvestigationStore((state) => state.setSelectedOid);
@@ -227,9 +220,45 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
   const [missingListOpen, setMissingListOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
   const presenter = isPresenterMode();
-  const [overlayVisible, setOverlayVisible] = useState(() =>
-    !shouldSkipIntro() && !overlayWasDismissed(),
-  );
+  const tourStep = useTourStore((state) => state.step);
+  const setTourStep = useTourStore((state) => state.setStep);
+  const tourActive = !presenter && tourStep !== "done";
+  // Skip the tour entirely if either query flag is set. Persist that
+  // decision so a hash change to #case/... and back doesn't bring the
+  // tour back. Honor the legacy 'overlay dismissed' flag from earlier
+  // builds so returning visitors don't get the tour again.
+  useEffect(() => {
+    if (tourStep === "done") return;
+    if (shouldSkipIntro() || overlayWasDismissed()) {
+      setTourStep("done");
+    }
+  }, [setTourStep, tourStep]);
+  // Auto-fade timer is gone (tour replaces the single-sentence overlay).
+  // Keyboard: Enter advances; Esc dismisses the whole tour.
+  useEffect(() => {
+    if (!tourActive) return undefined;
+    const handler = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setTourStep("done");
+        return;
+      }
+      if (event.key === "Enter") {
+        const target = event.target;
+        if (target instanceof HTMLElement) {
+          const tag = target.tagName;
+          if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || target.isContentEditable) {
+            return;
+          }
+        }
+        event.preventDefault();
+        if (tourStep === "1") setTourStep("2");
+        else if (tourStep === "2") setTourStep("armed");
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [tourActive, tourStep, setTourStep]);
 
   onOpenCaseRef.current = onOpenCase;
   setSelectedOidRef.current = setSelectedOid;
@@ -285,16 +314,6 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
   );
   const frame = useMemo(() => skyFrame(skyEntries), [skyEntries]);
 
-  useEffect(() => {
-    if (!overlayVisible || reduceMotion || presenter) {
-      return undefined;
-    }
-    const timer = window.setTimeout(() => {
-      markOverlayDismissed();
-      setOverlayVisible(false);
-    }, OVERLAY_AUTO_FADE_MS);
-    return () => window.clearTimeout(timer);
-  }, [overlayVisible, presenter, reduceMotion]);
 
   useEffect(() => {
     aladinRef.current?.remove?.();
@@ -453,6 +472,12 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
             if (!oid) return;
             const coords = sourceByOidRef.current.get(oid);
             setSelectedOidRef.current(oid);
+            // Clicking a marker counts as completing step 2 even if the
+            // user hadn't pressed Next yet.
+            const currentStep = useTourStore.getState().step;
+            if (currentStep === "1" || currentStep === "2") {
+              useTourStore.getState().setStep("armed");
+            }
             if (coords) {
               aladin.gotoRaDec?.(coords.ra, coords.dec);
               if (reduceMotion) {
@@ -595,9 +620,14 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
     }
   }, [selectedOid, status]);
 
-  function dismissOverlay() {
-    markOverlayDismissed();
-    setOverlayVisible(false);
+  function dismissTour() {
+    setTourStep("done");
+  }
+  function advanceFromStep1() {
+    setTourStep("2");
+  }
+  function advanceFromStep2() {
+    setTourStep("armed");
   }
 
   const fovRef = useRef(frame.fov);
@@ -658,7 +688,7 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
         </div>
       ) : null}
 
-      {invitationPos && !overlayVisible ? (
+      {invitationPos && tourStep !== "1" ? (
         <div
           aria-hidden="true"
           className={`pointer-events-none absolute z-10 h-16 w-16 rounded-full ${
@@ -785,44 +815,100 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
         </div>
       ) : null}
 
-      {overlayVisible && !presenter ? (
+      {tourActive && tourStep === "1" && status === "ready" ? (
         <motion.div
           animate={{ opacity: 1 }}
-          className="pointer-events-auto absolute inset-0 z-10 flex items-center justify-center bg-workstation-bg/55 px-6 text-center backdrop-blur-sm"
-          exit={reduceMotion ? { opacity: 0 } : { opacity: 0, transition: { duration: 0.6 } }}
+          className="pointer-events-auto absolute inset-0 z-30 flex items-center justify-center bg-workstation-bg/65 px-6 text-center backdrop-blur-sm"
+          exit={reduceMotion ? { opacity: 0 } : { opacity: 0, transition: { duration: 0.2 } }}
           initial={reduceMotion ? false : { opacity: 0 }}
-          onClick={dismissOverlay}
-          role="presentation"
-          transition={reduceMotion ? { duration: 0 } : { duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          role="dialog"
+          aria-label="Step 1 of 3"
+          transition={reduceMotion ? { duration: 0 } : { duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="max-w-2xl">
-            <p className="font-mono text-xs uppercase tracking-[0.28em] text-workstation-accent">
-              Argus
+          <div className="w-full max-w-md border border-workstation-line bg-workstation-panel/95 p-6 shadow-lg backdrop-blur">
+            <p className="font-mono text-[0.62rem] uppercase tracking-[0.22em] text-workstation-muted">
+              1 of 3
             </p>
-            <p className="mt-6 text-2xl font-semibold leading-[1.3] tracking-tight text-white sm:text-[2rem] sm:leading-[1.25]">
+            <p className="mt-4 text-xl font-semibold leading-snug text-white">
               Argus watches the sky for unusual behavior.
             </p>
-            <p className="mt-3 text-2xl font-semibold leading-[1.3] tracking-tight text-white sm:text-[2rem] sm:leading-[1.25]">
-              These are the objects it flagged for human review.
+            <p className="mt-3 text-base leading-7 text-workstation-text">
+              Each glowing point is an object it flagged for human review.
             </p>
-            <p className="mt-6 font-mono text-sm uppercase tracking-[0.22em] text-workstation-muted">
-              Click one.
-            </p>
-            <button
-              className="argus-focus-visible mt-8 border border-workstation-accent bg-workstation-accent/15 px-5 py-2.5 font-mono text-xs uppercase tracking-[0.22em] text-white hover:bg-workstation-accent/25"
-              onClick={(event) => {
-                event.stopPropagation();
-                dismissOverlay();
-              }}
-              type="button"
-            >
-              Enter
-            </button>
+            <div className="mt-6 flex items-center justify-between gap-3">
+              <button
+                className="argus-focus-visible font-mono text-[0.68rem] uppercase tracking-[0.22em] text-workstation-muted hover:text-white"
+                onClick={dismissTour}
+                type="button"
+              >
+                Skip tour
+              </button>
+              <button
+                autoFocus
+                className="argus-focus-visible border border-workstation-accent bg-workstation-accent/15 px-5 py-2 font-mono text-xs uppercase tracking-[0.22em] text-white hover:bg-workstation-accent/25"
+                onClick={advanceFromStep1}
+                type="button"
+              >
+                Next
+              </button>
+            </div>
           </div>
         </motion.div>
       ) : null}
 
-      {hoveredEntry && !overlayVisible ? (
+      {tourActive && tourStep === "2" && status === "ready" ? (
+        <motion.div
+          animate={{ opacity: 1 }}
+          className="pointer-events-auto absolute z-30 max-w-xs"
+          exit={reduceMotion ? { opacity: 0 } : { opacity: 0, transition: { duration: 0.2 } }}
+          initial={reduceMotion ? false : { opacity: 0 }}
+          style={{
+            left: invitationPos
+              ? Math.max(16, Math.min(invitationPos.x + 32, window.innerWidth - 340))
+              : window.innerWidth / 2 - 160,
+            top: invitationPos
+              ? Math.max(80, Math.min(invitationPos.y + 24, window.innerHeight - 220))
+              : window.innerHeight / 2,
+          }}
+          role="dialog"
+          aria-label="Step 2 of 3"
+          transition={reduceMotion ? { duration: 0 } : { duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="relative border border-workstation-accent/70 bg-workstation-panel/95 p-5 shadow-lg backdrop-blur">
+            {invitationPos ? (
+              <span
+                aria-hidden="true"
+                className="absolute -left-2 top-6 h-2 w-2 rotate-45 border-b border-l border-workstation-accent/70 bg-workstation-panel/95"
+              />
+            ) : null}
+            <p className="font-mono text-[0.62rem] uppercase tracking-[0.22em] text-workstation-muted">
+              2 of 3
+            </p>
+            <p className="mt-3 text-base leading-7 text-white">
+              Click any glowing object to investigate it.
+            </p>
+            <div className="mt-5 flex items-center justify-between gap-3">
+              <button
+                className="argus-focus-visible font-mono text-[0.68rem] uppercase tracking-[0.22em] text-workstation-muted hover:text-white"
+                onClick={dismissTour}
+                type="button"
+              >
+                Skip tour
+              </button>
+              <button
+                autoFocus
+                className="argus-focus-visible border border-workstation-accent bg-workstation-accent/15 px-5 py-2 font-mono text-xs uppercase tracking-[0.22em] text-white hover:bg-workstation-accent/25"
+                onClick={advanceFromStep2}
+                type="button"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      ) : null}
+
+      {hoveredEntry && tourStep !== "1" ? (
         hoveredPos ? (
           <div
             className="pointer-events-none absolute z-20 max-w-xs"
