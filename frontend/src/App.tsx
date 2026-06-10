@@ -1,14 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ColdOpen, coldOpenWasSeen, markColdOpenSeen } from "./components/shell/ColdOpen";
 import { WorkstationFrame } from "./components/shell/WorkstationFrame";
+import { SkyMain } from "./components/sky/SkyMain";
 import { loadCasefileIndex } from "./lib/casefileIndex";
 import { loadCaseFileDetails } from "./lib/casefileLoader";
-import { shouldSkipIntro } from "./lib/presenterMode";
 import { useInvestigationStore } from "./stores/investigationStore";
 import type { CaseFileDetailMap, CasefileIndex } from "./types/casefile";
 import { CaseRoute } from "./routes/CaseRoute";
-import { QueueRoute } from "./routes/QueueRoute";
 
 type Route =
   | { mode: "queue"; oid: null }
@@ -37,17 +35,9 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [route, setRoute] = useState<Route>(() => readRoute());
-  const [showColdOpen, setShowColdOpen] = useState(
-    () => !shouldSkipIntro() && !coldOpenWasSeen(),
-  );
   const selectedOid = useInvestigationStore((state) => state.selectedOid);
   const setSelectedOid = useInvestigationStore((state) => state.setSelectedOid);
   const reduceMotion = useReducedMotion();
-
-  const completeColdOpen = useCallback(() => {
-    markColdOpenSeen();
-    setShowColdOpen(false);
-  }, []);
 
   useEffect(() => {
     const handleHashChange = () => setRoute(readRoute());
@@ -107,17 +97,11 @@ export default function App() {
   }, [route, setSelectedOid]);
 
   useEffect(() => {
-    if (reduceMotion && showColdOpen) {
-      completeColdOpen();
-    }
-  }, [completeColdOpen, reduceMotion, showColdOpen]);
-
-  useEffect(() => {
     if (route.mode === "case") {
       const oid = route.oid ?? selectedOid;
       document.title = oid ? `Argus — ${oid}` : "Argus — Case";
     } else {
-      document.title = "Argus — Queue";
+      document.title = "Argus — Sky";
     }
   }, [route.mode, route.oid, selectedOid]);
 
@@ -143,26 +127,31 @@ export default function App() {
     return () => window.removeEventListener("keydown", handleEsc);
   }, [route.mode]);
 
-  const queueRoute = QueueRoute({
-    index,
-    isLoading,
-    error,
-    onOpenCase: navigateToCase,
-    selectedOid,
-    caseDetails,
-  });
+  if (route.mode === "queue") {
+    return (
+      <SkyMain
+        caseDetails={caseDetails}
+        error={error}
+        index={index}
+        isLoading={isLoading}
+        onOpenCase={navigateToCase}
+      />
+    );
+  }
+
   const caseRoute = CaseRoute({
     index,
     oid: route.oid ?? selectedOid,
     onBackToQueue: navigateToQueue,
     caseDetails,
   });
-  const renderedRoute = route.mode === "case" ? caseRoute : queueRoute;
-  const routeKey = route.mode === "case" ? `case-${route.oid ?? selectedOid ?? "none"}` : "queue";
+  const routeKey = `case-${route.oid ?? selectedOid ?? "none"}`;
   const motionInitial = reduceMotion ? false : { opacity: 0, y: 8 };
   const motionAnimate = { opacity: 1, y: 0 };
   const motionExit = reduceMotion ? { opacity: 0 } : { opacity: 0, y: -4 };
-  const routeTransition = reduceMotion ? { duration: 0 } : { duration: 0.22, ease: [0.16, 1, 0.3, 1] as const };
+  const routeTransition = reduceMotion
+    ? { duration: 0 }
+    : { duration: 0.22, ease: [0.16, 1, 0.3, 1] as const };
   const primary = (
     <AnimatePresence initial={false} mode="wait">
       <motion.div
@@ -173,7 +162,7 @@ export default function App() {
         key={`primary-${routeKey}`}
         transition={routeTransition}
       >
-        {renderedRoute.primary}
+        {caseRoute.primary}
       </motion.div>
     </AnimatePresence>
   );
@@ -187,14 +176,10 @@ export default function App() {
         key={`secondary-${routeKey}`}
         transition={reduceMotion ? { duration: 0 } : { ...routeTransition, delay: 0.04 }}
       >
-        {renderedRoute.secondary}
+        {caseRoute.secondary}
       </motion.div>
     </AnimatePresence>
   );
-
-  if (showColdOpen && !reduceMotion) {
-    return <ColdOpen onComplete={completeColdOpen} />;
-  }
 
   return (
     <WorkstationFrame
