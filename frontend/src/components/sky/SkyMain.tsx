@@ -138,6 +138,7 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
   const setSelectedOidRef = useRef(setSelectedOid);
   const setHoveredOidRef = useRef(setHoveredOid);
   const [status, setStatus] = useState<SkyStatus>("idle");
+  const [reloadKey, setReloadKey] = useState(0);
   const [hoveredEntry, setHoveredEntry] = useState<CasefileIndexEntry | null>(null);
   const [missingListOpen, setMissingListOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
@@ -255,10 +256,22 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
       });
     };
 
+    // Stops the loading state from flashing too briefly to read.
+    const minimumLoadingMs = 1500;
+    // If we are still in loading after this, the external service didn't
+    // deliver. Show the failure panel with a fallback object list.
+    const failTimer = window.setTimeout(() => {
+      if (cancelled) return;
+      setStatus((current) => (current === "ready" ? current : "failed"));
+    }, 12_000);
+
+    const initStart = performance.now();
+
     Promise.all([loadAladinLite(), waitForContainerSize()])
       .then(([A, node]) => {
         if (cancelled) return;
         if (!node || node.clientHeight <= 4) {
+          window.clearTimeout(failTimer);
           setStatus("failed");
           return;
         }
@@ -288,6 +301,10 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
         }
         sourceByOidRef.current = positionByOid;
 
+        // Catalogs are added only after the loading state ends, so the
+        // starfield overlay covers any half-painted marker layer Aladin
+        // sketches in during its first frames.
+        const addCatalogsAndEvents = () => {
         if (A.catalog && A.source && aladin.addCatalog) {
           const buckets = new Map<
             string,
@@ -363,22 +380,32 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
             setHoveredOidRef.current(oid);
           });
         }
+        };
 
-        setStatus("ready");
+        const elapsed = performance.now() - initStart;
+        const remaining = Math.max(0, minimumLoadingMs - elapsed);
+        window.setTimeout(() => {
+          if (cancelled) return;
+          addCatalogsAndEvents();
+          window.clearTimeout(failTimer);
+          setStatus("ready");
+        }, remaining);
       })
       .catch(() => {
         if (cancelled) return;
+        window.clearTimeout(failTimer);
         setStatus("failed");
       });
 
     return () => {
       cancelled = true;
+      window.clearTimeout(failTimer);
       aladinRef.current?.remove?.();
       aladinRef.current = null;
       aladinGlobalRef.current = null;
       selectionCatalogRef.current = null;
     };
-  }, [frame.centerDec, frame.centerRa, frame.fov, reduceMotion, skyEntries]);
+  }, [frame.centerDec, frame.centerRa, frame.fov, reduceMotion, skyEntries, reloadKey]);
 
   useEffect(() => {
     if (status !== "ready" || !invitationEntry) {
@@ -469,6 +496,26 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
         style={{ width: "100%", height: "100%" }}
       />
 
+      {/*
+        Starfield placeholder. Visible whenever real tiles haven't taken over.
+        Cross-fades out once status flips to "ready"; remains under the
+        failure panel when status flips to "failed" so the page never goes
+        to a true black void.
+      */}
+      <div
+        aria-hidden="true"
+        className={`argus-starfield ${reduceMotion ? "" : "argus-starfield-twinkle"} pointer-events-none absolute inset-0 transition-opacity duration-700`}
+        style={{ opacity: status === "ready" ? 0 : 1 }}
+      />
+
+      {status === "loading" ? (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <p className="font-mono text-xs uppercase tracking-[0.22em] text-workstation-muted">
+            Loading the sky…
+          </p>
+        </div>
+      ) : null}
+
       {invitationPos && !overlayVisible ? (
         <div
           aria-hidden="true"
@@ -498,11 +545,49 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
       ) : null}
 
       {status === "failed" && !isLoading && !error ? (
-        <div className="absolute inset-x-0 top-1/3 mx-auto max-w-md px-6 text-center">
-          <p className="text-sm leading-6 text-workstation-muted">
-            External sky imagery did not load. You can still browse the flagged objects
-            from the list below.
-          </p>
+        <div className="absolute inset-0 z-20 flex items-center justify-center overflow-auto p-6">
+          <div className="w-full max-w-2xl space-y-6">
+            <div className="border border-workstation-line bg-workstation-panel/95 p-5 backdrop-blur">
+              <p className="font-mono text-xs uppercase tracking-[0.22em] text-workstation-accent">
+                Sky imagery offline
+              </p>
+              <p className="mt-3 text-base leading-7 text-white">
+                The live sky imagery couldn't load (it streams from an external
+                astronomy service). The flagged objects below are still available.
+              </p>
+              <button
+                className="argus-focus-visible mt-4 border border-workstation-accent bg-workstation-accent/15 px-4 py-2 font-mono text-xs uppercase tracking-[0.22em] text-white hover:bg-workstation-accent/25"
+                onClick={() => {
+                  setStatus("loading");
+                  setReloadKey((value) => value + 1);
+                }}
+                type="button"
+              >
+                Retry
+              </button>
+            </div>
+            <ul className="space-y-2">
+              {[...skyEntries.map((item) => item.entry), ...missingEntries].map((entry) => (
+                <li key={entry.oid}>
+                  <button
+                    className="argus-focus-visible block w-full border border-workstation-line bg-workstation-bg/80 px-4 py-3 text-left transition-colors hover:border-workstation-accent hover:bg-workstation-bg"
+                    onClick={() => {
+                      setSelectedOid(entry.oid);
+                      onOpenCase(entry.oid);
+                    }}
+                    type="button"
+                  >
+                    <span className="font-mono text-xs uppercase tracking-[0.18em] text-workstation-accent">
+                      {entry.oid}
+                    </span>
+                    <span className="mt-1 block text-sm leading-6 text-white">
+                      {plainHeadline(entry)}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       ) : null}
 
