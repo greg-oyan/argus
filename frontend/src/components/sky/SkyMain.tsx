@@ -80,14 +80,25 @@ function angularOffset(ra: number, centerRa: number): number {
 
 function skyFrame(entries: SkyEntry[]) {
   if (entries.length === 0) {
-    return { centerRa: 180, centerDec: 0, fov: 180 };
+    return { centerRa: 180, centerDec: 0, fov: 60 };
   }
   const centerRa = circularMeanRa(entries.map((item) => item.ra));
   const centerDec =
     entries.reduce((total, item) => total + item.dec, 0) / Math.max(1, entries.length);
-  const raSpread = Math.max(...entries.map((item) => Math.abs(angularOffset(item.ra, centerRa)))) * 2;
-  const decSpread = Math.max(...entries.map((item) => Math.abs(item.dec - centerDec))) * 2;
-  const fov = Math.max(2, Math.min(180, Math.max(raSpread, decSpread) + 12));
+  // Cluster bbox: full extent in each axis, scaled cos(dec) so RA spread is
+  // an actual on-sky angle rather than a coordinate delta.
+  const decRad = (centerDec * Math.PI) / 180;
+  const cosDec = Math.max(0.1, Math.cos(decRad));
+  const raSpread =
+    Math.max(...entries.map((item) => Math.abs(angularOffset(item.ra, centerRa)))) * 2 * cosDec;
+  const decSpread =
+    Math.max(...entries.map((item) => Math.abs(item.dec - centerDec))) * 2;
+  // Frame the cluster generously: bbox extent x 2.5, with a 4 deg floor so
+  // a tight cluster does not start zoomed in past the marker scale, then
+  // clamp to [20, 120] so the first paint is sky-with-stars (SIN/MOL),
+  // never the AIT whole-sky ellipse on a 100vh canvas.
+  const raw = Math.max(4, Math.max(raSpread, decSpread)) * 2.5;
+  const fov = Math.max(20, Math.min(120, raw));
   return { centerRa, centerDec, fov };
 }
 
@@ -215,15 +226,50 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
     setStatus("loading");
     containerRef.current.innerHTML = "";
 
-    loadAladinLite()
-      .then((A) => {
+    // Aladin Lite v3 reads container size synchronously at init and locks
+    // canvas dimensions to those values. If we call init while the container
+    // is still 0-height (layout not yet applied / React 19 + StrictMode
+    // ordering), the canvases end up 1px tall and the page renders as a
+    // black void regardless of which survey responds. Wait until the
+    // container has a real height (up to ~2s) before init.
+    const waitForContainerSize = (): Promise<HTMLDivElement | null> => {
+      return new Promise((resolve) => {
+        const start = performance.now();
+        const tick = () => {
+          if (cancelled) {
+            resolve(null);
+            return;
+          }
+          const node = containerRef.current;
+          if (node && node.clientHeight > 4 && node.clientWidth > 4) {
+            resolve(node);
+            return;
+          }
+          if (performance.now() - start > 2000) {
+            resolve(node ?? null);
+            return;
+          }
+          window.requestAnimationFrame(tick);
+        };
+        tick();
+      });
+    };
+
+    Promise.all([loadAladinLite(), waitForContainerSize()])
+      .then(([A, node]) => {
         if (cancelled) return;
+        if (!node || node.clientHeight <= 4) {
+          setStatus("failed");
+          return;
+        }
         const aladin = A.aladin("#argus-sky-main", {
           survey: "P/DSS2/color",
           target: `${frame.centerRa} ${frame.centerDec}`,
           fov: frame.fov,
           cooFrame: "equatorial",
-          projection: "AIT",
+          // SIN renders a recognizable star field at our framed FoVs;
+          // AIT collapsed everything to a small ellipse on the dark canvas.
+          projection: "SIN",
           showReticle: false,
           showCooGrid: false,
           showCooGridControl: false,
@@ -411,7 +457,17 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
 
   return (
     <div className="argus-sky-root relative h-screen w-screen overflow-hidden bg-workstation-bg text-workstation-text">
-      <div className="absolute inset-0" id="argus-sky-main" ref={containerRef} />
+      {/*
+        Aladin Lite v3 rewrites the container's position to `relative` during
+        init, which kills `absolute inset-0`. Inline width/height percentages
+        survive that rewrite and let Aladin read a real clientHeight at init,
+        so the canvas does not lock at 1px tall.
+      */}
+      <div
+        id="argus-sky-main"
+        ref={containerRef}
+        style={{ width: "100%", height: "100%" }}
+      />
 
       {invitationPos && !overlayVisible ? (
         <div
