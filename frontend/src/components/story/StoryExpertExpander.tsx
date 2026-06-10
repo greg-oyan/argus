@@ -1,9 +1,26 @@
-import { useState } from "react";
+import { Suspense, lazy, useState } from "react";
 import type { CaseFileDetail, CaseFileDetailMap, CasefileIndexEntry } from "../../types/casefile";
-import { CaseCanvas } from "../case/CaseCanvas";
-import { CaseEvidenceColumn } from "../case/CaseEvidenceColumn";
-import { QueueField } from "../queue/QueueField";
 import { StoryGlossary } from "./StoryGlossary";
+
+const CaseCanvas = lazy(() =>
+  import("../case/CaseCanvas").then((module) => ({ default: module.CaseCanvas })),
+);
+const CaseEvidenceColumn = lazy(() =>
+  import("../case/CaseEvidenceColumn").then((module) => ({
+    default: module.CaseEvidenceColumn,
+  })),
+);
+const QueueField = lazy(() =>
+  import("../queue/QueueField").then((module) => ({ default: module.QueueField })),
+);
+
+function ExpertSpinner({ label }: { label: string }) {
+  return (
+    <div className="argus-missing-state min-h-[240px]">
+      <p>{label}</p>
+    </div>
+  );
+}
 
 type ExpertTab = "evidence" | "queue" | "glossary";
 
@@ -100,14 +117,18 @@ export function StoryExpertExpander({
                   role="tabpanel"
                 >
                   <div className="min-h-[480px] border border-workstation-line bg-workstation-bg/40">
-                    <CaseCanvas
-                      detail={detail}
-                      entry={entry}
-                      onBackToQueue={onBackToQueue}
-                    />
+                    <Suspense fallback={<ExpertSpinner label="Loading evidence panels…" />}>
+                      <CaseCanvas
+                        detail={detail}
+                        entry={entry}
+                        onBackToQueue={onBackToQueue}
+                      />
+                    </Suspense>
                   </div>
                   <div className="min-h-[480px] border border-workstation-line bg-workstation-panel/70">
-                    <CaseEvidenceColumn detail={detail} entry={entry} />
+                    <Suspense fallback={<ExpertSpinner label="Loading evidence column…" />}>
+                      <CaseEvidenceColumn detail={detail} entry={entry} />
+                    </Suspense>
                   </div>
                 </div>
               ) : null}
@@ -122,12 +143,14 @@ export function StoryExpertExpander({
                     Arrow keys / j / k move through the queue, Enter opens a case. The
                     selected row is highlighted.
                   </div>
-                  <QueueField
-                    details={caseDetails}
-                    entries={entries}
-                    onOpenCase={onOpenCase}
-                    showHeader={false}
-                  />
+                  <Suspense fallback={<ExpertSpinner label="Loading queue table…" />}>
+                    <QueueField
+                      details={caseDetails}
+                      entries={entries}
+                      onOpenCase={onOpenCase}
+                      showHeader={false}
+                    />
+                  </Suspense>
                 </div>
               ) : null}
               {tab === "glossary" ? (

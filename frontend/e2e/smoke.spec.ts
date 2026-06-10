@@ -23,3 +23,18 @@ test("sky view loads and a case opens into the story view", async ({ page }) => 
   await expect(page.getByTestId("story-expert-content")).toBeVisible();
   await expect(page.getByTestId("assessment-panel")).toBeVisible();
 });
+
+test("story view stacks cleanly at 375px (mobile)", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/workstation/?nointro=1#case/ZTF18abujsbq");
+
+  await expect(page.getByTestId("story-root")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "What is this?" })).toBeVisible();
+  await expect(page.getByTestId("light-curve-panel")).toBeVisible();
+
+  // Vertical layout: the story root should fit the viewport width and the
+  // body should be scrollable vertically rather than horizontally.
+  const root = page.getByTestId("story-root");
+  const box = await root.boundingBox();
+  expect(box?.width ?? 0).toBeLessThanOrEqual(375);
+});
