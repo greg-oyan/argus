@@ -291,6 +291,14 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
           showLayersControl: false,
           showGotoControl: false,
           showShareControl: false,
+          // Aladin v3 also exposes these widget toggles separately; default
+          // values vary by build, so the inversion belongs on the caller.
+          showFrame: false,
+          showProjectionControl: false,
+          showZoomControl: false,
+          showSettingsControl: false,
+          showStatusBar: false,
+          showContextMenu: false,
         });
         aladinRef.current = aladin;
         aladinGlobalRef.current = A;
@@ -480,6 +488,30 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
   function dismissOverlay() {
     markOverlayDismissed();
     setOverlayVisible(false);
+  }
+
+  const fovRef = useRef(frame.fov);
+  useEffect(() => {
+    // Reset the tracked FoV when the cluster frame changes (e.g. when more
+    // case details land and the bbox widens). User-driven zoom updates the
+    // ref directly inside applyZoom.
+    fovRef.current = frame.fov;
+  }, [frame.fov]);
+  function applyZoom(direction: 1 | -1) {
+    const aladin = aladinRef.current;
+    if (!aladin) return;
+    const factor = direction > 0 ? 1 / 1.5 : 1.5;
+    const next = Math.max(0.05, Math.min(180, fovRef.current * factor));
+    fovRef.current = next;
+    if (typeof aladin.zoomToFoV === "function") {
+      try {
+        aladin.zoomToFoV(next, reduceMotion ? 0 : 0.6);
+        return;
+      } catch {
+        /* fall through to setFoV */
+      }
+    }
+    aladin.setFoV?.(next);
   }
 
   return (
@@ -691,6 +723,27 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
               Click to investigate
             </p>
           </div>
+        </div>
+      ) : null}
+
+      {!presenter && status === "ready" ? (
+        <div className="absolute bottom-4 left-4 z-20 flex flex-col gap-2 sm:bottom-6 sm:left-6">
+          <button
+            aria-label="Zoom in"
+            className="argus-focus-visible h-11 w-11 border border-workstation-line bg-workstation-bg/75 font-mono text-lg text-workstation-muted backdrop-blur hover:border-workstation-accent/70 hover:text-white"
+            onClick={() => applyZoom(1)}
+            type="button"
+          >
+            +
+          </button>
+          <button
+            aria-label="Zoom out"
+            className="argus-focus-visible h-11 w-11 border border-workstation-line bg-workstation-bg/75 font-mono text-lg text-workstation-muted backdrop-blur hover:border-workstation-accent/70 hover:text-white"
+            onClick={() => applyZoom(-1)}
+            type="button"
+          >
+            −
+          </button>
         </div>
       ) : null}
 

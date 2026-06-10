@@ -106,6 +106,28 @@ a {
   animation: argus-starfield-twinkle 3800ms ease-in-out infinite alternate;
 }
 
+/*
+  Aladin Lite v3 still injects several widget containers even with the
+  matching show* options set to false (version drift). Hide them, scoped
+  to our sky container so we never affect the Aladin instance inside the
+  Expert SkyContextPanel (which keeps its survey-compare toggle).
+*/
+#argus-sky-main .aladin-logo-container,
+#argus-sky-main .aladin-location,
+#argus-sky-main .aladin-fov,
+#argus-sky-main .aladin-reticle,
+#argus-sky-main .aladin-zoomControl,
+#argus-sky-main .aladin-frameChoice,
+#argus-sky-main .aladin-projectionChoice,
+#argus-sky-main .aladin-share-control,
+#argus-sky-main .aladin-fullscreen-control,
+#argus-sky-main .aladin-stack-control,
+#argus-sky-main .aladin-settings-control,
+#argus-sky-main .aladin-status-bar,
+#argus-sky-main .aladin-context-menu {
+  display: none !important;
+}
+
 @keyframes argus-starfield-twinkle {
   0% { opacity: 0.55; }
   100% { opacity: 1; }

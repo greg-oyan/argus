@@ -136,5 +136,25 @@ test("diagnose sky render", async ({ page }) => {
     console.log(`  ${req.status ?? "FAILED"} ${req.failed ?? ""} ${req.url}`);
   }
   console.log("Pixel sample:", JSON.stringify(pixelStat, null, 2));
+
+  const chrome = await page.evaluate(() => {
+    const container = document.getElementById("argus-sky-main");
+    if (!container) return [];
+    const items: Array<{ tag: string; cls: string; text: string }> = [];
+    container.querySelectorAll<HTMLElement>("div, span, button, a").forEach((el) => {
+      if (el === container) return;
+      // Only catalog visible siblings of the canvas (Aladin's widget chrome
+      // sits in absolutely positioned divs over the canvas).
+      const rect = el.getBoundingClientRect();
+      if (rect.width < 4 || rect.height < 4) return;
+      const text = (el.textContent ?? "").trim().slice(0, 60);
+      const cls = el.className.toString().slice(0, 80);
+      const tag = el.tagName.toLowerCase();
+      // Skip our own chrome (it lives outside #argus-sky-main).
+      items.push({ tag, cls, text });
+    });
+    return items.slice(0, 40);
+  });
+  console.log("Aladin DOM children:", JSON.stringify(chrome, null, 2));
   await page.screenshot({ path: "test-results/sky-probe.png", fullPage: false });
 });

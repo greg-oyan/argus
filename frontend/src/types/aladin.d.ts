@@ -24,11 +24,34 @@ interface AladinLiteInstance {
   remove?: () => void;
 }
 
+interface AladinLiteInitOptions {
+  survey?: string;
+  target?: string;
+  fov?: number;
+  cooFrame?: string;
+  projection?: string;
+  showReticle?: boolean;
+  showCooGrid?: boolean;
+  showCooGridControl?: boolean;
+  showSimbadPointerControl?: boolean;
+  showFullscreenControl?: boolean;
+  showLayersControl?: boolean;
+  showGotoControl?: boolean;
+  showShareControl?: boolean;
+  showFrame?: boolean;
+  showProjectionControl?: boolean;
+  showZoomControl?: boolean;
+  showSettingsControl?: boolean;
+  showStatusBar?: boolean;
+  showContextMenu?: boolean;
+  [key: string]: unknown;
+}
+
 interface AladinLiteGlobal {
   init?: Promise<void>;
   aladin: (
     selectorOrElement: string | HTMLElement,
-    options?: Record<string, unknown>,
+    options?: AladinLiteInitOptions,
   ) => AladinLiteInstance;
   catalog?: (options?: Record<string, unknown>) => AladinLiteCatalog;
   source?: (ra: number, dec: number, data?: Record<string, unknown>) => AladinLiteSource;
