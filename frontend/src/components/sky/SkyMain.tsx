@@ -159,6 +159,25 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
       }),
     [caseDetails, entries],
   );
+  const invitationEntry = useMemo<SkyEntry | null>(() => {
+    const high = skyEntries.filter(
+      (item) => item.entry.review_priority?.level === "high",
+    );
+    if (high.length === 0) {
+      return skyEntries[0] ?? null;
+    }
+    return high.reduce(
+      (best, current) =>
+        (current.entry.review_priority?.score ?? 0) >
+        (best.entry.review_priority?.score ?? 0)
+          ? current
+          : best,
+      high[0],
+    );
+  }, [skyEntries]);
+  const [invitationPos, setInvitationPos] = useState<{ x: number; y: number } | null>(
+    null,
+  );
   const missingEntries = useMemo(
     () =>
       entries.filter((entry) => {
@@ -316,6 +335,46 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
   }, [frame.centerDec, frame.centerRa, frame.fov, reduceMotion, skyEntries]);
 
   useEffect(() => {
+    if (status !== "ready" || !invitationEntry) {
+      setInvitationPos(null);
+      return undefined;
+    }
+    const aladin = aladinRef.current;
+    if (!aladin || typeof aladin.world2pix !== "function") {
+      setInvitationPos(null);
+      return undefined;
+    }
+    let cancelled = false;
+    const project = () => {
+      if (cancelled) return;
+      try {
+        const result = aladin.world2pix?.(invitationEntry.ra, invitationEntry.dec);
+        if (result && Number.isFinite(result[0]) && Number.isFinite(result[1])) {
+          setInvitationPos({ x: result[0], y: result[1] });
+        } else {
+          setInvitationPos(null);
+        }
+      } catch {
+        setInvitationPos(null);
+      }
+    };
+    project();
+    // Aladin v3 exposes "positionChanged" / "zoomChanged" events when the user
+    // pans or zooms. Subscribe when available; the 250ms tick is a cheap
+    // fallback in case the runtime does not fire them (or the projection
+    // matrix updates asynchronously during a flyTo).
+    if (typeof aladin.on === "function") {
+      aladin.on("positionChanged", project);
+      aladin.on("zoomChanged", project);
+    }
+    const interval = window.setInterval(project, 250);
+    return () => {
+      cancelled = true;
+      window.clearInterval(interval);
+    };
+  }, [invitationEntry, status]);
+
+  useEffect(() => {
     if (status !== "ready") return;
     const A = aladinGlobalRef.current;
     const selectionCatalog = selectionCatalogRef.current;
@@ -343,6 +402,20 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
   return (
     <div className="argus-sky-root relative h-screen w-screen overflow-hidden bg-workstation-bg text-workstation-text">
       <div className="absolute inset-0" id="argus-sky-main" ref={containerRef} />
+
+      {invitationPos && !overlayVisible ? (
+        <div
+          aria-hidden="true"
+          className={`pointer-events-none absolute z-10 h-16 w-16 rounded-full ${
+            reduceMotion ? "argus-marker-pulse-static" : "argus-marker-pulse"
+          }`}
+          style={{
+            left: invitationPos.x,
+            top: invitationPos.y,
+            transform: reduceMotion ? "translate(-50%, -50%)" : undefined,
+          }}
+        />
+      ) : null}
 
       {isLoading ? (
         <div className="absolute inset-0 flex items-center justify-center bg-workstation-bg/80">
@@ -423,23 +496,27 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
         <motion.div
           animate={{ opacity: 1 }}
           className="pointer-events-auto absolute inset-0 z-10 flex items-center justify-center bg-workstation-bg/55 px-6 text-center backdrop-blur-sm"
-          exit={{ opacity: 0 }}
+          exit={reduceMotion ? { opacity: 0 } : { opacity: 0, transition: { duration: 0.6 } }}
           initial={reduceMotion ? false : { opacity: 0 }}
           onClick={dismissOverlay}
           role="presentation"
-          transition={reduceMotion ? { duration: 0 } : { duration: 0.5 }}
+          transition={reduceMotion ? { duration: 0 } : { duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="max-w-2xl">
             <p className="font-mono text-xs uppercase tracking-[0.28em] text-workstation-accent">
               Argus
             </p>
-            <p className="mt-4 text-xl leading-8 text-white sm:text-2xl sm:leading-9">
-              Argus watches the sky for unusual behavior. These are the objects it
-              flagged for human review.
+            <p className="mt-6 text-2xl font-semibold leading-[1.3] tracking-tight text-white sm:text-[2rem] sm:leading-[1.25]">
+              Argus watches the sky for unusual behavior.
             </p>
-            <p className="mt-3 text-base leading-7 text-workstation-muted">Click one.</p>
+            <p className="mt-3 text-2xl font-semibold leading-[1.3] tracking-tight text-white sm:text-[2rem] sm:leading-[1.25]">
+              These are the objects it flagged for human review.
+            </p>
+            <p className="mt-6 font-mono text-sm uppercase tracking-[0.22em] text-workstation-muted">
+              Click one.
+            </p>
             <button
-              className="argus-focus-visible mt-6 border border-workstation-accent/70 bg-workstation-accent/10 px-4 py-2 font-mono text-xs uppercase tracking-[0.18em] text-white hover:bg-workstation-accent/20"
+              className="argus-focus-visible mt-8 border border-workstation-accent bg-workstation-accent/15 px-5 py-2.5 font-mono text-xs uppercase tracking-[0.22em] text-white hover:bg-workstation-accent/25"
               onClick={(event) => {
                 event.stopPropagation();
                 dismissOverlay();
@@ -454,8 +531,8 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
 
       {hoveredEntry && !overlayVisible ? (
         <div className="pointer-events-none absolute inset-x-0 top-16 z-20 mx-auto flex justify-center px-4 sm:top-20">
-          <div className="pointer-events-auto max-w-md border border-workstation-line bg-workstation-bg/85 px-4 py-3 backdrop-blur">
-            <p className="font-mono text-xs uppercase tracking-[0.16em] text-workstation-muted">
+          <div className="pointer-events-auto max-w-md border border-workstation-accent/70 bg-workstation-bg/85 px-4 py-3 shadow-[0_0_0_1px_rgba(107,183,255,0.18)] backdrop-blur">
+            <p className="font-mono text-xs uppercase tracking-[0.16em] text-workstation-accent">
               {hoveredEntry.oid}
             </p>
             <p className="mt-1 text-sm leading-5 text-white">{plainHeadline(hoveredEntry)}</p>

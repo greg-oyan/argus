@@ -20,6 +20,7 @@ interface AladinLiteInstance {
   zoomToFoV?: (fov: number, durationSeconds?: number) => void;
   setImageSurvey?: (survey: string) => void;
   on?: (eventName: AladinLiteEventName, callback: (object: AladinLiteEventPayload) => void) => void;
+  world2pix?: (ra: number, dec: number) => [number, number] | null | undefined;
   remove?: () => void;
 }
 

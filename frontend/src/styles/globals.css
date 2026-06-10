@@ -62,6 +62,27 @@ a {
   animation: argus-sky-pulse 900ms ease-out 1;
 }
 
+.argus-marker-pulse {
+  background: radial-gradient(circle, rgba(107, 183, 255, 0.4) 0%, rgba(107, 183, 255, 0.18) 38%, transparent 70%);
+  animation: argus-marker-pulse 2400ms ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.argus-marker-pulse-static {
+  background: radial-gradient(circle, rgba(107, 183, 255, 0.32) 0%, rgba(107, 183, 255, 0.12) 45%, transparent 70%);
+}
+
+@keyframes argus-marker-pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(0.85);
+    opacity: 0.45;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.18);
+    opacity: 0.95;
+  }
+}
+
 @keyframes argus-sky-pulse {
   0% {
     opacity: 0;
