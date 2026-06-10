@@ -18,6 +18,13 @@ interface SkyEntry {
   dec: number;
 }
 
+const SELECTION_CATALOG_NAME = "Argus selected";
+const SELECTION_COLOR = "#ffffff";
+const SELECTION_SOURCE_SIZE = 22;
+const FLY_TO_FOV = 0.3;
+const FLY_TO_DURATION = 1.2;
+const OPEN_CASE_DELAY_MS = 320;
+
 function finiteNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
 }
@@ -80,25 +87,38 @@ function skyFrame(entries: SkyEntry[]) {
   return { centerRa, centerDec, fov };
 }
 
-function markerPosition(item: SkyEntry, centerRa: number, centerDec: number, fov: number) {
-  const x = 50 + (angularOffset(item.ra, centerRa) / fov) * 86;
-  const y = 50 - ((item.dec - centerDec) / fov) * 86;
-  return {
-    left: `${Math.max(4, Math.min(96, x))}%`,
-    top: `${Math.max(4, Math.min(96, y))}%`,
-  };
+function bucketKey(color: string, size: number): string {
+  return `${color}|${size}`;
+}
+
+function extractOidFromObject(object: unknown): string | null {
+  if (!object || typeof object !== "object") {
+    return null;
+  }
+  const data = (object as { data?: Record<string, unknown> }).data;
+  const oid = data && typeof data.oid === "string" ? data.oid : null;
+  return oid;
 }
 
 export function QueueSkyView({ entries, details, onOpenCase }: QueueSkyViewProps) {
   const selectedOid = useInvestigationStore((state) => state.selectedOid);
-  const hoveredOid = useInvestigationStore((state) => state.hoveredOid);
   const setSelectedOid = useInvestigationStore((state) => state.setSelectedOid);
   const setHoveredOid = useInvestigationStore((state) => state.setHoveredOid);
   const aladinId = useMemo(() => `argus-queue-sky-${Math.random().toString(36).slice(2)}`, []);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const aladinRef = useRef<AladinLiteInstance | null>(null);
+  const aladinGlobalRef = useRef<AladinLiteGlobal | null>(null);
+  const selectionCatalogRef = useRef<AladinLiteCatalog | null>(null);
+  const sourceByOidRef = useRef<Map<string, { ra: number; dec: number }>>(new Map());
+  const onOpenCaseRef = useRef(onOpenCase);
+  const setSelectedOidRef = useRef(setSelectedOid);
+  const setHoveredOidRef = useRef(setHoveredOid);
   const [status, setStatus] = useState<SkyStatus>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  onOpenCaseRef.current = onOpenCase;
+  setSelectedOidRef.current = setSelectedOid;
+  setHoveredOidRef.current = setHoveredOid;
 
   const skyEntries = useMemo(
     () =>
@@ -125,6 +145,9 @@ export function QueueSkyView({ entries, details, onOpenCase }: QueueSkyViewProps
   useEffect(() => {
     aladinRef.current?.remove?.();
     aladinRef.current = null;
+    aladinGlobalRef.current = null;
+    selectionCatalogRef.current = null;
+    sourceByOidRef.current = new Map();
     setErrorMessage(null);
 
     if (!containerRef.current) {
@@ -157,25 +180,99 @@ export function QueueSkyView({ entries, details, onOpenCase }: QueueSkyViewProps
           showShareControl: false,
         });
 
+        aladinRef.current = aladin;
+        aladinGlobalRef.current = A;
+
+        const positionByOid = new Map<string, { ra: number; dec: number }>();
+        for (const item of skyEntries) {
+          positionByOid.set(item.entry.oid, { ra: item.ra, dec: item.dec });
+        }
+        sourceByOidRef.current = positionByOid;
+
         if (A.catalog && A.source && aladin.addCatalog) {
-          const catalog = A.catalog({
-            name: "Argus queue objects",
-            color: "#6bb7ff",
-            sourceSize: 9,
+          const buckets = new Map<
+            string,
+            { color: string; size: number; entries: SkyEntry[] }
+          >();
+          for (const item of skyEntries) {
+            const encoding = priorityMarkerEncoding(item.entry);
+            const key = bucketKey(encoding.color, encoding.size);
+            const existing = buckets.get(key);
+            if (existing) {
+              existing.entries.push(item);
+            } else {
+              buckets.set(key, { color: encoding.color, size: encoding.size, entries: [item] });
+            }
+          }
+
+          const sortedBuckets = Array.from(buckets.values()).sort(
+            (a, b) => a.size - b.size,
+          );
+
+          for (const bucket of sortedBuckets) {
+            const catalog = A.catalog({
+              name: `Argus queue (${bucket.color})`,
+              color: bucket.color,
+              sourceSize: bucket.size,
+              shape: "circle",
+            });
+            const sources = bucket.entries
+              .map((item) =>
+                A.source?.(item.ra, item.dec, {
+                  oid: item.entry.oid,
+                  name: item.entry.oid,
+                }),
+              )
+              .filter((source): source is AladinLiteSource => Boolean(source));
+            catalog.addSources?.(sources);
+            aladin.addCatalog(catalog);
+          }
+
+          const selectionCatalog = A.catalog({
+            name: SELECTION_CATALOG_NAME,
+            color: SELECTION_COLOR,
+            sourceSize: SELECTION_SOURCE_SIZE,
             shape: "circle",
           });
-          catalog.addSources?.(
-            skyEntries.map((item) =>
-              A.source?.(item.ra, item.dec, {
-                oid: item.entry.oid,
-                name: item.entry.oid,
-              }),
-            ).filter((source): source is AladinLiteSource => Boolean(source)),
-          );
-          aladin.addCatalog(catalog);
+          aladin.addCatalog(selectionCatalog);
+          selectionCatalogRef.current = selectionCatalog;
         }
 
-        aladinRef.current = aladin;
+        if (typeof aladin.on === "function") {
+          aladin.on("objectClicked", (object) => {
+            const oid = extractOidFromObject(object);
+            if (!oid) {
+              return;
+            }
+            const coords = sourceByOidRef.current.get(oid);
+            setSelectedOidRef.current(oid);
+            const reduce = reducedMotionPreferred();
+            if (coords) {
+              aladin.gotoRaDec?.(coords.ra, coords.dec);
+              if (reduce) {
+                aladin.setFoV?.(FLY_TO_FOV);
+              } else if (aladin.zoomToFoV) {
+                aladin.zoomToFoV(FLY_TO_FOV, FLY_TO_DURATION);
+              } else {
+                aladin.setFoV?.(FLY_TO_FOV);
+              }
+            }
+            window.setTimeout(
+              () => onOpenCaseRef.current(oid),
+              reduce ? 0 : OPEN_CASE_DELAY_MS,
+            );
+          });
+
+          aladin.on("objectHovered", (object) => {
+            if (object === null || object === undefined) {
+              setHoveredOidRef.current(null);
+              return;
+            }
+            const oid = extractOidFromObject(object);
+            setHoveredOidRef.current(oid);
+          });
+        }
+
         setStatus("ready");
       })
       .catch((error: unknown) => {
@@ -190,25 +287,40 @@ export function QueueSkyView({ entries, details, onOpenCase }: QueueSkyViewProps
       cancelled = true;
       aladinRef.current?.remove?.();
       aladinRef.current = null;
+      aladinGlobalRef.current = null;
+      selectionCatalogRef.current = null;
     };
   }, [frame.centerDec, frame.centerRa, frame.fov, selector, skyEntries]);
 
-  function openFromMarker(item: SkyEntry) {
-    setSelectedOid(item.entry.oid);
-    const aladin = aladinRef.current;
-    const reduce = reducedMotionPreferred();
-    if (aladin) {
-      aladin.gotoRaDec?.(item.ra, item.dec);
-      if (reduce) {
-        aladin.setFoV?.(0.3);
-      } else if (aladin.zoomToFoV) {
-        aladin.zoomToFoV(0.3, 1.2);
-      } else {
-        aladin.setFoV?.(0.3);
-      }
+  useEffect(() => {
+    if (status !== "ready") {
+      return;
     }
-    window.setTimeout(() => onOpenCase(item.entry.oid), reduce ? 0 : 320);
-  }
+    const A = aladinGlobalRef.current;
+    const selectionCatalog = selectionCatalogRef.current;
+    if (!A?.source || !selectionCatalog) {
+      return;
+    }
+
+    if (typeof selectionCatalog.removeAll === "function") {
+      selectionCatalog.removeAll();
+    }
+
+    if (!selectedOid) {
+      return;
+    }
+    const coords = sourceByOidRef.current.get(selectedOid);
+    if (!coords || typeof selectionCatalog.addSources !== "function") {
+      return;
+    }
+    const source = A.source(coords.ra, coords.dec, {
+      oid: selectedOid,
+      name: `${selectedOid} (selected)`,
+    });
+    if (source) {
+      selectionCatalog.addSources([source]);
+    }
+  }, [selectedOid, status]);
 
   return (
     <div className="grid h-full min-h-0 grid-cols-[minmax(0,1fr)_220px] gap-0 overflow-hidden">
@@ -225,36 +337,6 @@ export function QueueSkyView({ entries, details, onOpenCase }: QueueSkyViewProps
             </div>
           ) : null}
         </div>
-        {status === "ready" ? (
-          <div className="pointer-events-none absolute inset-0">
-            {skyEntries.map((item) => {
-              const marker = priorityMarkerEncoding(item.entry);
-              const selected = selectedOid === item.entry.oid;
-              const hovered = hoveredOid === item.entry.oid;
-              return (
-                <button
-                  aria-label={`Open ${item.entry.oid} from sky queue`}
-                  className="pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2 rounded-full border font-mono text-[0.58rem] text-white shadow-[0_0_18px_rgba(107,183,255,0.25)] transition-[border-color,box-shadow,transform,opacity] duration-200"
-                  key={item.entry.oid}
-                  onClick={() => openFromMarker(item)}
-                  onMouseEnter={() => setHoveredOid(item.entry.oid)}
-                  onMouseLeave={() => setHoveredOid(null)}
-                  style={{
-                    ...markerPosition(item, frame.centerRa, frame.centerDec, frame.fov),
-                    background: marker.color,
-                    borderColor: selected || hovered ? "#ffffff" : "rgba(215,222,231,0.5)",
-                    height: marker.size,
-                    opacity: selected || hovered ? 1 : marker.opacity,
-                    transform: `translate(-50%, -50%) scale(${selected ? 1.35 : hovered ? 1.18 : 1})`,
-                    width: marker.size,
-                  }}
-                  title={`${item.entry.oid} review priority ${item.entry.review_priority?.score ?? "n/a"}`}
-                  type="button"
-                />
-              );
-            })}
-          </div>
-        ) : null}
         <div className="pointer-events-none absolute bottom-3 left-3 border border-workstation-line bg-workstation-bg/80 px-3 py-2 font-mono text-[0.68rem] uppercase tracking-[0.14em] text-workstation-muted">
           {skyEntries.length} plotted / {missingEntries.length} without sky position
         </div>

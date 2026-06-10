@@ -6,7 +6,12 @@ interface AladinLiteSource {
 
 interface AladinLiteCatalog {
   addSources?: (sources: AladinLiteSource[]) => void;
+  removeAll?: () => void;
 }
+
+type AladinLiteEventName = "objectClicked" | "objectHovered" | string;
+
+type AladinLiteEventPayload = AladinLiteSource | null | undefined;
 
 interface AladinLiteInstance {
   addCatalog?: (catalog: AladinLiteCatalog) => void;
@@ -14,6 +19,7 @@ interface AladinLiteInstance {
   setFoV?: (fov: number) => void;
   zoomToFoV?: (fov: number, durationSeconds?: number) => void;
   setImageSurvey?: (survey: string) => void;
+  on?: (eventName: AladinLiteEventName, callback: (object: AladinLiteEventPayload) => void) => void;
   remove?: () => void;
 }
 
