@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { ErrorBoundary, RouteErrorFallback } from "./components/ErrorBoundary";
 import { SkyMain } from "./components/sky/SkyMain";
 import { StoryRoute } from "./routes/StoryRoute";
 import { loadCasefileIndex } from "./lib/casefileIndex";
@@ -144,26 +145,48 @@ export default function App() {
     [index, route.oid, selectedOid],
   );
 
-  if (route.mode === "queue") {
-    return (
-      <SkyMain
-        caseDetails={caseDetails}
-        error={error}
-        index={index}
-        isLoading={isLoading}
-        onOpenCase={navigateToCase}
-      />
-    );
-  }
+  const recoverToSky = () => {
+    // Clear per-object investigation state so the crashed view's selections
+    // cannot re-trigger the same render error after recovery.
+    const store = useInvestigationStore.getState();
+    store.clearPointSelection();
+    store.setSelectedTimeRange(null);
+    store.setActiveComparator(null);
+    store.setHighlightedEvidenceKey(null);
+    store.setFocusedPanelKey(null);
+    navigateToQueue();
+  };
 
   return (
-    <StoryRoute
-      caseDetails={caseDetails}
-      index={index}
-      oid={route.oid ?? selectedOid}
-      onBackToSky={navigateToQueue}
-      onNavigateRelative={navigateRelative}
-      onOpenCase={navigateToCase}
-    />
+    <ErrorBoundary
+      fallback={(reset) => (
+        <RouteErrorFallback
+          onBackToSky={() => {
+            recoverToSky();
+            reset();
+          }}
+        />
+      )}
+      resetKey={`${route.mode}:${route.oid ?? ""}`}
+    >
+      {route.mode === "queue" ? (
+        <SkyMain
+          caseDetails={caseDetails}
+          error={error}
+          index={index}
+          isLoading={isLoading}
+          onOpenCase={navigateToCase}
+        />
+      ) : (
+        <StoryRoute
+          caseDetails={caseDetails}
+          index={index}
+          oid={route.oid ?? selectedOid}
+          onBackToSky={navigateToQueue}
+          onNavigateRelative={navigateRelative}
+          onOpenCase={navigateToCase}
+        />
+      )}
+    </ErrorBoundary>
   );
 }

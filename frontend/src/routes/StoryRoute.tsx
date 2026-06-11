@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useInvestigationStore } from "../stores/investigationStore";
 import type { CaseFileDetail, CaseFileDetailMap, CasefileIndex, CasefileIndexEntry } from "../types/casefile";
+import { CutoutErrorFallback, ErrorBoundary } from "../components/ErrorBoundary";
 import { CaseErrorState } from "../components/case/CaseErrorState";
 import { CaseLoadingState } from "../components/case/CaseLoadingState";
 import { LightCurvePanel } from "../components/case/LightCurvePanel";
@@ -492,7 +493,12 @@ export function StoryRoute({
         <StoryHeader entry={entry} />
         <section className="bg-workstation-panel/40 px-4 pb-10 pt-10 sm:px-8 sm:pb-14 sm:pt-14">
           <div className="mx-auto max-w-4xl">
-            <StorySkyCutout detail={detail} />
+            {/* If only the cutout throws, the rest of the story (chart,
+                questions) keeps working and the cutout shows its existing
+                failure-state styling. */}
+            <ErrorBoundary fallback={() => <CutoutErrorFallback />}>
+              <StorySkyCutout detail={detail} />
+            </ErrorBoundary>
             <p className="mt-3 text-sm leading-6 text-workstation-muted">
               The region of sky around this object.
             </p>
