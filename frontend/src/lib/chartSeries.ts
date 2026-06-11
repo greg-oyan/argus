@@ -214,3 +214,143 @@ export function formatMagnitude(value: number | null | undefined): string {
 export function formatMjd(value: number | null | undefined): string {
   return typeof value === "number" && Number.isFinite(value) ? value.toFixed(5) : "n/a";
 }
+
+// Modified Julian Date 0 corresponds to JD 2400000.5 = 1858-11-17 00:00:00 UTC.
+// UTC vs TT/UT1 drift over the ~25-year span we typically render is <40s,
+// which is well under one day and so invisible on month/year labels. We do
+// not claim precision finer than the label granularity.
+const MJD_UNIX_EPOCH_MS = Date.UTC(1858, 10, 17, 0, 0, 0);
+const DAY_MS = 86_400_000;
+
+export function mjdToUtcDate(mjd: number): Date {
+  return new Date(MJD_UNIX_EPOCH_MS + mjd * DAY_MS);
+}
+
+export interface PaddedDomain {
+  min: number;
+  max: number;
+}
+
+function finiteOrNull(value: number | null | undefined): number | null {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+// X domain (time): exact data extent + 2% padding on each side. Single-point
+// data degenerates to ±0.5 day around the value so the chart still renders.
+export function lightCurveTimeDomain(points: Array<{ mjd: number }>): PaddedDomain {
+  if (points.length === 0) {
+    // Fallback: a 1-day window around MJD 0. Caller should normally have
+    // points before calling; this exists to make the math safe.
+    return { min: -0.5, max: 0.5 };
+  }
+  let min = Infinity;
+  let max = -Infinity;
+  for (const point of points) {
+    if (!Number.isFinite(point.mjd)) continue;
+    if (point.mjd < min) min = point.mjd;
+    if (point.mjd > max) max = point.mjd;
+  }
+  if (!Number.isFinite(min) || !Number.isFinite(max)) {
+    return { min: -0.5, max: 0.5 };
+  }
+  const span = max - min;
+  if (span === 0) {
+    return { min: min - 0.5, max: max + 0.5 };
+  }
+  const pad = span * 0.02;
+  return { min: min - pad, max: max + pad };
+}
+
+// Y domain (magnitude): exact data extent across observed + model values
+// (so the model curve is never clipped) plus 0.4 mag on each side. Single
+// magnitude degenerates to ±0.5 around the value. Caller is responsible for
+// keeping yAxis.inverse = true; this only computes [min, max].
+export function lightCurveMagDomain(
+  points: Array<{ observedMag: number | null; modelMag: number | null }>,
+): PaddedDomain {
+  let min = Infinity;
+  let max = -Infinity;
+  for (const point of points) {
+    const o = finiteOrNull(point.observedMag);
+    const m = finiteOrNull(point.modelMag);
+    if (o !== null) {
+      if (o < min) min = o;
+      if (o > max) max = o;
+    }
+    if (m !== null) {
+      if (m < min) min = m;
+      if (m > max) max = m;
+    }
+  }
+  if (!Number.isFinite(min) || !Number.isFinite(max)) {
+    return { min: -0.5, max: 0.5 };
+  }
+  const span = max - min;
+  if (span === 0) {
+    return { min: min - 0.5, max: max + 0.5 };
+  }
+  return { min: min - 0.4, max: max + 0.4 };
+}
+
+export type AxisLabelGranularity = "year" | "month-year";
+
+const YEAR_DAYS = 365.25;
+
+// Label granularity follows the visible span: 3 years or more => year labels
+// only; under 3 years => month + year. The 3-year threshold keeps the demo
+// case (2018-2026, ~8 years) on year ticks and a short outburst window on
+// month ticks.
+export function axisLabelGranularity(spanDays: number): AxisLabelGranularity {
+  return spanDays >= 3 * YEAR_DAYS ? "year" : "month-year";
+}
+
+const MONTH_SHORT = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
+export function formatMjdAxisLabel(mjd: number, granularity: AxisLabelGranularity): string {
+  if (!Number.isFinite(mjd)) return "";
+  const date = mjdToUtcDate(mjd);
+  if (granularity === "year") {
+    return String(date.getUTCFullYear());
+  }
+  return `${MONTH_SHORT[date.getUTCMonth()]} ${date.getUTCFullYear()}`;
+}
+
+const MONTH_LONG = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+export function formatMjdAsDate(mjd: number): string {
+  if (!Number.isFinite(mjd)) return "n/a";
+  const date = mjdToUtcDate(mjd);
+  return `${MONTH_SHORT[date.getUTCMonth()]} ${date.getUTCDate()}, ${date.getUTCFullYear()}`;
+}
+
+export function formatMjdAsMonthYear(mjd: number): string {
+  if (!Number.isFinite(mjd)) return "n/a";
+  const date = mjdToUtcDate(mjd);
+  return `${MONTH_LONG[date.getUTCMonth()]} ${date.getUTCFullYear()}`;
+}

@@ -15,7 +15,13 @@ import {
   selectedTimeRangeFromDataZoomEvent,
 } from "../../lib/chartInteractions";
 import {
+  axisLabelGranularity,
   formatMjd,
+  formatMjdAsDate,
+  formatMjdAsMonthYear,
+  formatMjdAxisLabel,
+  lightCurveMagDomain,
+  lightCurveTimeDomain,
   timeBounds,
   timeRangeToPercent,
   type LinkedLightCurvePoint,
@@ -47,9 +53,15 @@ function pointEncoding(
   point: LinkedLightCurvePoint,
   hoveredPointId: string | null,
   selectedPointId: string | null,
+  storyMode: boolean,
 ) {
   const isSelected = point.pointId === selectedPointId;
   const isHovered = point.pointId === hoveredPointId;
+  // The story hero chart spans a wide time domain, so observed points need to
+  // read as a clear presence; the expert chart keeps its tighter sizing.
+  const baseSize = storyMode ? 8 : 6;
+  const hoverSize = storyMode ? 11 : 10;
+  const selectSize = storyMode ? 14 : 12;
   return {
     itemStyle: {
       color: isSelected ? chartColors.selected : isHovered ? chartColors.accent : bandColor(point.band),
@@ -58,7 +70,7 @@ function pointEncoding(
       borderWidth: isSelected ? 2 : isHovered ? 1.5 : 0,
     },
     symbol: bandSymbol(point.band),
-    symbolSize: isSelected ? 12 : isHovered ? 10 : 6,
+    symbolSize: isSelected ? selectSize : isHovered ? hoverSize : baseSize,
   };
 }
 
@@ -74,10 +86,13 @@ function tooltipFormatter(params: unknown): string {
   };
   const data = point.data ?? {};
   const [mjd, mag] = data.value ?? [Number.NaN, Number.NaN];
+  const when = Number.isFinite(mjd)
+    ? `${formatMjdAsDate(mjd)} (MJD ${mjd.toFixed(1)})`
+    : "date: n/a";
   const lines = [
     point.seriesName ?? "point",
+    when,
     `band: ${data.band ?? "n/a"}`,
-    `MJD: ${Number.isFinite(mjd) ? mjd.toFixed(5) : "n/a"}`,
     `mag: ${Number.isFinite(mag) ? mag.toFixed(3) : "n/a"}`,
     `magerr: ${typeof data.magerr === "number" && Number.isFinite(data.magerr) ? data.magerr.toFixed(3) : "n/a"}`,
     `source: ${data.sourceType ?? "observed"}`,
@@ -156,6 +171,12 @@ export function LightCurvePanel({
 
   const option = useMemo(() => {
     const initialAnimation = !reduceMotion && animateInitialRef.current;
+    // Axes fit the full plotted data (all bands + model overlay), not the
+    // playback-filtered subset, so the domain stays fixed while playback
+    // reveals points inside it instead of rescaling each frame.
+    const timeDomain = lightCurveTimeDomain(points);
+    const magDomain = lightCurveMagDomain(points);
+    const granularity = axisLabelGranularity(timeDomain.max - timeDomain.min);
     const zoom = timeRangeToPercent(points, linkedZoomEnabled ? selectedTimeRange : null);
     const rangeStart = selectedTimeRange?.startMjd;
     const rangeEnd = selectedTimeRange?.endMjd;
@@ -177,7 +198,7 @@ export function LightCurvePanel({
       data: observedPoints
         .filter((point) => (point.band ?? "unknown") === band)
         .map((point) => ({
-          ...pointEncoding(point, hoveredPointId, selectedPointId),
+          ...pointEncoding(point, hoveredPointId, selectedPointId, storyMode),
           band: point.band,
           magerr: point.magerr,
           pointId: point.pointId,
@@ -212,7 +233,10 @@ export function LightCurvePanel({
       animationEasing: "cubicOut",
       color: [chartColors.accent, chartColors.model],
       textStyle: chartTextStyle,
-      grid: chartGrid,
+      // Extra bottom padding over the shared chartGrid so the x-axis title sits
+      // clearly above the dataZoom slider, and a little extra left room for the
+      // rotated y-axis title (the two used to collide with the slider/legend).
+      grid: { ...chartGrid, left: 64, bottom: 78 },
       legend: {
         top: 6,
         right: 16,
@@ -231,15 +255,31 @@ export function LightCurvePanel({
         type: "value",
         name: storyMode ? "Time" : "MJD",
         nameLocation: "middle",
-        nameGap: 28,
+        nameGap: 32,
+        min: timeDomain.min,
+        max: timeDomain.max,
         axisLine: chartAxisLine,
-        axisLabel: { color: chartColors.muted },
+        axisLabel: {
+          color: chartColors.muted,
+          // Story view shows calendar dates; the expert view keeps raw MJD.
+          formatter: storyMode
+            ? (value: number) => formatMjdAxisLabel(value, granularity)
+            : undefined,
+        },
         splitLine: chartSplitLine,
       },
       yAxis: {
         type: "value",
         name: storyMode ? "Brightness (lower = brighter)" : "magnitude",
+        // The axis is inverted, so ECharts' default "end" name location lands
+        // at the bottom-left where it collided with the dataZoom slider, and a
+        // top "start" location collided with the legend on narrow screens.
+        // Rotate the title along the axis (the conventional placement) so it
+        // clears both.
+        nameLocation: "middle",
         nameGap: 44,
+        min: magDomain.min,
+        max: magDomain.max,
         inverse: true,
         axisLine: chartAxisLine,
         axisLabel: { color: chartColors.muted },
@@ -259,12 +299,17 @@ export function LightCurvePanel({
           filterMode: "none",
           start: zoom.start,
           end: zoom.end,
-          height: 14,
-          bottom: 8,
+          height: 16,
+          bottom: 10,
           borderColor: chartColors.grid,
           fillerColor: "rgba(107, 183, 255, 0.13)",
           handleStyle: { color: chartColors.accent },
           textStyle: { color: chartColors.muted },
+          // Match the axis: story view labels the zoom handles with dates, the
+          // expert view keeps raw MJD.
+          labelFormatter: storyMode
+            ? (value: number) => formatMjdAxisLabel(value, granularity)
+            : undefined,
         },
       ],
       series: [
@@ -452,6 +497,9 @@ export function LightCurvePanel({
           >
             show all
           </button>
+          <span className="font-mono text-[0.68rem] uppercase tracking-[0.14em] text-workstation-muted">
+            {formatMjdAsMonthYear(playbackMjd ?? bounds.max)}
+          </span>
           <span className="font-mono text-[0.68rem] uppercase tracking-[0.14em] text-workstation-muted">
             {displayedPoints.length}/{points.length} points
           </span>

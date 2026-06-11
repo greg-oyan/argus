@@ -1,8 +1,14 @@
 import { describe, expect, it } from "vitest";
 import {
   activeLinkedPoint,
+  axisLabelGranularity,
+  formatMjdAsDate,
+  formatMjdAxisLabel,
+  lightCurveMagDomain,
+  lightCurveTimeDomain,
   linkedLightCurvePoints,
   linkedResidualPoints,
+  mjdToUtcDate,
   timeRangeToPercent,
 } from "./chartSeries";
 import type { CaseFileDetail } from "../types/casefile";
@@ -85,5 +91,52 @@ describe("chartSeries", () => {
       start: 25,
       end: 75,
     });
+  });
+
+  it("converts MJD to a UTC calendar date", () => {
+    const date = mjdToUtcDate(60000);
+    expect(date.getUTCFullYear()).toBe(2023);
+    expect(date.getUTCMonth()).toBe(1); // February (zero-based)
+    expect(date.getUTCDate()).toBe(25);
+    // The "May 12, 2021 (MJD 59346.2)" tooltip example from the spec.
+    expect(formatMjdAsDate(59346.2)).toBe("May 12, 2021");
+  });
+
+  it("computes a padded time domain from the data extent", () => {
+    const domain = lightCurveTimeDomain([{ mjd: 58000 }, { mjd: 58100 }, { mjd: 58050 }]);
+    // 2% of the 100-day span on each side.
+    expect(domain.min).toBeCloseTo(57998, 6);
+    expect(domain.max).toBeCloseTo(58102, 6);
+  });
+
+  it("degenerates a single-point time domain to a 1-day window", () => {
+    const domain = lightCurveTimeDomain([{ mjd: 59000 }]);
+    expect(domain.min).toBe(58999.5);
+    expect(domain.max).toBe(59000.5);
+  });
+
+  it("computes a padded magnitude domain across observed and model values", () => {
+    const domain = lightCurveMagDomain([
+      { observedMag: 19.2, modelMag: 19.0 },
+      { observedMag: 20.4, modelMag: null },
+      { observedMag: null, modelMag: 18.6 },
+    ]);
+    // min uses the model value 18.6, max uses the observed value 20.4, ±0.4 pad.
+    expect(domain.min).toBeCloseTo(18.2, 6);
+    expect(domain.max).toBeCloseTo(20.8, 6);
+  });
+
+  it("degenerates a single-magnitude domain to ±0.5", () => {
+    const domain = lightCurveMagDomain([{ observedMag: 19.5, modelMag: null }]);
+    expect(domain.min).toBe(19.0);
+    expect(domain.max).toBe(20.0);
+  });
+
+  it("uses year labels for spans over ~3 years and month-year for shorter spans", () => {
+    expect(axisLabelGranularity(4 * 365.25)).toBe("year");
+    expect(axisLabelGranularity(2 * 365.25)).toBe("month-year");
+    // The demo object spans ~7.7 years -> year-only ticks.
+    expect(formatMjdAxisLabel(58370.1, "year")).toBe("2018");
+    expect(formatMjdAxisLabel(59346.2, "month-year")).toBe("May 2021");
   });
 });
