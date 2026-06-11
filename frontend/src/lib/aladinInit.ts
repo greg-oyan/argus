@@ -81,5 +81,16 @@ export async function initAladinHardened(
     throw new Error("aladin init cancelled");
   }
   const aladin = A.aladin(container, { ...CHROME_OFF, ...options });
+  if (signal?.cancelled) {
+    // Cancelled between creation and resolution (e.g. the caller's effect
+    // cleanup ran mid-init). Destroy the instance here so it cannot leak a
+    // live render loop into a container the caller is about to reuse.
+    try {
+      aladin.remove?.();
+    } catch {
+      // The container may already be detached; nothing left to clean.
+    }
+    throw new Error("aladin init cancelled");
+  }
   return { A, aladin };
 }

@@ -58,7 +58,12 @@ export function StorySkyCutout({ detail }: StorySkyCutoutProps) {
   const selectedSurvey = SURVEY_OPTIONS[selectedSurveyIndex];
 
   useEffect(() => {
-    aladinRef.current?.remove?.();
+    try {
+      aladinRef.current?.remove?.();
+    } catch {
+      // A torn-down instance may throw on double-remove; the container reset
+      // below leaves the DOM clean regardless.
+    }
     aladinRef.current = null;
     setErrorMessage(null);
 
@@ -120,8 +125,15 @@ export function StorySkyCutout({ detail }: StorySkyCutoutProps) {
     return () => {
       signal.cancelled = true;
       window.clearTimeout(failTimer);
-      aladinRef.current?.remove?.();
+      try {
+        aladinRef.current?.remove?.();
+      } catch {
+        // Ignore teardown errors; the container is emptied below.
+      }
       aladinRef.current = null;
+      // Aladin owns everything inside this node; empty it so a re-init never
+      // meets leftovers from the previous instance.
+      container.innerHTML = "";
     };
   }, [detail?.oid, selectedSurvey.id, usableCoordinates, reloadKey]);
 

@@ -82,7 +82,12 @@ export function SkyContextPanel({ detail }: SkyContextPanelProps) {
   }, [selectedSurvey]);
 
   useEffect(() => {
-    aladinRef.current?.remove?.();
+    try {
+      aladinRef.current?.remove?.();
+    } catch {
+      // A torn-down instance may throw on double-remove; the container reset
+      // below leaves the DOM clean regardless.
+    }
     aladinRef.current = null;
     setErrorMessage(null);
 
@@ -95,7 +100,8 @@ export function SkyContextPanel({ detail }: SkyContextPanelProps) {
     let flyToTimeout: number | null = null;
     let pulseTimeout: number | null = null;
     setStatus("loading");
-    containerRef.current.innerHTML = "";
+    const container = containerRef.current;
+    container.innerHTML = "";
 
     loadAladinLite()
       .then((A) => {
@@ -172,8 +178,15 @@ export function SkyContextPanel({ detail }: SkyContextPanelProps) {
       if (pulseTimeout !== null) {
         window.clearTimeout(pulseTimeout);
       }
-      aladinRef.current?.remove?.();
+      try {
+        aladinRef.current?.remove?.();
+      } catch {
+        // Ignore teardown errors; the container is emptied below.
+      }
       aladinRef.current = null;
+      // Aladin owns everything inside this node; empty it so a re-init never
+      // meets leftovers from the previous instance.
+      container.innerHTML = "";
     };
   }, [detail?.oid, reduceMotion, selector, usableCoordinates]);
 
@@ -215,11 +228,20 @@ export function SkyContextPanel({ detail }: SkyContextPanelProps) {
       </div>
 
       <div className="p-3">
-        <div
-          className="relative h-56 overflow-hidden border border-workstation-line bg-workstation-bg"
-          id={aladinId}
-          ref={containerRef}
-        >
+        {/*
+          Aladin owns the inner container node and mutates its children
+          directly (and remove()/innerHTML resets wipe it). React must never
+          render children inside it — when it did, oid-change reconciliation
+          hit removeChild on a node Aladin had already destroyed, throwing a
+          fatal NotFoundError that unmounted the whole app. All overlays are
+          siblings layered above the container instead.
+        */}
+        <div className="relative h-56 overflow-hidden border border-workstation-line bg-workstation-bg">
+          <div
+            id={aladinId}
+            ref={containerRef}
+            style={{ width: "100%", height: "100%" }}
+          />
           {usableCoordinates && status === "ready" ? (
             <div className={`pointer-events-none absolute inset-0 z-10 ${crosshairPulse ? "argus-sky-pulse" : ""}`}>
               <div className="absolute left-1/2 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 border border-workstation-accent/70" />
@@ -228,15 +250,15 @@ export function SkyContextPanel({ detail }: SkyContextPanelProps) {
             </div>
           ) : null}
           {!usableCoordinates ? (
-            <div className="argus-missing-state min-h-full border-0">
+            <div className="argus-missing-state absolute inset-0 border-0">
               Coordinate context is unavailable for this case-file artifact.
             </div>
           ) : status === "loading" ? (
-            <div className="argus-missing-state min-h-full border-0 font-mono uppercase tracking-[0.16em]">
+            <div className="argus-missing-state absolute inset-0 border-0 font-mono uppercase tracking-[0.16em]">
               Loading external sky imagery
             </div>
           ) : status === "failed" ? (
-            <div className="argus-missing-state min-h-full border-0">
+            <div className="argus-missing-state absolute inset-0 border-0">
               Aladin Lite did not load. Case Mode remains available without the sky panel.
             </div>
           ) : null}

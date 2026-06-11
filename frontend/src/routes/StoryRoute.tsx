@@ -346,6 +346,13 @@ export function StoryRoute({
 }: StoryRouteProps) {
   const [activeExpertTab, setActiveExpertTab] = useState<ExpertTab | null>(null);
   const reduceMotion = useReducedMotion();
+  // The per-object subtree below is keyed on the oid, so the expander
+  // remounts closed on navigation; keep the parent's mirror of its state in
+  // sync or arrow-key navigation would stay disabled after leaving the queue
+  // tab.
+  useEffect(() => {
+    setActiveExpertTab(null);
+  }, [oid]);
   const tourStep = useTourStore((state) => state.step);
   const setTourStep = useTourStore((state) => state.setStep);
   // The sky arms the tour on first marker open; the story view advances it
@@ -475,32 +482,40 @@ export function StoryRoute({
         onNext={() => onNavigateRelative(1)}
         onPrev={() => onNavigateRelative(-1)}
       />
-      <StoryHeader entry={entry} />
-      <section className="bg-workstation-panel/40 px-4 pb-10 pt-10 sm:px-8 sm:pb-14 sm:pt-14">
-        <div className="mx-auto max-w-4xl">
-          <StorySkyCutout detail={detail} />
-          <p className="mt-3 text-sm leading-6 text-workstation-muted">
-            The region of sky around this object.
-          </p>
-        </div>
-      </section>
-      <StoryHero
-        activeLightCurvePoint={activeLightCurvePoint}
-        detail={detail}
-        entry={entry}
-        lightCurvePoints={lightCurvePoints}
-        residuals={residualPoints}
-      />
-      <ThreeQuestions detail={detail} entry={entry} />
-      <StoryExpertExpander
-        caseDetails={caseDetails}
-        detail={detail}
-        entries={entries}
-        entry={entry}
-        onActiveTabChange={setActiveExpertTab}
-        onBackToQueue={onBackToSky}
-        onOpenCase={onOpenCase}
-      />
+      {/*
+        Keyed on the oid so navigating between objects remounts the whole
+        per-object subtree (sky cutout, charts, question blocks, expert
+        expander) instead of transitioning components in place. Aladin and
+        playback state never survive an object change this way.
+      */}
+      <div key={entry.oid}>
+        <StoryHeader entry={entry} />
+        <section className="bg-workstation-panel/40 px-4 pb-10 pt-10 sm:px-8 sm:pb-14 sm:pt-14">
+          <div className="mx-auto max-w-4xl">
+            <StorySkyCutout detail={detail} />
+            <p className="mt-3 text-sm leading-6 text-workstation-muted">
+              The region of sky around this object.
+            </p>
+          </div>
+        </section>
+        <StoryHero
+          activeLightCurvePoint={activeLightCurvePoint}
+          detail={detail}
+          entry={entry}
+          lightCurvePoints={lightCurvePoints}
+          residuals={residualPoints}
+        />
+        <ThreeQuestions detail={detail} entry={entry} />
+        <StoryExpertExpander
+          caseDetails={caseDetails}
+          detail={detail}
+          entries={entries}
+          entry={entry}
+          onActiveTabChange={setActiveExpertTab}
+          onBackToQueue={onBackToSky}
+          onOpenCase={onOpenCase}
+        />
+      </div>
     </motion.div>
   );
 }
