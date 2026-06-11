@@ -41,10 +41,10 @@ test.describe("argus screenshots", () => {
 
   test("social preview (social-preview.png, 1280x640)", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 640 });
-    // Show step 1 of the tour as the marketing image (plain Argus line).
+    // Show the first narrative beat of the tour as the marketing image.
     await page.goto("/workstation/");
     await expect(
-      page.getByText("Argus watches the sky for unusual behavior."),
+      page.getByText("Telescopes watch the same patches of sky", { exact: false }),
     ).toBeVisible({ timeout: 15_000 });
     await page.waitForTimeout(1500);
     await page.screenshot({

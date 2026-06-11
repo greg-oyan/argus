@@ -201,6 +201,15 @@ function overlayWasDismissed(): boolean {
   }
 }
 
+// Phase 6C narrative opening: tour step 1 shows these three beats in
+// sequence before flowing into the existing "Click any glowing object"
+// step. Approved copy — do not embellish.
+const INTRO_BEATS = [
+  "Telescopes watch the same patches of sky, night after night. Most objects behave predictably — the same brightness, the same rhythms, over and over.",
+  "Some don't. Every so often, an object's brightness changes in ways the usual models can't explain.",
+  "Argus watches public sky-survey data and flags those objects for a human to review. Each glowing point is one of them.",
+] as const;
+
 export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: SkyMainProps) {
   const selectedOid = useInvestigationStore((state) => state.selectedOid);
   const setSelectedOid = useInvestigationStore((state) => state.setSelectedOid);
@@ -223,6 +232,9 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
   const tourStep = useTourStore((state) => state.step);
   const setTourStep = useTourStore((state) => state.setStep);
   const tourActive = !presenter && tourStep !== "done";
+  // Which of the three narrative beats is showing within tour step "1".
+  // Deliberately not persisted: a reload mid-opening restarts the beats.
+  const [introBeat, setIntroBeat] = useState(0);
   // Skip the tour entirely if either query flag is set. Persist that
   // decision so a hash change to #case/... and back doesn't bring the
   // tour back. Honor the legacy 'overlay dismissed' flag from earlier
@@ -252,13 +264,16 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
           }
         }
         event.preventDefault();
-        if (tourStep === "1") setTourStep("2");
-        else if (tourStep === "2") setTourStep("armed");
+        if (tourStep === "1") {
+          // Enter advances through the narrative beats, then into step 2.
+          if (introBeat < INTRO_BEATS.length - 1) setIntroBeat(introBeat + 1);
+          else setTourStep("2");
+        } else if (tourStep === "2") setTourStep("armed");
       }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [tourActive, tourStep, setTourStep]);
+  }, [tourActive, tourStep, setTourStep, introBeat]);
 
   onOpenCaseRef.current = onOpenCase;
   setSelectedOidRef.current = setSelectedOid;
@@ -577,8 +592,14 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
   function dismissTour() {
     setTourStep("done");
   }
-  function advanceFromStep1() {
-    setTourStep("2");
+  function advanceIntroBeat() {
+    if (introBeat < INTRO_BEATS.length - 1) {
+      setIntroBeat(introBeat + 1);
+    } else {
+      // After beat 3, flow directly into the existing "click any glowing
+      // object" step.
+      setTourStep("2");
+    }
   }
   function advanceFromStep2() {
     setTourStep("armed");
@@ -783,11 +804,28 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
             <p className="font-mono text-[0.62rem] uppercase tracking-[0.22em] text-workstation-muted">
               1 of 3
             </p>
-            <p className="mt-4 text-xl font-semibold leading-snug text-white">
-              Argus watches the sky for unusual behavior.
-            </p>
-            <p className="mt-3 text-base leading-7 text-workstation-text">
-              Each glowing point is an object it flagged for human review.
+            <motion.p
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-4 min-h-[7rem] text-lg leading-8 text-white"
+              initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+              key={introBeat}
+              transition={reduceMotion ? { duration: 0 } : { duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            >
+              {INTRO_BEATS[introBeat]}
+            </motion.p>
+            {/* Beat progress hint. */}
+            <div aria-hidden="true" className="mt-4 flex items-center justify-center gap-2">
+              {INTRO_BEATS.map((beat, beatIndex) => (
+                <span
+                  className={`h-1.5 w-1.5 rounded-full ${
+                    beatIndex === introBeat ? "bg-workstation-accent" : "bg-workstation-line"
+                  }`}
+                  key={beat}
+                />
+              ))}
+            </div>
+            <p className="sr-only" role="status">
+              Part {introBeat + 1} of {INTRO_BEATS.length}
             </p>
             <div className="mt-6 flex items-center justify-between gap-3">
               <button
@@ -800,7 +838,7 @@ export function SkyMain({ index, caseDetails, isLoading, error, onOpenCase }: Sk
               <button
                 autoFocus
                 className="argus-focus-visible border border-workstation-accent bg-workstation-accent/15 px-5 py-2 font-mono text-xs uppercase tracking-[0.22em] text-white hover:bg-workstation-accent/25"
-                onClick={advanceFromStep1}
+                onClick={advanceIntroBeat}
                 type="button"
               >
                 Next
