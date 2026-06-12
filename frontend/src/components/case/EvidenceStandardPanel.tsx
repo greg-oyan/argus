@@ -37,7 +37,7 @@ export function EvidenceStandardPanel({ entry, detail }: EvidenceStandardPanelPr
           What is observed, computed, missing, and explicitly not claimed.
         </p>
       </div>
-      <div className="grid gap-3 p-3 text-xs leading-5 text-workstation-muted">
+      <div className="grid gap-3 p-4 text-xs leading-5 text-workstation-muted">
         <div className="border border-workstation-line bg-workstation-bg/40 p-3">
           <p className="font-mono uppercase tracking-[0.14em] text-workstation-text">
             Observed facts

@@ -54,7 +54,7 @@ export function PointInspector({ entry, detail }: PointInspectorProps) {
         </p>
       </div>
 
-      <div className="max-h-[280px] overflow-auto p-3">
+      <div className="max-h-[280px] overflow-auto p-4">
         <dl className="grid grid-cols-[120px_minmax(0,1fr)] gap-2 font-mono text-xs">
           <dt className="text-workstation-muted">MJD</dt>
           <dd>{formatMjd(activePoint?.mjd)}</dd>

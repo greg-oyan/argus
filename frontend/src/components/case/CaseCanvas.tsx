@@ -44,7 +44,7 @@ export function CaseCanvas({ entry, detail, onBackToQueue }: CaseCanvasProps) {
     const gaussianFocused =
       activeComparator === "gaussian_bump" || activeComparator === "gaussian";
     body = (
-      <div className="grid min-h-0 flex-1 grid-rows-[minmax(300px,1.15fr)_minmax(260px,0.85fr)] gap-4 p-4">
+      <div className="grid min-h-0 flex-1 grid-rows-[minmax(300px,1.15fr)_minmax(260px,0.85fr)] gap-6 p-5">
         <LightCurvePanel
           activePoint={activeLightCurvePoint}
           hasResidualField={residualPoints.length > 0}

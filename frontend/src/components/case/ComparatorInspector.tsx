@@ -105,7 +105,7 @@ export function ComparatorInspector({ detail }: ComparatorInspectorProps) {
           Active: <span className="text-workstation-text">{activeComparator ?? "none"}</span>
         </p>
       </div>
-      <div className="max-h-[380px] overflow-auto p-3">
+      <div className="max-h-[380px] overflow-auto p-4">
         {comparisons.length === 0 ? (
           <p className="text-sm text-workstation-muted">No comparator entries are present.</p>
         ) : (

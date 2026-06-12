@@ -186,7 +186,8 @@ a {
   }
 
   .argus-panel-header {
-    @apply border-b border-workstation-line px-3 py-2;
+    /* Phase 6D: roomier, uniform header band across all evidence panels. */
+    @apply border-b border-workstation-line px-4 py-3;
   }
 
   .argus-panel-title {

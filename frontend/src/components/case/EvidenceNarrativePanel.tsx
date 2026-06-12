@@ -64,7 +64,7 @@ export function EvidenceNarrativePanel({ detail }: EvidenceNarrativePanelProps) 
         </p>
       </div>
 
-      <div className="max-h-[330px] overflow-auto p-3">
+      <div className="max-h-[330px] overflow-auto p-4">
         <h2 className="font-mono text-sm text-white">
           {narrative?.headline ?? detail?.comparison_summary?.headline ?? "Narrative unavailable"}
         </h2>

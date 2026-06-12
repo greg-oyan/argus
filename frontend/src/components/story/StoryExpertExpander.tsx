@@ -108,11 +108,11 @@ export function StoryExpertExpander({
                 </button>
               ))}
             </div>
-            <div className="mt-4">
+            <div className="mt-6">
               {tab === "evidence" ? (
                 <div
                   aria-labelledby="expert-tab-button-evidence"
-                  className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)]"
+                  className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)] xl:grid-cols-[minmax(0,1fr)_minmax(0,460px)]"
                   id="expert-tab-evidence"
                   role="tabpanel"
                 >

@@ -45,7 +45,7 @@ export function NextChecksPanel({ entry, detail }: NextChecksPanelProps) {
         </p>
       </div>
 
-      <div className="max-h-[280px] overflow-auto p-3">
+      <div className="max-h-[280px] overflow-auto p-4">
         {missingContext ? (
           <p className="mb-3 border-l border-workstation-amber/70 pl-3 text-xs leading-5 text-workstation-text">
             Missing context is part of the current evidence state. Treat the next checks as

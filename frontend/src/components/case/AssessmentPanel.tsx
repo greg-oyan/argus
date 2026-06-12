@@ -48,7 +48,7 @@ export function AssessmentPanel({ entry, detail }: AssessmentPanelProps) {
         </p>
       </div>
 
-      <div className="max-h-[260px] overflow-auto p-3">
+      <div className="max-h-[260px] overflow-auto p-4">
         <button
           className="w-full border border-workstation-line bg-workstation-bg/40 p-3 text-left hover:border-workstation-accent/70"
           onClick={() => {

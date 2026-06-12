@@ -75,7 +75,7 @@ export function FeatureInspector({ detail }: FeatureInspectorProps) {
         </button>
       </div>
 
-      <div className="max-h-[300px] overflow-auto p-3">
+      <div className="max-h-[300px] overflow-auto p-4">
         {!summary ? (
           <div className="argus-missing-state">No feature summary is present in this case-file artifact.</div>
         ) : (

@@ -227,7 +227,7 @@ export function SkyContextPanel({ detail }: SkyContextPanelProps) {
         </button>
       </div>
 
-      <div className="p-3">
+      <div className="p-4">
         {/*
           Aladin owns the inner container node and mutates its children
           directly (and remove()/innerHTML resets wipe it). React must never
